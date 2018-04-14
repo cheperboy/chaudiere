@@ -1,0 +1,21 @@
+##nginx virtual host setting
+
+server {
+    listen 5002;
+    server_name 81.56.250.29;
+
+    root /home/pi/Production/teleinfo-chart/teleinfoapp;
+
+    access_log /home/pi/Production/teleinfo-chart/log/nginx_access.log;
+    error_log /home/pi/Production/teleinfo-chart/log/nginx_error.log;
+
+    location / {
+        proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        if (!-f $request_filename) {
+            proxy_pass http://127.0.0.1:8000;
+            break;
+		}
+	}
+}

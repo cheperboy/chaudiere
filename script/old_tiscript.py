@@ -3,23 +3,24 @@ import logging, logging.config
 import serial
 from serial.serialutil import SerialException
 
-PORT = '/dev/ttyACM0'
-BAUDRATE = 9600
+PORT = '/dev/ttyS0'
+BAUDRATE = 1200
 STOPBITS = serial.STOPBITS_ONE
 BYTESIZE = serial.SEVENBITS
 
-currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere
-#projectpath = os.path.dirname(currentpath)               # /home/pi/Dev
-envpath = os.path.dirname(currentpath)                   # /home/pi/Dev
-envname = os.path.basename(envpath)                      # Dev
+currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Development/teleinfo/tiscript
+projectpath = os.path.dirname(currentpath)               # /home/pi/Development/teleinfo
+envpath = os.path.dirname(projectpath)                   # /home/pi/Development
+envname = os.path.basename(envpath)                      # Development
 
-#logfile_base = os.path.join(currentpath, 'log')
-logfile_base = currentpath
-'''
-api = projectpath + '/teleinfoapp/'
-sys.path.append(api)
-from api import createti
-'''
+#logfile_base = '/home/pi/Development/teleinfo/tiscript/log/teleinfo.py'
+logfile_base = os.path.join(projectpath, 'log')
+
+teleinfoapp = os.path.join(projectpath, 'teleinfoapp')
+print teleinfoapp
+sys.path.append(teleinfoapp)
+#from app.api import createti
+from newapi import createTeleinfo
 '''
 logging.critical(os.path.basename(__file__))
 logging.error("ERROR")
@@ -30,80 +31,74 @@ logging.debug("DEBUG")
 
 def main():
     logger.info('Start')
-    try:
-        logger.info('before port open')
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE)
-        logger.info('after port open')
-    except SerialException:
-        logger.info('Cant Open Port')
-        sys.exit(0)
-    logger.debug('before try read port')
+    EDFserial = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE)
+
     try:
         while True:
-            teleinfo = readPort(port)
-            print(teleinfo)
-            """
-            createti(
-                      datetime.datetime.now(), 
-                      teleinfo['base'],
-                      teleinfo['papp'],
-                      teleinfo['iinst1'],
-                      teleinfo['iinst2'],
-                      teleinfo['iinst3']
-                    )
-            """
+            teleinfo = readPort(EDFserial)
+            createTeleinfo(
+                    datetime.datetime.utcnow(),
+                    teleinfo['base'],
+                    teleinfo['papp'],
+                    teleinfo['iinst1'],
+                    teleinfo['iinst2'],
+                    teleinfo['iinst3'])
     except KeyboardInterrupt:
         logger.debug('KeyboardInterrupt')
         try:
-            port.close()
+            EDFserial.close()
             logger.debug('serial.close()')
             sys.exit(0)
         except SystemExit:
             logger.debug('SystemExit')
             os._exit(0)
 
-def checkCRC(values):
-    sum = 0
-    crc = values.pop()
-    for value in values :
-        sum += int(value)
-    if (int(sum) == int(crc)) :
-        return True
-    return False
-    
-def readPort(port):
+def readPort(EDFserial):
     logger.debug('readSerial()')
     teleinfo = dict([('papp', -1), ('base', -1), ('iinst1', -1), ('iinst2', -1), ('iinst3', -1), ('valid', -1)])
     reading = True #End of frame found / all datas are set
     count_valid = 0
     while (reading == True):
         try:
-            data = port.readline()
+            data = EDFserial.readline()
         except SerialException:
             logger.error('SerialException, closing port and EXIT', exc_info=True)
-            port.close()
+            EDFserial.close()
             sys.exit(0)
-        values = data.split(';')
-        values.pop() #remove EOL \n\r
-        """        
+
+        if (string.find(data, 'BASE ') != -1):
+            if (data[5:14].isdigit() == True):
+                teleinfo['base'] = int(data[5:14])
+                count_valid += 1
+        if (string.find(data, 'IINST1 ') != -1):
+            if (data[7:10].isdigit() == True):
+                teleinfo['iinst1'] = int(data[7:10])
+                count_valid += 1
+        if (string.find(data, 'IINST2 ') != -1):
+            if (data[7:10].isdigit() == True):
+                teleinfo['iinst2'] = int(data[7:10])
+                count_valid += 1
+        if (string.find(data, 'IINST3 ') != -1):
+            if (data[7:10].isdigit() == True):
+                teleinfo['iinst3'] = int(data[7:10])
+                count_valid += 1
         if (string.find(data, 'PAPP ') != -1):
             if (data[5:10].isdigit() == True):
                 teleinfo['papp'] = int(data[5:10])
                 count_valid += 1
-        """
-    logger.info(values)
-    crc = checkCRC(values)
-    if crc == False:
-        logger.error("CRC ERROR")
-        logger.info(values)
-        return (False)
-    return (values)
+        
+        if (count_valid == 5):
+            reading = False
+            teleinfo['valid'] = 1
+            
+    logger.info(teleinfo)
+    return (teleinfo)
 
 
 if __name__ == '__main__':
     
     # PARSE ARGS
-    parser = argparse.ArgumentParser(description = "Rpi gets info from Uno serial", epilog = "" )
+    parser = argparse.ArgumentParser(description = "Rpi gets teleinfo from EDF serial output", epilog = "" )
     parser.add_argument("-v",
                           "--verbose",
                           help="increase output verbosity",
@@ -138,9 +133,9 @@ if __name__ == '__main__':
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "INFO",
                 "formatter": "simple",
-                "filename": os.path.join(logfile_base, 'info.log'),
-                "maxBytes": 1000,
-                "backupCount": 1,
+                "filename": os.path.join(logfile_base, 'tiscript_info.log'),
+                "maxBytes": 100000,
+                "backupCount": 3,
                 "encoding": "utf8"
             },
 
@@ -148,9 +143,9 @@ if __name__ == '__main__':
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "ERROR",
                 "formatter": "simple",
-                "filename": os.path.join(logfile_base, 'error.log'),
-                "maxBytes": 1000,
-                "backupCount": 1,
+                "filename": str(os.path.join(logfile_base, 'tiscript_error.log')),
+                "maxBytes": 100000,
+                "backupCount": 3,
                 "encoding": "utf8"
             }
         },

@@ -1,0 +1,26 @@
+{% include "_header.html" %}
+{% include "_navbar.html" %}
+	<div class="container">	
+
+	{{baseURL}}
+{% if mystaticchart %}
+	<div class="container-fluid">
+	  <div class="row">
+		  <div class="container-fluid" id="mystaticchart-container"></div>
+		</div>
+	</div>
+{% endif %}
+{% if mylivechart %}
+	<div class="container-fluid">
+	  <div class="row">
+		  <div class="container-fluid" id="mylivechart-container"></div>
+		</div>
+	</div>
+{% endif %}
+	
+
+	</div>
+
+    
+	<hr>
+{% include "_footer.html" %}

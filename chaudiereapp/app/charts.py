@@ -42,7 +42,7 @@ static_conf = {
         },
 
         'title': {
-            'text': 'Conso EDF'
+            'text': 'Temp'
         },
 
         'yAxis': [{
@@ -51,7 +51,7 @@ static_conf = {
                 'x': -3
             },
             'title': {
-                'text': 'Puissance'
+                'text': 'Degre'
             },
             'height': '60%',
             'lineWidth': 1,

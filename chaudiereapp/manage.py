@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask.cli import FlaskGroup
 
 from app import create_app, db
-from app.models import Teleinfo
+from app.models import Chaudiere
 
 
 def create_my_app(info):
@@ -34,7 +34,7 @@ def drop_db():
 @cli.command()
 def create_data():
     """Creates a data Entry."""
-    me = Teleinfo(datetime.now())
+    me = Chaudiere(datetime.now())
     db.session.add(me)
     db.session.commit()
     print me

@@ -32,10 +32,10 @@ def drop_db():
     db.drop_all()
 
 @app.command()
-@click.option('--base', default=666)
-def create_data(base):
+@click.option('--temp0', default=666)
+def create_data(temp0):
     """Creates a data Entry."""
-    me = Teleinfo(datetime.now(), base=base)
+    me = Chaudiere(datetime.now(), temp0=temp0)
     db.session.add(me)
     db.session.commit()
     print me

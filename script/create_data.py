@@ -1,92 +1,36 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os, sys, argparse, string, datetime, time
 import logging, logging.config
-import serial
-from serial.serialutil import SerialException
-
-PORT = '/dev/ttyACM0'
-BAUDRATE = 9600
-STOPBITS = serial.STOPBITS_ONE
-BYTESIZE = serial.SEVENBITS
+import glob
+import time
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-logfile_base = os.path.join(currentpath, 'log')
-#logfile_base = currentpath
+#logfile_base = os.path.join(currentpath, 'log')
+logfile_base = currentpath
 
 # import Database API
 chaudiereapp = os.path.join(projectpath, 'chaudiereapp')
 print chaudiereapp
 sys.path.append(chaudiereapp)
-from newapi import createWattbuffer
+from newapi import createChaudiere
+
+def get_last_watt():
+    return 0
+
+def get_temp():
+    return 0
 
 def main():
-    try:
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE)
-        time.sleep(.1)
-        port.flushInput()
-        time.sleep(.1)
-    except SerialException:
-        logger.info('Cant Open Port')
-        sys.exit(0)
-    logger.info('Port open')
     while True:
-        try:
-            checkedValues = parseLine(port)
-            createWattbuffer(
-                    datetime.datetime.utcnow(),
-                    checkedValues[0],
-                    checkedValues[1],
-                    checkedValues[2])
-        except KeyboardInterrupt:
-            logger.debug('KeyboardInterrupt')
-            try:
-                port.close()
-                logger.debug('serial.close()')
-                sys.exit(0)
-            except SystemExit:
-                logger.debug('SystemExit')
-                os._exit(0)
-#        time.sleep()
-
-def checkCRC(values):
-    sum = 0
-    try:
-        crc = int(values.pop())
-        for value in values :
-            sum += int(value)
-        if (int(sum) == crc):
-            return True
-    except Exception as e:
-        logger.error("Invalid datas from serial port ({0})".format(e))
-        return False
-    return False
-    
-def parseLine(port):
-    try:
-        data = port.readline()
-    except SerialException:
-        logger.error(data)
-        logger.error('SerialException, closing port and EXIT', exc_info=True)
-        port.close()
-        sys.exit(0)
-    try:
-        values = data.split(';')
-        values.pop() #remove EOL \n\r
-    except Exception as e:
-        logger.error("Invalid datas from serial port ({0})".format(e))
-        return False
-    else:
-        logger.info(values)
-        crc = checkCRC(values)
-        if crc == False:
-            logger.error("CRC ERROR")
-            logger.error(values)
-            return (False)
-        return (values)
-    
+        get_temp()
+        get_last_watt()
+#        createChaudiere()
 
 if __name__ == '__main__':
     
@@ -128,7 +72,7 @@ if __name__ == '__main__':
                 "formatter": "simple",
                 "filename": os.path.join(logfile_base, __file__+'_info.log'),
                 "maxBytes": 5000,
-                "backupCount": 1,
+                "backupCount": 0,
                 "encoding": "utf8"
             },
 
@@ -136,9 +80,9 @@ if __name__ == '__main__':
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "ERROR",
                 "formatter": "simple",
-                "filename": os.path.join(logfile_base, __file__+'_error.log'),
+                "filename": os.path.join(logfile_base, 'get_temp_error.log'),
                 "maxBytes": 5000,
-                "backupCount": 1,
+                "backupCount": 0,
                 "encoding": "utf8"
             }
         },

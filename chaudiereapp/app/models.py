@@ -16,32 +16,31 @@ def dump_timestamp(value):
 def totimestamp(value):
     return time.mktime(value.timetuple())
 
-class TeleinfoBase(db.Model):
+class ChaudiereBase(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime)
-    base = db.Column(db.Integer)
-    papp = db.Column(db.Integer)
-    iinst1 = db.Column(db.Float)
-    iinst2 = db.Column(db.Float)
-    iinst3 = db.Column(db.Float)
+    temp0 = db.Column(db.Float)
+    temp1 = db.Column(db.Float)
+    watt0 = db.Column(db.Float)
+    watt1 = db.Column(db.Float)
+    watt2 = db.Column(db.Float)
 
-    def __init__(self, timestamp, base, papp, iinst1, iinst2, iinst3):
+    def __init__(self, timestamp, temp0, temp1, watt0, watt1, watt2):
         self.timestamp = timestamp
-        self.base = base
-        self.papp = papp
-        self.iinst1 = iinst1
-        self.iinst2 = iinst2 
-        self.iinst3 = iinst3
+        self.temp0 = temp0
+        self.temp1 = temp1
+        self.watt0 = watt0
+        self.watt1 = watt1 
+        self.watt2 = watt2
 
     def __repr__(self):
-        return '<Teleinfo {0} {1} : {2}, {3}>'.format(self.id, self.timestamp, self.base, self.papp)
+        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.timestamp, self.temp0, self.temp1, self.watt0, self.watt1, self.watt2)
 
     @classmethod
-    def create(self, cls, timestamp, base, papp, iinst1, iinst2, iinst3):
+    def create(self, cls, timestamp, temp0, temp1, watt0, watt1, watt2):
         try:
-            entry = cls(timestamp, base, papp, iinst1, iinst2, iinst3)
-            entry = cls(timestamp, base, papp, iinst1, iinst2, iinst3)
+            entry = cls(timestamp, temp0, temp1, watt0, watt1, watt2)
             db.session.add(entry)
             db.session.commit()
             ret = 'OK'
@@ -54,11 +53,11 @@ class TeleinfoBase(db.Model):
         """Return Object data in list format"""
         return [
             dump_timestamp(self.timestamp),
-            self.base,
-            self.papp,
-            self.iinst1,
-            self.iinst2,
-            self.iinst3,
+            self.temp0, 
+            self.temp1, 
+            self.watt0, 
+            self.watt1, 
+            self.watt2,
             self.id
         ]
        
@@ -85,21 +84,80 @@ class TeleinfoBase(db.Model):
                 .all())
 
                         
-class TeleinfoMinute(TeleinfoBase):
-    __bind_key__ = 'teleinfo_minute'
+class ChaudiereMinute(ChaudiereBase):
+    __bind_key__ = 'chaudiere_minute'
         
-class TeleinfoHour(TeleinfoBase):
-    __bind_key__ = 'teleinfo_hour'
+class ChaudiereHour(ChaudiereBase):
+    __bind_key__ = 'chaudiere_hour'
     
-class Teleinfo(TeleinfoBase):
-    __bind_key__ = 'teleinfo'
-        
-    def __init__(self, timestamp, base=1, papp=1, iinst1=1, iinst2=1, iinst3=1):
+class Chaudiere(ChaudiereBase):
+    __bind_key__ = 'chaudiere'
+    
+    def __init__(self, timestamp, temp0=1, temp1=1, watt0=1, watt1=1, watt2=1):
         self.timestamp = timestamp
-        self.base = base
-        self.papp = papp
-        self.iinst1 = iinst1
-        self.iinst2 = iinst2 
-        self.iinst3 = iinst3
+        self.temp0 = temp0
+        self.temp1 = temp1
+        self.watt0 = watt0
+        self.watt1 = watt1 
+        self.watt2 = watt2
 
+class Wattbuffer(db.Model):
+    __bind_key__ = 'watt_buffer'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime)
+    watt0 = db.Column(db.Float)
+    watt1 = db.Column(db.Float)
+    watt2 = db.Column(db.Float)
+
+    def __init__(self, timestamp, watt0, watt1, watt2):
+        self.timestamp = timestamp
+        self.watt0 = watt0
+        self.watt1 = watt1 
+        self.watt2 = watt2
+
+    def __repr__(self):
+        return '<Wattbuffer {0} {1} {2} {3} {4}>'.format(self.id, self.timestamp, self.watt0, self.watt1, self.watt2)
+
+    @classmethod
+    def create(self, cls, timestamp, watt0, watt1, watt2):
+        try:
+            entry = cls(timestamp, watt0, watt1, watt2)
+            db.session.add(entry)
+            db.session.commit()
+            ret = 'OK'
+        except Exception as e:
+            ret = 'Not Ok'
+            print e
+        return ret
+    
+    def tolist(self):
+        """Return Object data in list format"""
+        return [
+            dump_timestamp(self.timestamp),
+            self.watt0, 
+            self.watt1, 
+            self.watt2,
+            self.id
+        ]
        
+    def papptolist(self):
+        return [
+            dump_timestamp(self.timestamp),
+            self.papp,
+       ]
+
+    @classmethod
+    def last(self, cls):
+        return(db.session.query(cls).order_by(cls.id.desc()).first())
+
+    @classmethod
+    def first(self, cls):
+        return(db.session.query(cls).order_by(cls.id.asc()).first())
+
+    @classmethod
+    def get_between_date(self, cls, begin, end):
+        return (db.session.query(cls) \
+                .filter(cls.timestamp > datetime(begin.year, begin.month, begin.day, begin.hour, begin.minute)) \
+                .filter(cls.timestamp < datetime(end.year, end.month, end.day, end.hour, end.minute)) \
+                .order_by(cls.id.desc()) \
+                .all())

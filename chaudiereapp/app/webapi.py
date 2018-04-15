@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from random import random
 
 from app.auth import auth
-from app.models import Teleinfo
+from app.models import Chaudiere
 
 import config
 

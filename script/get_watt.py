@@ -1,3 +1,13 @@
+"""
+Reads current value from serial port (from Arduino Due)
+Outputs current values (watt) to a temp file (/tmp/watt.tmp) 
+the output buffer is formatted as:
+2018/04/15 21:06:05;10;8;10
+date (%Y/%m/%d %H:%M:%S) value1;value2;valueN
+
+
+
+"""
 import os, sys, argparse, string, datetime, time
 import logging, logging.config
 import serial
@@ -14,6 +24,7 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(currentpath, 'log')
+tmpfile_base = os.path.join(currentpath, 'tmp')
 #logfile_base = currentpath
 
 # import Database API
@@ -32,14 +43,24 @@ def main():
         logger.info('Cant Open Port')
         sys.exit(0)
     logger.info('Port open')
+    
+    # Delete X firsts records (not relevant)
+    for i in range(6):
+        checkedValues = parseLine(port)
     while True:
         try:
             checkedValues = parseLine(port)
-            createWattbuffer(
+            # Format output and write to special logger
+            logger_output_content = ""
+            for value in checkedValues:
+                logger_output_content += ";" + str(value)
+            logger_output.info(logger_output_content)
+            """createWattbuffer(
                     datetime.datetime.utcnow(),
                     checkedValues[0],
                     checkedValues[1],
                     checkedValues[2])
+            """
         except KeyboardInterrupt:
             logger.debug('KeyboardInterrupt')
             try:
@@ -87,7 +108,6 @@ def parseLine(port):
             return (False)
         return (values)
     
-
 if __name__ == '__main__':
     
     # PARSE ARGS
@@ -105,12 +125,17 @@ if __name__ == '__main__':
     
     # SET LOGGER
     logger = logging.getLogger(__name__)
+    logger_output = logging.getLogger("output")
     logging.config.dictConfig({
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
             "simple": {
                 "format": "%(asctime)s | %(name)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+            },
+            "output": {
+                "format": "%(asctime)s%(message)s",
+                "datefmt": "%Y/%m/%d %H:%M:%S",
             }
         },
 
@@ -140,22 +165,31 @@ if __name__ == '__main__':
                 "maxBytes": 5000,
                 "backupCount": 1,
                 "encoding": "utf8"
+            },
+            
+            "output_file_handler": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": "INFO",
+                "formatter": "output",
+                "filename": os.path.join(tmpfile_base, 'watt.tmp'),
+                "maxBytes": 200,
+                "backupCount": 1,
+                "encoding": "utf8"
             }
         },
 
         "loggers": {
-            "my_module": {
-                "level": "ERROR",
-                "handlers": ["console"],
-                "propagate": "no"
+            __name__: {
+                "level": "INFO",
+                "handlers": ["console", "info_file_handler", "error_file_handler"]
+            },
+            "output": {
+                "level": "INFO",
+                "handlers": ["output_file_handler"]
             }
         },
-
-        "root": {
-            "level": "INFO",
-            "handlers": ["console", "info_file_handler", "error_file_handler"]
-        }
     })
 
+    
     # CALL MAIN
     main()

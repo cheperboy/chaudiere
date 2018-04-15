@@ -46,11 +46,16 @@ def read_temp(sensor):
         temp_c = float(temp_string) / 1000.0
         return temp_c
 
+def api_get_temp_values():
+    temp0 = read_temp(0)
+    temp1 = read_temp(1)
+    return( [temp0, temp1] )
+
 def main():
     while True:
         temp0 = read_temp(0)
         temp1 = read_temp(1)
-        logger.info(str(temp0)+" "+str(temp1))
+        logger.info(str("%.1f" % temp0)+" "+str("%.1f" % temp1))
         time.sleep(1)
 
 if __name__ == '__main__':

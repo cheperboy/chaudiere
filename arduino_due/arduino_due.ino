@@ -10,7 +10,8 @@ const int const_calib = 110;
 const int const_irms = 1480;
 
 void setup(){
-	Serial.begin(9600);
+	Serial.begin(9600);		// Programming USB
+    SerialUSB.begin(9600); 	// Native USB
 	for(int i=STARTPIN; i<STARTPIN+NSENSORS; i++) {
 		emon[i].current(i, const_calib);
 	}
@@ -26,10 +27,15 @@ void loop(){
 	for(int i=STARTPIN; i<STARTPIN+NSENSORS; i++) {
 		Serial.print(irms[i]);
 		Serial.print(";");
+		SerialUSB.print(irms[i]);
+		SerialUSB.print(";");
 	}
 	Serial.print(crc);
 	Serial.print(";");
 	Serial.println();
+	SerialUSB.print(crc);
+	SerialUSB.print(";");
+	SerialUSB.println();
 	delay(700);
 }
 

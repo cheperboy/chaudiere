@@ -19,12 +19,6 @@ os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 base_dir = '/sys/bus/w1/devices/'
 
-
-# import Database API
-chaudiereapp = os.path.join(projectpath, 'chaudiereapp')
-sys.path.append(chaudiereapp)
-from newapi import createWattbuffer
-
 # Constant
 DEFAULT_SENSOR_VALUE = -1
 

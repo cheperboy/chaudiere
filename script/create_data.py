@@ -2,9 +2,10 @@ import os, sys, argparse, string, datetime, time
 import logging, logging.config
 import serial
 from serial.serialutil import SerialException
-from get_temp import api_get_temp_values
-import logger_config
 
+import logger_config
+from get_temp import api_get_temp_values
+from get_watt import api_get_watt_values
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -12,8 +13,6 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(currentpath, 'log')
-tmpfile_base = os.path.join(currentpath, 'tmp')
-tmpfile = os.path.join(tmpfile_base, 'watt.tmp')
 
 # import Database API
 chaudiereapp = os.path.join(projectpath, 'chaudiereapp')
@@ -37,27 +36,8 @@ verify data is fresh
 return values
 """
 def get_last_watt():
-    # Get last line of wattbuffer
-    with open(tmpfile, 'rb') as buffer:
-        for line in buffer:
-            pass
-        if line:
-            last = line
-        else:
-            logger.error("watt buffer empty")
-            return [0,0,0]
-    # Remove \n with rstrip and Parse date
-    values = line.rstrip().split(';')
-    date_str = values.pop(0) #get first element = the date
-    date_obj = datetime.datetime.strptime(date_str, '%Y/%m/%d %H:%M:%S')
-    delta = (datetime.datetime.now() - date_obj).seconds
-    if delta < 3:
-        values = map(int, values) #cast to Int all values
-        return values
-    else:
-        logger.warning("no fresh value (Watt) from Arduino")
-        return [0,0,0]
-            
+    return api_get_watt_values()
+
 def get_temp():
     return api_get_temp_values()
 

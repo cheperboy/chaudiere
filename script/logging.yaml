@@ -1,0 +1,50 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  simple:
+    format: "%(asctime)s | %(name)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+
+#handler level overrides the logger level
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+
+  file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: simple
+    filename: log/logger.log
+    maxBytes: 1000000
+    backupCount: 1
+    encoding: utf8
+
+# logger level is overriden by the handler level
+# logger propagate: if yes, root logger records also this logger datas
+loggers:
+  create_data:
+    level: DEBUG
+    handlers: [console, file_handler]
+    propagate: no
+
+  get_temp:
+    level: DEBUG
+    handlers: [console, file_handler]
+    propagate: no
+
+  get_watt:
+    level: DEBUG
+    handlers: [console, file_handler]
+    propagate: no
+
+root:
+    level: DEBUG
+    handlers: [console, file_handler]
+
+#CRITICAL
+#ERROR
+#WARNING
+#INFO
+#DEBUG

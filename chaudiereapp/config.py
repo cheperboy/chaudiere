@@ -23,8 +23,6 @@ PORT = 5002
 #detect env from filesystem location (Proc/Dev)
 if envname == 'Dev' :
     """Development configuration."""
-    print 'db path '+os.path.join(projectpath + '/db/', 'chaudiere.db')
-
     APP_NAME += ' Dev' 
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))

@@ -65,6 +65,7 @@ def read_serial_port(port):
     else:
         #logger.debug(values)
         crc = checkCRC(values)
+        logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
         if crc == False:
             logger.warning("CRC Error")
             return (False)

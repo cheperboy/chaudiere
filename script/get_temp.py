@@ -11,8 +11,9 @@ projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudier
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
+# SET LOGGER
 logfile_base = os.path.join(currentpath, 'log')
-#logfile_base = currentpath
+logger = logging.getLogger(__name__)
 
 # Sensor Config
 os.system('modprobe w1-gpio')
@@ -21,9 +22,6 @@ base_dir = '/sys/bus/w1/devices/'
 
 # Constant
 DEFAULT_SENSOR_VALUE = -1
-
-# SET LOGGER
-logger = logging.getLogger(__name__)
 
 """
 Read sensor buffer in /sys/bus/w1/devices/28xxxx[N]/w1_slave
@@ -34,6 +32,7 @@ Read sensor buffer in /sys/bus/w1/devices/28xxxx[N]/w1_slave
 def get_raw_sensor_buffer(sensor):
     device_folder = glob.glob(base_dir + '28*')[sensor]
     device_file = device_folder + '/w1_slave'
+    logger.debug("reading sensor "+str(sensor) + " " + str(device_file))
     f = open(device_file, 'r')
     w1_slave = f.readlines()
     f.close()
@@ -43,23 +42,24 @@ def get_raw_sensor_buffer(sensor):
 Parse temperature value from sensor buffer and returns
 """
 def get_temp_value(sensor):
-    lines = get_raw_sensor_buffer(sensor)
+    sensor_buffer = get_raw_sensor_buffer(sensor)
     # if CRC Fail, read again (if fail too much, stop)
     fail_count = 0
     max_fail = 10
-    while lines[0].strip()[-3:] != 'YES':
+    while sensor_buffer[0].strip()[-3:] != 'YES':
         fail_count += 1
         if fail_count > max_fail:
             logger.warning("CRC Fail many times for sensor "+str(sensor))
             return False
         else:
             time.sleep(0.2)
-            lines = get_raw_sensor_buffer(sensor)
-    equals_pos = lines[1].find('t=')
+            sensor_buffer = get_raw_sensor_buffer(sensor)
+    equals_pos = sensor_buffer[1].find('t=')
     # if CRC is ok and temp value exist
     if equals_pos != -1:
-        temp_string = lines[1][equals_pos+2:]
+        temp_string = sensor_buffer[1][equals_pos+2:]
         temp_c = float(temp_string) / 1000.0
+        logger.debug("value "+str(temp_c))
         return temp_c
 
 """

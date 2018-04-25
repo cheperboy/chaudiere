@@ -18,7 +18,8 @@ BAUDRATE = 9600
 STOPBITS = serial.STOPBITS_ONE
 BYTESIZE = serial.SEVENBITS
 
-# Constants
+# Script Constants
+TIMEOUT = 2*1000
 WATT_SENSOR_SIZE = 3
 DEFAULT_SENSOR_VALUE = -1
 
@@ -26,8 +27,6 @@ currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudier
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
-
-logfile_base = os.path.join(currentpath, 'log')
 
 # SET LOGGER
 logger = logging.getLogger(__name__)
@@ -51,14 +50,19 @@ def checkCRC(values):
     
 def read_serial_port(port):
     try:
+        start = time.time()
+        now = time.time()
+        data = False
         data = port.readline()
+        if not data : # if empty list, no data from serial port, return false
+            logger.warning('no data from serial port')
+            return False
+        values = data.split(';')
+        values.pop() #remove EOL \n\r
     except SerialException:
         logger.error('SerialException, closing port and EXIT', exc_info=True)
         port.close()
         sys.exit(0)
-    try:
-        values = data.split(';')
-        values.pop() #remove EOL \n\r
     except Exception as e:
         logger.warning("Invalid datas from serial port ({0})".format(e))
         return False
@@ -74,7 +78,6 @@ def read_serial_port(port):
 """
 print to watt_buffer the values read from serial port
 delete the N first value that are not relevant (first reading from arduino ADC)
-
 """
 def api_get_watt_values():
     values = get_watt_values()
@@ -83,8 +86,8 @@ def api_get_watt_values():
         watt0 = DEFAULT_SENSOR_VALUE
         watt1 = DEFAULT_SENSOR_VALUE
         watt2 = DEFAULT_SENSOR_VALUE
-        values = ()
-        for n in range(1, WATT_SENSOR_SIZE):
+        values = []
+        for n in range(0, WATT_SENSOR_SIZE):
             values.append(DEFAULT_SENSOR_VALUE)
     return (values)
 
@@ -95,7 +98,7 @@ def main():
 
 def get_watt_values():
     try:
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE)
+        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = 2)
         time.sleep(.1)
         port.flushInput()
         time.sleep(.1)

@@ -7,10 +7,10 @@ var chart;
  * Request data from the server, add it to the graph and set a timeout
  * to request again
  */
-function requestLastPapp(chart_name) {
-	console.log('requestLastPapp');
+function requestLastWatt0(chart_name) {
+	console.log('requestLastWatt0');
     $.ajax({
-        url: JSbaseURL+'webapi/getlastpapp',
+        url: JSbaseURL+'webapi/getlastwatt0',
         success: function(point) {
             var series = live_chart.series[0],
                 shift = series.data.length > 50; // shift if the series is// longer than 20
@@ -18,7 +18,7 @@ function requestLastPapp(chart_name) {
             live_chart.series[0].addPoint(papp, true, shift);
 			console.log(papp);
             // call it again after one second
-            setTimeout(requestLastPapp, 1000);
+            setTimeout(requestLastWatt0, 1000);
         },
         cache: false
     });
@@ -54,18 +54,17 @@ function requestConf(url_part){
 	if(myoptions.chart.events){
 		myoptions.chart.events.load = eval(myoptions.chart.events.load);
 	}
+
 	return myoptions;
 }
-function requestData(){
-//	var url = JSbaseURL+'webapi/conso_by_date/2018/03/19'
-	var url = JSbaseURL+'webapi/getpapp/12'
+function requestData(sensor_type, sensor_id){
+	var url = JSbaseURL+'webapi/getserie/12/'+sensor_type+'/'+sensor_id
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 
 		async: false
 	}).responseText;
 	var datas = JSON.parse(datas);
-	console.log("DATAS "+ JSON.stringify(datas, null, 4));
 	return datas;
 }
 
@@ -75,14 +74,30 @@ $(document).ready(function() {
 	div_id = 'mylivechart-container'
 	if(document.getElementById(div_id)){
 		var conf = requestConf('liveconf');
-		console.log("opt after "+ JSON.stringify(conf, null, 4));
+		//console.log("conf "+ JSON.stringify(conf, null, 4));
 		live_chart = new Highcharts.stockChart(div_id, conf);
 	}
-	div_id = 'mystaticchart-container'
+	div_id = 'staticcharttemp-container'
 	if(document.getElementById(div_id)){
-		var conf = requestConf('staticconf');
-		conf.series[0].data = requestData()
-		console.log("opt after "+ JSON.stringify(conf, null, 4));
+		var conf = requestConf('staticconf/temp');
+		//conf.series[0].data = [datas[0], datas[1]]
+		series_length = Object.keys(conf.series).length;
+		for (i = 0; i < series_length; i++) {
+			sensor_type = conf.series[i].sensor_type
+			sensor_id = conf.series[i].sensor_id
+			conf.series[i].data = requestData(sensor_type, sensor_id)
+		}
+		static_chart = new Highcharts.stockChart(div_id, conf);
+	}
+	div_id = 'staticchartwatt-container'
+	if(document.getElementById(div_id)){
+		var conf = requestConf('staticconf/watt');
+		series_length = Object.keys(conf.series).length;
+		for (i = 0; i < series_length; i++) {
+			sensor_type = conf.series[i].sensor_type
+			sensor_id = conf.series[i].sensor_id
+			conf.series[i].data = requestData(sensor_type, sensor_id)
+		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}
 });

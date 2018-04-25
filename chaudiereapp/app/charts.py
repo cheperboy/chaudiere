@@ -10,7 +10,7 @@ from flask import Blueprint, render_template, request, jsonify, make_response
 from app.auth import auth
 import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
-static_conf = {
+static_conf_temp = {
         "chart": { 
             "renderTo": 'mystaticchart-container',
             "defaultSeriesType": 'spline',
@@ -42,7 +42,7 @@ static_conf = {
         },
 
         'title': {
-            'text': 'Temp'
+            'text': 'Température'
         },
 
         'yAxis': [{
@@ -60,17 +60,100 @@ static_conf = {
             'shared': True,
             'crosshairs': True
         },
-        "series": [{
-			"name": 'Random data',
-			"data": []
-        }]
+        "series": [
+            {
+                "name": 'temp chaudière',
+                "data": [],
+                "sensor_type": 'temp',
+                "sensor_id": '0'
+            },
+            {
+                "name": 'temp fumée',
+                "data": [],
+                "sensor_type": 'temp',
+                "sensor_id": '1'
+
+            },
+            {
+                "name": 'temp retour',
+                "data": [],
+                "sensor_type": 'temp',
+                "sensor_id": '2'
+            }
+        ]
+}
+
+static_conf_watt = {
+        "chart": { 
+            "renderTo": 'mystaticchart-container',
+            "defaultSeriesType": 'spline',
+        },
+        'rangeSelector' : {
+            'inputEnabled': 'false',
+            'selected' : 4,
+            'buttons': [
+                {
+                    'type': 'minute',
+                    'count': 15,
+                    'text': '15m'
+                },{
+                    'type': 'minute',
+                    'count': 60,
+                    'text': '1h'
+                },{
+                    'type': 'day',
+                    'count': 1,
+                    'text': '24h'
+                },{
+                    'type': 'day',
+                    'count': 7,
+                    'text': '1w'
+                },{
+                    'type': 'all',
+                    'text': 'All'
+                }]
+        },
+
+        'title': {
+            'text': 'Température'
+        },
+
+        'yAxis': [{
+            'labels': {
+                'align': 'right',
+                'x': -3
+            },
+            'title': {
+                'text': 'Degre'
+            },
+            'height': '60%',
+            'lineWidth': 1,
+        }],
+        'tooltip': {
+            'shared': True,
+            'crosshairs': True
+        },
+        "series": [
+            {
+                "name": 'watt 0',
+                "data": [],
+                "sensor_type": 'watt',
+                "sensor_id": '0'
+            },
+            {
+                "name": 'watt 1',
+                "data": [],
+                "sensor_type": 'watt',
+                "sensor_id": '1'
+            }
+        ]
 }
 live_conf = {
         "chart": { 
             "renderTo": 'data-container',
             "defaultSeriesType": 'spline',
             "events": {
-                "load": 'requestLastPapp'
+                "load": 'requestLastWatt0'
             }
         },
         "title": {
@@ -114,7 +197,7 @@ def mylivechart():
 
 @charts_blueprint.route('/mystaticchart')
 def mystaticchart():
-    return render_template('index.html', baseURL=baseURL, mystaticchart=True)
+    return render_template('index.html', baseURL=baseURL, staticcharttemp=True, staticchartwatt=True)
 
 @charts_blueprint.route('/livedatas')
 def livedatas():
@@ -130,8 +213,14 @@ def liveconf():
     response.content_type = 'application/json'
     return response
 
-@charts_blueprint.route('/staticconf', methods=['GET'])
-def staticconf():
-    response = make_response(json.dumps(static_conf))
+"""
+data : temp OR watt
+"""
+@charts_blueprint.route('/staticconf/<string:type>', methods=['GET'])
+def staticconf(type):
+    if type == 'temp':
+        response = make_response(json.dumps(static_conf_temp))
+    elif type == 'watt':
+        response = make_response(json.dumps(static_conf_watt))
     response.content_type = 'application/json'
     return response

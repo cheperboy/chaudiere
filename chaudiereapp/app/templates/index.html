@@ -3,10 +3,17 @@
 	<div class="container">	
 
 	{{baseURL}}
-{% if mystaticchart %}
+{% if staticcharttemp %}
 	<div class="container-fluid">
 	  <div class="row">
-		  <div class="container-fluid" id="mystaticchart-container"></div>
+		  <div class="container-fluid" id="staticcharttemp-container"></div>
+		</div>
+	</div>
+{% endif %}
+{% if staticchartwatt %}
+	<div class="container-fluid">
+	  <div class="row">
+		  <div class="container-fluid" id="staticchartwatt-container"></div>
 		</div>
 	</div>
 {% endif %}

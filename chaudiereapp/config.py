@@ -17,18 +17,17 @@ APP_NAME = "Chaudiere"
 SECRET_KEY = os.getenv('SECRET_KEY', default='my_secret')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 WTF_CSRF_ENABLED = False
-PORT = 5002
+PORT = 5007
 
 
 #detect env from filesystem location (Proc/Dev)
 if envname == 'Dev' :
     """Development configuration."""
     APP_NAME += ' Dev' 
-    APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
+    APP_BASE_URL = 'http://192.168.0.70:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
         'chaudiere':         'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere.db'),
-        'watt_buffer':       'sqlite:///' + os.path.join(projectpath + '/db/', 'watt_buffer.db'),
         'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_minute.db'),
         'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_hour.db')
     }
@@ -40,7 +39,6 @@ elif envname == 'Prod':
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
         'chaudiere':         'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere.db'),
-        'watt_buffer':       'sqlite:///' + os.path.join(projectpath + '/db/', 'watt_buffer.db'),
         'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_minute.db'),
         'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_hour.db')
     }
@@ -58,7 +56,6 @@ elif envname == 'flask-dev' :
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '\db\\', 'app.db'))
     SQLALCHEMY_BINDS = {
         'chaudiere':         'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere.db'),
-        'watt_buffer':       'sqlite:///' + os.path.join(projectpath + '\db\\', 'watt_buffer.db'),
         'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere_minute.db'),
         'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere_hour.db')
     }

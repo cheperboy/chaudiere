@@ -17,8 +17,11 @@ CONFIG_PY = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "simple": {
+        "default": {
             "format": "%(asctime)s | %(name)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+        },
+        "simple": {
+            "format": "%(message)s"
         }
     },
 
@@ -31,10 +34,17 @@ CONFIG_PY = {
             "stream": "ext://sys.stdout"
         },
 
+        "simple": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+
         "file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
-            "formatter": "simple",
+            "formatter": "default",
             "filename": logfile_name,
             "maxBytes": 20000,
             "backupCount": 1,
@@ -81,7 +91,7 @@ if CONFIG_TYPE == "YAML":
 if CONFIG_TYPE == "PY":
     logging.config.dictConfig(CONFIG_PY)
 
-# Example of config.yaml file content:
+# Example of config.yaml:
 """
 version: 1
 disable_existing_loggers: False

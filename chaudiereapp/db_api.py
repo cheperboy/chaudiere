@@ -5,15 +5,15 @@ import os
 from datetime import datetime, timedelta
 
 from app import create_app, db
-from app.models import Chaudiere, Wattbuffer
+from app.models import Chaudiere
 
 from app import create_app
 app = create_app().app_context().push()
 
 
-def createSensorRecord(timestamp, temp0, temp1, watt0, watt1, watt2):
+def createSensorRecord(timestamp, temp0, temp1, temp2, watt0, watt1, watt2):
     try:
-        entry = Chaudiere(timestamp, temp0, temp1, watt0, watt1, watt2)
+        entry = Chaudiere(timestamp, temp0, temp1, temp2, watt0, watt1, watt2)
         db.session.add(entry)
         db.session.commit()
     except RuntimeError,e:
@@ -21,15 +21,6 @@ def createSensorRecord(timestamp, temp0, temp1, watt0, watt1, watt2):
         return False
     else:
         return True
-
-def createWattbuffer(timestamp, watt0, watt1, watt2):
-    try:
-        entry = Wattbuffer(timestamp, watt0, watt1, watt2)
-        db.session.add(entry)
-        db.session.commit()
-        print entry
-    except RuntimeError,e:
-        print e.message
 
 if __name__ == '__main__':
     createChaudiere()

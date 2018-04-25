@@ -18,46 +18,72 @@ webapi = Blueprint("webapi", __name__, url_prefix='/webapi')
 def conso_by_date(year, month, day):
     entries = list()
 #    ts = datetime.now() - timedelta(hours=25)
-#                     .filter(Teleinfo.timestamp >= ts)\
-    for entry in Teleinfo.query\
-                     .order_by(Teleinfo.timestamp)\
+#                     .filter(Chaudiere.timestamp >= ts)\
+    for entry in Chaudiere.query\
+                     .order_by(Chaudiere.timestamp)\
                      .limit(1000)\
                      .all():
-        entries.append(entry.papptolist())
+        entries.append(entry.watt0tolist())
     return jsonify(entries), 200
 
-@webapi.route('/getpapp', defaults={'hours': 1}, methods=['GET'])
-@webapi.route('/getpapp/<int:hours>', methods=['GET'])
-def getpapp(hours):
-    last = Teleinfo.query.order_by(Teleinfo.id.desc()).limit(1)[0]
+@webapi.route('/getwatt0', defaults={'hours': 1}, methods=['GET'])
+@webapi.route('/getwatt0/<int:hours>', methods=['GET'])
+def getwatt0(hours):
+    last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
     ts = last.timestamp - timedelta(hours=hours)
     entries = list()
-    for entry in Teleinfo.query\
-                     .order_by(Teleinfo.timestamp)\
-                     .filter(Teleinfo.timestamp >= ts)\
+    for entry in Chaudiere.query\
+                     .order_by(Chaudiere.timestamp)\
+                     .filter(Chaudiere.timestamp >= ts)\
                      .all():
-        entries.append(entry.papptolist())    
+        entries.append(entry.watt0tolist())    
     return jsonify(entries), 200
 
-@webapi.route('/getlastpapp', methods=['GET'])
-def getlastpapp():
-    last_entry = Teleinfo.query.order_by(Teleinfo.id.desc()).limit(1)[0]
-    return jsonify(last_entry.papptolist()), 200
+"""
+return a serie of a database Column with timestamp
+return format is [
+  [
+    1524597668000,  # timestamp
+    62.875          # value
+  ], 
+  ...
+]
+hours : time from now 
+type : temp OR watt
+sensor : integer from 0 to N sensor
+"""
+#@webapi.route('/getserie', defaults={'hours': 1,'type': 0,'sensor': 0}, methods=['GET'])
+@webapi.route('/getserie/<int:hours>/<string:type>/<int:sensor>', methods=['GET'])
+def getserie(hours, type, sensor):
+    last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
+    ts = last.timestamp - timedelta(hours=hours)
+    entries = list()
+    for entry in Chaudiere.query\
+                     .order_by(Chaudiere.timestamp)\
+                     .filter(Chaudiere.timestamp >= ts)\
+                     .all():
+        entries.append(entry.datatolist(str(type)+str(sensor))) # e.g. 'temp0'
+    return jsonify(entries), 200
+
+@webapi.route('/getlastwatt0', methods=['GET'])
+def getlastwatt0():
+    last_entry = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
+    return jsonify(last_entry.watt0tolist()), 200
 
 @webapi.route('/getlastentries', defaults={'limit': 1}, methods=['GET'])
 @webapi.route('/getlastentries/<int:limit>', methods=['GET'])
 def getlastentries(limit):
     entries = list()
-    for entry in Teleinfo.query\
-                     .order_by(Teleinfo.id.desc())\
+    for entry in Chaudiere.query\
+                     .order_by(Chaudiere.id.desc())\
                      .limit(limit):
         entries.append(entry.tolist())    
     return jsonify(entries), 200
 
 @webapi.route('/fakedataall', methods=['GET'])
 def fakedataall():
-    entries = Teleinfo.alltolist(Teleinfo)
-    last = Teleinfo.query.order_by(Teleinfo.id.desc()).limit(1)
+    entries = Chaudiere.alltolist(Chaudiere)
+    last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)
     
     ts = datetime.now() - timedelta(minutes=len(entries))
     for entry in entries:

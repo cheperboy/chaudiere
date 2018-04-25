@@ -3,16 +3,14 @@ import logging, logging.config
 import serial
 from serial.serialutil import SerialException
 
-import logger_config
-from get_temp import api_get_temp_values
-from get_watt import api_get_watt_values
-
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-logfile_base = os.path.join(currentpath, 'log')
+# import sensors API
+from get_temp import api_get_temp_values
+from get_watt import api_get_watt_values
 
 # import Database API
 chaudiereapp = os.path.join(projectpath, 'chaudiereapp')
@@ -20,22 +18,18 @@ sys.path.append(chaudiereapp)
 from db_api import createSensorRecord
 
 # SET LOGGER
+import logger_config
 logger = logging.getLogger(__name__)
-"""
-logger.critical("critical")
-logger.error("error")
-logger.warning("warning")
-logger.info("info")
-logger.debug("debug")
-"""
 
+# Global variables
+count_serial_port_fail = 0
 
 """
-Get last line of wattbuffer
-verify data is fresh
-return values
+if serial port fail
+the following command in console reopen the port and resolves the problem
+ls /dev/tty
 """
-def get_last_watt():
+def get_watt():
     return api_get_watt_values()
 
 def get_temp():
@@ -43,9 +37,11 @@ def get_temp():
 
 def main():
     while True:
-        watts = get_last_watt()
+        watts = get_watt()
         temps = get_temp()
-        if createSensorRecord(datetime.datetime.now(), temps[0], temps[1], watts[0], watts[1], watts[2]):
+        ret = createSensorRecord(datetime.datetime.now(), temps[0], temps[1], temps[2], watts[0], watts[1], watts[2])
+        if ret:
+            logger.debug(ret)
             logger.info("createSensorRecord : Ok")
         else:
             logger.warning("createSensorRecord : Fail")

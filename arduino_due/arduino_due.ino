@@ -6,7 +6,8 @@ EnergyMonitor emon[STARTPIN-NSENSORS];
 int irms[STARTPIN-NSENSORS];
 
 const int const_voltage = 234;
-const int const_calib = 110;
+//const int const_calib = 110;
+const int const_calib = 30;
 const int const_irms = 1480;
 
 void setup(){

@@ -39,7 +39,7 @@ def main():
     while True:
         watts = get_watt()
         temps = get_temp()
-        ret = createSensorRecord(datetime.datetime.now(), temps[0], temps[1], temps[2], watts[0], watts[1], watts[2])
+        ret = createSensorRecord(datetime.datetime.now(), temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
         if ret:
             logger.debug(ret)
             logger.info("createSensorRecord : Ok")

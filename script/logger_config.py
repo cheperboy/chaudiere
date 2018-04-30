@@ -46,8 +46,8 @@ CONFIG_PY = {
             "level": "DEBUG",
             "formatter": "default",
             "filename": logfile_name,
-            "maxBytes": 20000,
-            "backupCount": 1,
+            "maxBytes": 1000000,
+            "backupCount": 10,
             "encoding": "utf8"
         },
     },

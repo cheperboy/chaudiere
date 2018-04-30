@@ -17,7 +17,7 @@ static_conf_temp = {
         },
         'rangeSelector' : {
             'inputEnabled': 'false',
-            'selected' : 4,
+            'selected' : 2,
             'buttons': [
                 {
                     'type': 'minute',
@@ -27,6 +27,10 @@ static_conf_temp = {
                     'type': 'minute',
                     'count': 60,
                     'text': '1h'
+                },{
+                    'type': 'minute',
+                    'count': 120,
+                    'text': '2h'
                 },{
                     'type': 'day',
                     'count': 1,
@@ -90,7 +94,7 @@ static_conf_watt = {
         },
         'rangeSelector' : {
             'inputEnabled': 'false',
-            'selected' : 4,
+            'selected' : 2,
             'buttons': [
                 {
                     'type': 'minute',
@@ -100,6 +104,10 @@ static_conf_watt = {
                     'type': 'minute',
                     'count': 60,
                     'text': '1h'
+                },{
+                    'type': 'minute',
+                    'count': 120,
+                    'text': '2h'
                 },{
                     'type': 'day',
                     'count': 1,
@@ -115,7 +123,7 @@ static_conf_watt = {
         },
 
         'title': {
-            'text': 'Température'
+            'text': 'Puissance'
         },
 
         'yAxis': [{
@@ -124,7 +132,7 @@ static_conf_watt = {
                 'x': -3
             },
             'title': {
-                'text': 'Degre'
+                'text': 'Watt'
             },
             'height': '60%',
             'lineWidth': 1,
@@ -145,6 +153,18 @@ static_conf_watt = {
                 "data": [],
                 "sensor_type": 'watt',
                 "sensor_id": '1'
+            },
+            {
+                "name": 'watt 2',
+                "data": [],
+                "sensor_type": 'watt',
+                "sensor_id": '2'
+            },
+            {
+                "name": 'watt 3',
+                "data": [],
+                "sensor_type": 'watt',
+                "sensor_id": '3'
             }
         ]
 }
@@ -186,7 +206,6 @@ opt_conf = {
 
 baseURL = {'value' : config.APP_BASE_URL}
 
-@charts_blueprint.route('/')
 @charts_blueprint.route('/allchart')
 def allchart():
     return render_template('index.html', baseURL=baseURL, mylivechart=True, mystaticchart=True)
@@ -195,6 +214,7 @@ def allchart():
 def mylivechart():
     return render_template('index.html', baseURL=baseURL, mylivechart=True)
 
+@charts_blueprint.route('/')
 @charts_blueprint.route('/mystaticchart')
 def mystaticchart():
     return render_template('index.html', baseURL=baseURL, staticcharttemp=True, staticchartwatt=True)

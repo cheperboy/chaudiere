@@ -26,8 +26,9 @@ class ChaudiereBase(db.Model):
     watt0 = db.Column(db.Integer)
     watt1 = db.Column(db.Integer)
     watt2 = db.Column(db.Integer)
+    watt3 = db.Column(db.Integer)
 
-    def __init__(self, timestamp, temp0, temp1, temp2, watt0, watt1, watt2):
+    def __init__(self, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3):
         self.timestamp = timestamp
         self.temp0 = temp0
         self.temp1 = temp1
@@ -35,14 +36,15 @@ class ChaudiereBase(db.Model):
         self.watt0 = watt0
         self.watt1 = watt1 
         self.watt2 = watt2
+        self.watt3 = watt3
 
     def __repr__(self):
-        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.timestamp, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2)
+        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.timestamp, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
 
     @classmethod
-    def create(self, cls, timestamp, temp0, temp1, temp2, watt0, watt1, watt2):
+    def create(self, cls, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3):
         try:
-            entry = cls(timestamp, temp0, temp1, temp2, watt0, watt1, watt2)
+            entry = cls(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3)
             db.session.add(entry)
             db.session.commit()
             ret = str(entry)
@@ -62,6 +64,7 @@ class ChaudiereBase(db.Model):
             self.watt0, 
             self.watt1, 
             self.watt2,
+            self.watt3,
             self.id
         ]
        
@@ -107,7 +110,7 @@ class ChaudiereHour(ChaudiereBase):
 class Chaudiere(ChaudiereBase):
     __bind_key__ = 'chaudiere'
     
-    def __init__(self, timestamp, temp0=1, temp1=1, temp2=2, watt0=1, watt1=1, watt2=1):
+    def __init__(self, timestamp, temp0=1, temp1=1, temp2=2, watt0=1, watt1=1, watt2=1, watt3=1):
         self.timestamp = timestamp
         self.temp0 = temp0
         self.temp1 = temp1
@@ -115,3 +118,4 @@ class Chaudiere(ChaudiereBase):
         self.watt0 = watt0
         self.watt1 = watt1 
         self.watt2 = watt2
+        self.watt3 = watt3

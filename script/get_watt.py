@@ -11,17 +11,23 @@ import logging, logging.config
 import serial
 from serial.serialutil import SerialException
 import logger_config
+import glob
+from find_port import native_port, prog_port
+
+#PORT = '/dev/ttyAMA0'  # Native USB
+#PORT = '/dev/ttyACM2'   # Programming port
 
 # Serial Config
-PORT = '/dev/ttyACM0'
 BAUDRATE = 9600
 STOPBITS = serial.STOPBITS_ONE
 BYTESIZE = serial.SEVENBITS
+PORT = native_port()
 
 # Script Constants
-TIMEOUT = 2*1000
-WATT_SENSOR_SIZE = 3
+TIMEOUT = 10
+WATT_SENSOR_SIZE = 4
 DEFAULT_SENSOR_VALUE = -1
+MAX_FAIL_SERIAL = 4
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -47,14 +53,56 @@ def checkCRC(values):
         logger.warning("Invalid datas from serial port ({0})".format(e))
         return False
     return False
-    
+
+"""
+resssources:
+https://raspberrypi.stackexchange.com/questions/5407/how-can-i-cut-power-coming-out-of-the-pis-usb-ports?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+https://github.com/mvp/uhubctl
+
+procedure:
+power off usb : sudo uhubctl -p 2 -a 0
+delay
+power on usb : sudo uhubctl -p 2 -a 1
+delay
+cat Prog port
+"""
+def restart_serial_port():
+    logger.debug('restart_serial_port')
+    try:
+        command = 'sudo /home/pi/Dev/chaudiere/script/usb/uhubctl/uhubctl -p 2 -a 0'
+        logger.debug('executing '+ command)
+        os.system(command)
+        time.sleep(2)
+
+        command = 'sudo /home/pi/Dev/chaudiere/script/usb/uhubctl/uhubctl -p 2 -a 1'
+        logger.debug('executing '+ command)
+        os.system(command)
+        time.sleep(6)
+        """
+        command = 'stty -F '+ prog_port() +' min 1 time 3'        
+        logger.debug('executing '+ command)
+        os.system(command)
+        command = 'cat '+ prog_port() +'> temp.txt'
+        logger.debug('executing '+ command)
+        os.system(command)
+        time.sleep(0.5)
+        """
+    except SerialException:
+        logger.error('SerialException while executing cat /dev/ttyA*, ', exc_info=True)
+
 def read_serial_port(port):
     try:
-        start = time.time()
-        now = time.time()
+        fail_count = 0
         data = False
-        data = port.readline()
-        if not data : # if empty list, no data from serial port, return false
+        while( (not data) and (fail_count < MAX_FAIL_SERIAL)):
+            if port.isOpen():
+                data = port.readline()
+            else:
+                logger.debug('port not opened')
+            fail_count += 1
+            if (not data):
+                restart_serial_port()
+        if (not data): # if empty list, no data from serial port, return false
             logger.warning('no data from serial port')
             return False
         values = data.split(';')
@@ -83,11 +131,8 @@ def api_get_watt_values():
     values = get_watt_values()
     if not values:
         logger.critical("get watt Fail, returning wrong value")
-        watt0 = DEFAULT_SENSOR_VALUE
-        watt1 = DEFAULT_SENSOR_VALUE
-        watt2 = DEFAULT_SENSOR_VALUE
         values = []
-        for n in range(0, WATT_SENSOR_SIZE):
+        for n in range(0,  ):
             values.append(DEFAULT_SENSOR_VALUE)
     return (values)
 
@@ -96,19 +141,31 @@ def main():
         values = get_watt_values()
         logger.info(values)
 
-def get_watt_values():
+        
+def open_port():
     try:
         port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = 2)
+        return port
+        
+    except SerialException:
+        logger.error('Cant Open Port')
+        port.close()
+        return False
+    
+def get_watt_values():
+    try:
+        port = open_port()
         time.sleep(.1)
         port.flushInput()
         time.sleep(.1)
         checkedValues = read_serial_port(port)
+        port.close()
         return checkedValues
         
     except SerialException:
         logger.error('Cant Open Port')
+        port.close()
         return False
-        sys.exit(0)
     except KeyboardInterrupt:
         logger.debug('KeyboardInterrupt')
         try:
@@ -116,6 +173,7 @@ def get_watt_values():
             logger.debug('serial.close()')
             sys.exit(0)
         except SystemExit:
+            port.close()
             logger.debug('SystemExit')
             os._exit(0)
 #        time.sleep()

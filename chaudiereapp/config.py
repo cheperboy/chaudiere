@@ -24,7 +24,8 @@ PORT = 5007
 if envname == 'Dev' :
     """Development configuration."""
     APP_NAME += ' Dev' 
-    APP_BASE_URL = 'http://192.168.0.70:' + str(PORT) + '/'
+#    APP_BASE_URL = 'http://192.168.0.70:' + str(PORT) + '/'
+    APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
         'chaudiere':         'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere.db'),

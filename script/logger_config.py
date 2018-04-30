@@ -30,7 +30,7 @@ CONFIG_PY = {
         "console": {
             "class": "logging.StreamHandler",
             "level": "DEBUG",
-            "formatter": "simple",
+            "formatter": "default",
             "stream": "ext://sys.stdout"
         },
 

@@ -22,9 +22,9 @@ BAUDRATE = 9600
 STOPBITS = serial.STOPBITS_ONE
 BYTESIZE = serial.SEVENBITS
 PORT = native_port()
+TIMEOUT = 10
 
 # Script Constants
-TIMEOUT = 10
 WATT_SENSOR_SIZE = 4
 DEFAULT_SENSOR_VALUE = -1
 MAX_FAIL_SERIAL = 4
@@ -90,39 +90,6 @@ def restart_serial_port():
     except SerialException:
         logger.error('SerialException while executing cat /dev/ttyA*, ', exc_info=True)
 
-def read_serial_port(port):
-    try:
-        fail_count = 0
-        data = False
-        while( (not data) and (fail_count < MAX_FAIL_SERIAL)):
-            if port.isOpen():
-                data = port.readline()
-            else:
-                logger.debug('port not opened')
-            fail_count += 1
-            if (not data):
-                restart_serial_port()
-        if (not data): # if empty list, no data from serial port, return false
-            logger.warning('no data from serial port')
-            return False
-        values = data.split(';')
-        values.pop() #remove EOL \n\r
-    except SerialException:
-        logger.error('SerialException, closing port and EXIT', exc_info=True)
-        port.close()
-        sys.exit(0)
-    except Exception as e:
-        logger.warning("Invalid datas from serial port ({0})".format(e))
-        return False
-    else:
-        #logger.debug(values)
-        crc = checkCRC(values)
-        logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
-        if crc == False:
-            logger.warning("CRC Error")
-            return (False)
-        return (values)
-
 """
 print to watt_buffer the values read from serial port
 delete the N first value that are not relevant (first reading from arduino ADC)
@@ -132,7 +99,7 @@ def api_get_watt_values():
     if not values:
         logger.critical("get watt Fail, returning wrong value")
         values = []
-        for n in range(0,  ):
+        for n in range(0, WATT_SENSOR_SIZE):
             values.append(DEFAULT_SENSOR_VALUE)
     return (values)
 
@@ -144,7 +111,7 @@ def main():
         
 def open_port():
     try:
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = 2)
+        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
         return port
         
     except SerialException:
@@ -152,32 +119,65 @@ def open_port():
         port.close()
         return False
     
+def close_port(port, caller):
+    try:
+        logger.info('Closing port '+ port.name)
+        port.close()       
+    except Exception as e:
+        logger.error('Cant close Port : caller '+str(caller)+'({0})'.format(e))
+    
 def get_watt_values():
     try:
-        port = open_port()
-        time.sleep(.1)
-        port.flushInput()
-        time.sleep(.1)
-        checkedValues = read_serial_port(port)
-        port.close()
+        checkedValues = read_serial_port()
         return checkedValues
         
-    except SerialException:
-        logger.error('Cant Open Port')
-        port.close()
+    except Exception as e:
+        logger.warning("General Exception 1 ({0})".format(e))
         return False
     except KeyboardInterrupt:
-        logger.debug('KeyboardInterrupt')
+        logger.debug('Keyboard Interrupt')
         try:
-            port.close()
-            logger.debug('serial.close()')
             sys.exit(0)
         except SystemExit:
-            port.close()
             logger.debug('SystemExit')
             os._exit(0)
-#        time.sleep()
+
+def read_serial_port():
+    try:
+        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
+    except serial.SerialException as e:
+        logger.error('Exception : Could not open serial port {}: {}\n'.format(port.name, e))
+        close_port(port, 1)
+        return False
+    try:
+        time.sleep(.1)
+        data = False
+        data = port.readline()
+        logger.debug('raw data : '+str(data))
+        close_port(port, 2)
+        if (not data): # if empty list, no data from serial port, return false
+            logger.warning('No data from serial port')
+            close_port(port, 3)
+            return False
+        values = data.split(';')
+        values.pop() #remove EOL \n\r
     
+    except serial.SerialException as e:
+        logger.error('Exception when reading port', exc_info=True)
+        close_port(port, 4)
+        return False
+    except Exception as e:
+        logger.warning("General Exception 2 ({0})".format(e))
+        return False
+    else:
+        #logger.debug(values)
+        crc = checkCRC(values)
+        logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
+        if crc == False:
+            logger.warning("CRC Error")
+            return (False)
+        return (values)
+
 if __name__ == '__main__':
     # CALL MAIN
     main()

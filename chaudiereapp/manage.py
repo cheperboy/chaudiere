@@ -39,6 +39,12 @@ def create_data():
     db.session.commit()
     print me
 
+@cli.command()
+def last():
+    """Get last data Entry."""
+    entry = Chaudiere.last(Chaudiere)
+    print entry
+
 
 if __name__ == '__main__':
     cli()

@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import time
+import time, calendar
 from datetime import datetime, timedelta
 from flask import current_app
 from app import db
@@ -11,7 +11,8 @@ def dump_timestamp(value):
     """Deserialize datetime object into string form for JSON processing."""
     if value is None:
         return None
-    return int(time.mktime(value.timetuple())*1000)
+#    return int(time.mktime(value.timetuple())*1000)
+    return int(calendar.timegm(value.timetuple())*1000)
 
 def totimestamp(value):
     return time.mktime(value.timetuple())

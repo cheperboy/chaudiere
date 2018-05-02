@@ -75,14 +75,15 @@ static_conf_temp = {
                 "name": 'temp fumée',
                 "data": [],
                 "sensor_type": 'temp',
-                "sensor_id": '1'
-
+                "sensor_id": '1',
+                "linkedTo": '1'
             },
             {
                 "name": 'temp retour',
                 "data": [],
                 "sensor_type": 'temp',
-                "sensor_id": '2'
+                "sensor_id": '2',
+                "linkedTo": 'temp chaudière'
             }
         ]
 }

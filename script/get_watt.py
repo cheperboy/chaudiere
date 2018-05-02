@@ -27,7 +27,7 @@ TIMEOUT = 10
 # Script Constants
 WATT_SENSOR_SIZE = 4
 DEFAULT_SENSOR_VALUE = -1
-MAX_FAIL_SERIAL = 4
+MAX_FAIL_SERIAL = 5
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -66,7 +66,7 @@ power on usb : sudo uhubctl -p 2 -a 1
 delay
 cat Prog port
 """
-def restart_serial_port():
+def restart_serial_port_old():
     logger.debug('restart_serial_port')
     try:
         command = 'sudo /home/pi/Dev/chaudiere/script/usb/uhubctl/uhubctl -p 2 -a 0'
@@ -90,6 +90,21 @@ def restart_serial_port():
     except SerialException:
         logger.error('SerialException while executing cat /dev/ttyA*, ', exc_info=True)
 
+def restart_serial_port():
+    logger.debug('restart_serial_port')
+    try:
+        command = ' timeout 8 cat '+ prog_port()
+        logger.debug('executing '+ command)
+        os.system(command)
+        time.sleep(0.5)
+
+        command = ' timeout 8 cat '+ native_port()
+        logger.debug('executing '+ command)
+        os.system(command)
+        time.sleep(0.5)
+    except SerialException:
+        logger.error('SerialException while executing command', exc_info=True)
+
 """
 print to watt_buffer the values read from serial port
 delete the N first value that are not relevant (first reading from arduino ADC)
@@ -108,7 +123,6 @@ def main():
         values = get_watt_values()
         logger.info(values)
 
-        
 def open_port():
     try:
         port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
@@ -144,23 +158,42 @@ def get_watt_values():
 
 def read_serial_port():
     try:
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
-    except serial.SerialException as e:
-        logger.error('Exception : Could not open serial port {}: {}\n'.format(port.name, e))
-        close_port(port, 1)
-        return False
-    try:
         time.sleep(.1)
+        fail_count = 0
         data = False
-        data = port.readline()
-        logger.debug('raw data : '+str(data))
-        close_port(port, 2)
-        if (not data): # if empty list, no data from serial port, return false
+        while( (not data) and (fail_count < MAX_FAIL_SERIAL) ):
+            fail_count += 1
+            
+            #open port
+            try:
+                port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
+            except serial.SerialException as e:
+                logger.error('Exception : Could not open serial port {}: {}\n'.format(port.name, e))
+                close_port(port, 1)
+                return False
+            
+            #read data and close port
+            data = port.readline()
+            close_port(port, 2)
+            logger.debug('raw data : '+str(data))
+        #end of while
+
+        #If no data is set restart serial port (for next call) and return false
+        if (not data):
             logger.warning('No data from serial port')
-            close_port(port, 3)
+            restart_serial_port()
             return False
-        values = data.split(';')
-        values.pop() #remove EOL \n\r
+        #else if some data to compute, check CRC
+        else:
+            values = data.split(';')
+            values.pop() #remove EOL \n\r
+            #logger.debug(values)
+            crc = checkCRC(values)
+            logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
+            if crc == False:
+                logger.warning("CRC Error")
+                return (False)
+            return (values)
     
     except serial.SerialException as e:
         logger.error('Exception when reading port', exc_info=True)
@@ -169,14 +202,6 @@ def read_serial_port():
     except Exception as e:
         logger.warning("General Exception 2 ({0})".format(e))
         return False
-    else:
-        #logger.debug(values)
-        crc = checkCRC(values)
-        logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
-        if crc == False:
-            logger.warning("CRC Error")
-            return (False)
-        return (values)
 
 if __name__ == '__main__':
     # CALL MAIN

@@ -5,11 +5,17 @@ import urllib
 import json
 from datetime import datetime, timedelta
 from random import random
+import util
 
 from flask import Blueprint, render_template, request, jsonify, make_response
 from app.auth import auth
+from app.models import Chaudiere
+
 import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
+
+watt = {0: 'vent secondaire', 1: 'allumage', 2: 'vent primaire', 3: 'alimentation'}
+
 static_conf_temp = {
         "chart": { 
             "renderTo": 'mystaticchart-container',
@@ -24,21 +30,21 @@ static_conf_temp = {
                     'count': 15,
                     'text': '15m'
                 },{
-                    'type': 'minute',
-                    'count': 60,
+                    'type': 'hour',
+                    'count': 1,
                     'text': '1h'
                 },{
-                    'type': 'minute',
-                    'count': 120,
+                    'type': 'hour',
+                    'count': 2,
                     'text': '2h'
                 },{
-                    'type': 'day',
-                    'count': 1,
-                    'text': '24h'
+                    'type': 'hour',
+                    'count': 4,
+                    'text': '4h'
                 },{
-                    'type': 'day',
-                    'count': 7,
-                    'text': '1w'
+                    'type': 'hour',
+                    'count': 6,
+                    'text': '6h'
                 },{
                     'type': 'all',
                     'text': 'All'
@@ -46,44 +52,104 @@ static_conf_temp = {
         },
 
         'title': {
-            'text': 'Température'
+            'text': 'Chaudière'
         },
 
-        'yAxis': [{
-            'labels': {
-                'align': 'right',
-                'x': -3
-            },
-            'title': {
-                'text': 'Degre'
-            },
-            'height': '60%',
+        'yAxis': [
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Température'},
+            'softMin': 55,
+            'softMax': 70,
+            'top': str((100/4)*0+3*0)+'%',
+            'height': '25%',
             'lineWidth': 1,
-        }],
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Vent'},
+            'softMin': 0,
+            'softMax': 20,
+            'top': str((100/4)*1+3*1)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Alimentation'},
+            'softMin': 0,
+            'softMax': 30,
+            'top': str((100/4)*2+3*2)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Allumage'},
+            'softMin': 0,
+            'softMax': 100,
+            'top': str((100/4)*3+3*3)+'%',
+            'height': '12%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        ],
         'tooltip': {
             'shared': True,
+            'split': False,
             'crosshairs': True
         },
         "series": [
             {
                 "name": 'temp chaudière',
                 "data": [],
+                "yAxis": 0,
                 "sensor_type": 'temp',
-                "sensor_id": '0'
+                "sensor_id": '0',
+                "tooltip": {"valueDecimals": 1}
             },
             {
                 "name": 'temp fumée',
                 "data": [],
+                "yAxis": 0,
                 "sensor_type": 'temp',
                 "sensor_id": '1',
-                "linkedTo": '1'
+                "tooltip": {"valueDecimals": 1}
+
             },
             {
-                "name": 'temp retour',
+                "name": watt[0],
                 "data": [],
-                "sensor_type": 'temp',
+                "yAxis": 1,
+                "sensor_type": 'watt',
+                "sensor_id": '0',
+                "tooltip": {"valueDecimals": 0}
+            },
+            {
+                "name": watt[1],
+                "data": [],
+                "yAxis": 3,
+                "sensor_type": 'watt',
+                "sensor_id": '1',
+                "tooltip": {"valueDecimals": 0}
+            },
+            {
+                "name": watt[2],
+                "data": [],
+                "yAxis": 1,
+                "sensor_type": 'watt',
                 "sensor_id": '2',
-                "linkedTo": 'temp chaudière'
+                "tooltip": {"valueDecimals": 0}
+            },
+            {
+                "name": watt[3],
+                "data": [],
+                "yAxis": 2,
+                "sensor_type": 'watt',
+                "sensor_id": '3',
+                "tooltip": {"valueDecimals": 0}
             }
         ]
 }
@@ -215,10 +281,20 @@ def allchart():
 def mylivechart():
     return render_template('index.html', baseURL=baseURL, mylivechart=True)
 
-@charts_blueprint.route('/')
-@charts_blueprint.route('/mystaticchart')
-def mystaticchart():
-    return render_template('index.html', baseURL=baseURL, staticcharttemp=True, staticchartwatt=True)
+"""
+hour_length param is not used in view but parsed by javascript to request datas
+"""
+@charts_blueprint.route('/', defaults={'hour_length': 1})
+@charts_blueprint.route('/<int:hour_length>', methods=['GET'])
+def mystaticchart(hour_length):
+    lastRecorddate = Chaudiere.last(Chaudiere).timestamp
+    debugData = None
+    return render_template('index.html', 
+                            baseURL=baseURL, 
+                            staticcharttemp=True, 
+                            staticchartwatt=True,
+                            lastRecordAgo=util.pretty_date(lastRecorddate),
+                            debugData=debugData)
 
 @charts_blueprint.route('/livedatas')
 def livedatas():

@@ -3,6 +3,13 @@ flask-live-charts
 */
 var chart;
 
+function parseURL(url) {
+	var separator = '/'
+	var arrayOfStrings = url.split(separator);
+	var param = arrayOfStrings[arrayOfStrings.length-1]
+	return param
+}
+
 /**
  * Request data from the server, add it to the graph and set a timeout
  * to request again
@@ -57,8 +64,8 @@ function requestConf(url_part){
 
 	return myoptions;
 }
-function requestData(sensor_type, sensor_id){
-	var url = JSbaseURL+'webapi/getserie/12/'+sensor_type+'/'+sensor_id
+function requestData(sensor_type, sensor_id, hour_length){
+	var url = JSbaseURL+'webapi/getserie/'+hour_length+'/'+sensor_type+'/'+sensor_id
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 
@@ -72,7 +79,7 @@ $(document).ready(function() {
 	// if document id exist then call chart constructor
 	//eval(div_id)
 	div_id = 'mylivechart-container'
-	if(document.getElementById(div_id)){
+	if(document.getElementById(div_id)){ 
 		var conf = requestConf('liveconf');
 		//console.log("conf "+ JSON.stringify(conf, null, 4));
 		live_chart = new Highcharts.stockChart(div_id, conf);
@@ -81,22 +88,12 @@ $(document).ready(function() {
 	if(document.getElementById(div_id)){
 		var conf = requestConf('staticconf/temp');
 		//conf.series[0].data = [datas[0], datas[1]]
+		hour_length = parseURL(window.location.href)
 		series_length = Object.keys(conf.series).length;
 		for (i = 0; i < series_length; i++) {
 			sensor_type = conf.series[i].sensor_type
 			sensor_id = conf.series[i].sensor_id
-			conf.series[i].data = requestData(sensor_type, sensor_id)
-		}
-		static_chart = new Highcharts.stockChart(div_id, conf);
-	}
-	div_id = 'staticchartwatt-container'
-	if(document.getElementById(div_id)){
-		var conf = requestConf('staticconf/watt');
-		series_length = Object.keys(conf.series).length;
-		for (i = 0; i < series_length; i++) {
-			sensor_type = conf.series[i].sensor_type
-			sensor_id = conf.series[i].sensor_id
-			conf.series[i].data = requestData(sensor_type, sensor_id)
+			conf.series[i].data = requestData(sensor_type, sensor_id, hour_length)
 		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}

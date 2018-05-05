@@ -2,11 +2,15 @@
 {% include "_navbar.html" %}
 	<div class="container">	
 
-	{{baseURL}}
+	<p>URL : {{baseURL}}</p>
+	<p>Dernier enregistrement : {{lastRecordAgo}}</p>
+	<p>debugData : {{debugData}}</p>
+	
+
 {% if staticcharttemp %}
 	<div class="container-fluid">
 	  <div class="row">
-		  <div class="container-fluid" id="staticcharttemp-container"></div>
+		  <div class="container"  style="height: 800px" id="staticcharttemp-container"></div>
 		</div>
 	</div>
 {% endif %}

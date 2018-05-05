@@ -42,7 +42,6 @@ def main():
         dt = datetime.datetime.now()
         ret = createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
         if ret:
-            logger.debug(ret)
             logger.info(str(dt)+" createSensorRecord : Ok")
         else:
             logger.warning("createSensorRecord : Fail")

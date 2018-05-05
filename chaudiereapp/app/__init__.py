@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+# ext import
 from flask import Flask
 from flask_assets import Environment, Bundle
+
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
-# change it
+from flask_caching import Cache
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+
+# app import
 from app.charts import charts_blueprint
 from app.webapi import webapi
 
@@ -21,10 +26,10 @@ def create_app():
                 static_url_path="/static")
     
     # set config
-#    app_settings = os.getenv('APP_SETTINGS', 'app.config.DevelopmentConfig')
     app.config.from_object('config')
 
     # set up extensions
+    cache.init_app(app)
     db.init_app(app)
     
     app.register_blueprint(charts_blueprint)

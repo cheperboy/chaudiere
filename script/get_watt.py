@@ -20,13 +20,14 @@ from find_port import native_port, prog_port
 # Serial Config
 BAUDRATE = 9600
 STOPBITS = serial.STOPBITS_ONE
-BYTESIZE = serial.SEVENBITS
+BYTESIZE = serial.SEVENBITS 
 PORT = native_port()
 TIMEOUT = 10
 
 # Script Constants
 WATT_SENSOR_SIZE = 4
-DEFAULT_SENSOR_VALUE = -1
+DEFAULT_SENSOR_VALUE = None #if no sensor value is read then recorded value is DEFAULT_SENSOR_VALUE
+MIN_VALUE = 4               #if sensor value < MIN_VALUE then recorded value is 0
 MAX_FAIL_SERIAL = 5
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
@@ -78,15 +79,6 @@ def restart_serial_port_old():
         logger.debug('executing '+ command)
         os.system(command)
         time.sleep(6)
-        """
-        command = 'stty -F '+ prog_port() +' min 1 time 3'        
-        logger.debug('executing '+ command)
-        os.system(command)
-        command = 'cat '+ prog_port() +'> temp.txt'
-        logger.debug('executing '+ command)
-        os.system(command)
-        time.sleep(0.5)
-        """
     except SerialException:
         logger.error('SerialException while executing cat /dev/ttyA*, ', exc_info=True)
 
@@ -96,12 +88,10 @@ def restart_serial_port():
         command = ' timeout 8 cat '+ prog_port()
         logger.debug('executing '+ command)
         os.system(command)
-        time.sleep(0.5)
 
         command = ' timeout 8 cat '+ native_port()
         logger.debug('executing '+ command)
         os.system(command)
-        time.sleep(0.5)
     except SerialException:
         logger.error('SerialException while executing command', exc_info=True)
 
@@ -123,16 +113,6 @@ def main():
         values = get_watt_values()
         logger.info(values)
 
-def open_port():
-    try:
-        port = serial.Serial(port = PORT,baudrate = BAUDRATE, stopbits = STOPBITS, bytesize = BYTESIZE, timeout = TIMEOUT)
-        return port
-        
-    except SerialException:
-        logger.error('Cant Open Port')
-        port.close()
-        return False
-    
 def close_port(port, caller):
     try:
         logger.info('Closing port '+ port.name)
@@ -143,7 +123,12 @@ def close_port(port, caller):
 def get_watt_values():
     try:
         checkedValues = read_serial_port()
-        return checkedValues
+        logger.debug('ecretage')
+        #convert values to int and to 0 if sensor value < MIN_VALUE
+        if checkedValues:
+            values = [0 if int(x)<MIN_VALUE else int(x) for x in checkedValues]
+        logger.debug(values)
+        return values 
         
     except Exception as e:
         logger.warning("General Exception 1 ({0})".format(e))

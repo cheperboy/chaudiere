@@ -8,6 +8,7 @@ from random import random
 
 from app.auth import auth
 from app.models import Chaudiere
+from app import cache
 
 import config
 
@@ -26,18 +27,6 @@ def conso_by_date(year, month, day):
         entries.append(entry.watt0tolist())
     return jsonify(entries), 200
 
-@webapi.route('/getwatt0', defaults={'hours': 1}, methods=['GET'])
-@webapi.route('/getwatt0/<int:hours>', methods=['GET'])
-def getwatt0(hours):
-    last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
-    ts = last.timestamp - timedelta(hours=hours)
-    entries = list()
-    for entry in Chaudiere.query\
-                     .order_by(Chaudiere.timestamp)\
-                     .filter(Chaudiere.timestamp >= ts)\
-                     .all():
-        entries.append(entry.watt0tolist())    
-    return jsonify(entries), 200
 
 """
 return a serie of a database Column with timestamp
@@ -54,6 +43,7 @@ sensor : integer from 0 to N sensor
 """
 #@webapi.route('/getserie', defaults={'hours': 1,'type': 0,'sensor': 0}, methods=['GET'])
 @webapi.route('/getserie/<int:hours>/<string:type>/<int:sensor>', methods=['GET'])
+@cache.cached(timeout=0)
 def getserie(hours, type, sensor):
     last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
     ts = last.timestamp - timedelta(hours=hours)
@@ -64,12 +54,7 @@ def getserie(hours, type, sensor):
                      .all():
         entries.append(entry.datatolist(str(type)+str(sensor))) # e.g. 'temp0'
     return jsonify(entries), 200
-
-@webapi.route('/getlastwatt0', methods=['GET'])
-def getlastwatt0():
-    last_entry = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
-    return jsonify(last_entry.watt0tolist()), 200
-
+    
 @webapi.route('/getlastentries', defaults={'limit': 1}, methods=['GET'])
 @webapi.route('/getlastentries/<int:limit>', methods=['GET'])
 def getlastentries(limit):
@@ -98,4 +83,3 @@ def live_json():
     response = make_response(json.dumps(data))
     response.content_type = 'application/json'
     return response
-

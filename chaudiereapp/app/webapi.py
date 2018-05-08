@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from random import random
 
 from app.auth import auth
-from app.models import Chaudiere
+from app.models import Chaudiere, ChaudiereMinute
 from app import cache
 
 import config
@@ -41,16 +41,30 @@ hours : time from now
 type : temp OR watt
 sensor : integer from 0 to N sensor
 """
-#@webapi.route('/getserie', defaults={'hours': 1,'type': 0,'sensor': 0}, methods=['GET'])
-@webapi.route('/getserie/<int:hours>/<string:type>/<int:sensor>', methods=['GET'])
-@cache.cached(timeout=0)
-def getserie(hours, type, sensor):
+#@webapi.route('/getchaudiere', defaults={'hours': 1,'type': 0,'sensor': 0}, methods=['GET'])
+@webapi.route('/getchaudiere/<int:hours>/<string:type>/<int:sensor>', methods=['GET'])
+#@cache.cached(timeout=10)
+def getchaudiere(hours, type, sensor):
     last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
     ts = last.timestamp - timedelta(hours=hours)
     entries = list()
     for entry in Chaudiere.query\
                      .order_by(Chaudiere.timestamp)\
                      .filter(Chaudiere.timestamp >= ts)\
+                     .all():
+        entries.append(entry.datatolist(str(type)+str(sensor))) # e.g. 'temp0'
+    return jsonify(entries), 200
+    
+@webapi.route('/getminute/<int:hours>/<string:type>/<int:sensor>', methods=['GET'])
+@webapi.route('/getminute/<int:hours>/<string:type>', methods=['GET']) 
+#@cache.cached(timeout=10)
+def getminute(hours, type, sensor=''):
+    last = ChaudiereMinute.query.order_by(ChaudiereMinute.id.desc()).limit(1)[0]
+    ts = last.timestamp - timedelta(hours=hours)
+    entries = list()
+    for entry in ChaudiereMinute.query\
+                     .order_by(ChaudiereMinute.timestamp)\
+                     .filter(ChaudiereMinute.timestamp >= ts)\
                      .all():
         entries.append(entry.datatolist(str(type)+str(sensor))) # e.g. 'temp0'
     return jsonify(entries), 200

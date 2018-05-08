@@ -7,7 +7,15 @@ function parseURL(url) {
 	var separator = '/'
 	var arrayOfStrings = url.split(separator);
 	var param = arrayOfStrings[arrayOfStrings.length-1]
-	return param
+	console.log(param)
+	var x = parseFloat(param);
+	//if is param is integer
+	if (!isNaN(param) && (x | 0) === x) {
+		console.log('param is integer')
+		return param;
+	}
+	console.log('param is not integer')
+	return 1;
 }
 
 /**
@@ -64,8 +72,13 @@ function requestConf(url_part){
 
 	return myoptions;
 }
-function requestData(sensor_type, sensor_id, hour_length){
-	var url = JSbaseURL+'webapi/getserie/'+hour_length+'/'+sensor_type+'/'+sensor_id
+function requestData(data_type, sensor_type, sensor_id, hour_length){
+	var url = JSbaseURL+'webapi/'+data_type+'/'+hour_length+'/'+sensor_type
+	//TODO verrue uniquement pour recuperer "phase"
+	//il faut appeler differement et passer en parametre "temp0 au lieur de temp et 0"
+	if(sensor_id != ''){
+		url = url + '/'+sensor_id;
+	}
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 
@@ -77,23 +90,37 @@ function requestData(sensor_type, sensor_id, hour_length){
 
 $(document).ready(function() {
 	// if document id exist then call chart constructor
-	//eval(div_id)
+/*
 	div_id = 'mylivechart-container'
 	if(document.getElementById(div_id)){ 
 		var conf = requestConf('liveconf');
 		//console.log("conf "+ JSON.stringify(conf, null, 4));
 		live_chart = new Highcharts.stockChart(div_id, conf);
 	}
-	div_id = 'staticcharttemp-container'
+*/
+	div_id = 'staticchartraw-container'
 	if(document.getElementById(div_id)){
-		var conf = requestConf('staticconf/temp');
+		var conf = requestConf('staticconf/raw');
 		//conf.series[0].data = [datas[0], datas[1]]
 		hour_length = parseURL(window.location.href)
 		series_length = Object.keys(conf.series).length;
 		for (i = 0; i < series_length; i++) {
 			sensor_type = conf.series[i].sensor_type
 			sensor_id = conf.series[i].sensor_id
-			conf.series[i].data = requestData(sensor_type, sensor_id, hour_length)
+			conf.series[i].data = requestData('getchaudiere', sensor_type, sensor_id, hour_length)
+		}
+		static_chart = new Highcharts.stockChart(div_id, conf);
+	}
+	div_id = 'staticchartminute-container'
+	if(document.getElementById(div_id)){
+		var conf = requestConf('staticconf/minute');
+		//conf.series[0].data = [datas[0], datas[1]]
+		hour_length = parseURL(window.location.href)
+		series_length = Object.keys(conf.series).length;
+		for (i = 0; i < series_length; i++) {
+			sensor_type = conf.series[i].sensor_type
+			sensor_id = conf.series[i].sensor_id
+			conf.series[i].data = requestData('getminute', sensor_type, sensor_id, hour_length)
 		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}

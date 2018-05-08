@@ -70,6 +70,16 @@ CONFIG_PY = {
             "handlers": [],
             "propagate": "no"
         },
+        "chaudiere_archive": {
+            "level": "DEBUG",
+            "handlers": [],
+            "propagate": "no"
+        },
+        "process_phase": {
+            "level": "DEBUG",
+            "handlers": [],
+            "propagate": "no"
+        },
     },
     
     "root": {

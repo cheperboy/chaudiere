@@ -28,8 +28,10 @@ class ChaudiereBase(db.Model):
     watt1 = db.Column(db.Integer)
     watt2 = db.Column(db.Integer)
     watt3 = db.Column(db.Integer)
+    phase = db.Column(db.Integer)
+    event = db.Column(db.String(100))
 
-    def __init__(self, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3):
+    def __init__(self, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
         self.timestamp = timestamp
         self.temp0 = temp0
         self.temp1 = temp1
@@ -38,14 +40,16 @@ class ChaudiereBase(db.Model):
         self.watt1 = watt1 
         self.watt2 = watt2
         self.watt3 = watt3
+        self.phase = phase
+        self.event = event
 
     def __repr__(self):
         return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.timestamp, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
 
     @classmethod
-    def create(self, cls, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3):
+    def create(self, cls, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
         try:
-            entry = cls(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3)
+            entry = cls(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event)
             db.session.add(entry)
             db.session.commit()
             ret = str(entry)
@@ -66,6 +70,8 @@ class ChaudiereBase(db.Model):
             self.watt1, 
             self.watt2,
             self.watt3,
+            self.phase,
+            self.event,
             self.id
         ]
        
@@ -101,16 +107,47 @@ class ChaudiereBase(db.Model):
                 .order_by(cls.id.desc()) \
                 .all())
 
+    @classmethod
+    def get_by_date(self, cls, dt):
+        ts = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute)
+        return db.session.query(cls).filter_by(timestamp=ts).first()
+
+    @classmethod
+    def get_by_timestamp(self, cls, ts):
+        return db.session.query(cls).filter_by(timestamp=ts).first()
+
                         
 class ChaudiereMinute(ChaudiereBase):
     __bind_key__ = 'chaudiere_minute'
+    
+    """ return precedent entry: one minute before self"""
+    def prec(self):
+        ts = datetime(self.timestamp.year, self.timestamp.month, self.timestamp.day, self.timestamp.hour, self.timestamp.minute)
+        ts = ts - timedelta(minutes=1)
+        return db.session.query(self.__class__).filter_by(timestamp=ts).first()
+        
+    """ return a list of precedents entries: x minute before self"""
+    def precs(self, minutes): 
+        entries = []
+        ts = datetime(self.timestamp.year, self.timestamp.month, self.timestamp.day, self.timestamp.hour, self.timestamp.minute)
+        for minute in range(1, minutes):
+            entry = db.session.query(self.__class__).filter_by(timestamp=ts - timedelta(minutes=minute)).first()
+            entries.append(entry)
+        return entries
+        
+    """ at least onre prec respect condition """
+    def at_least_one_prec_verify_condition(self, minutes, condition):
+        for prec in self.precs(minutes):
+            if eval(condition):
+                return True
+        return False
         
 class ChaudiereHour(ChaudiereBase):
     __bind_key__ = 'chaudiere_hour'
     
 class Chaudiere(ChaudiereBase):
     __bind_key__ = 'chaudiere'
-    
+"""    
     def __init__(self, timestamp, temp0=1, temp1=1, temp2=2, watt0=1, watt1=1, watt2=1, watt3=1):
         self.timestamp = timestamp
         self.temp0 = temp0
@@ -120,3 +157,4 @@ class Chaudiere(ChaudiereBase):
         self.watt1 = watt1 
         self.watt2 = watt2
         self.watt3 = watt3
+"""

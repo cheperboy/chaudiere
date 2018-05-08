@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask.cli import FlaskGroup
 
 from app import create_app, db
-from app.models import Chaudiere
+from app.models import Chaudiere, ChaudiereMinute
 
 
 def create_my_app(info):
@@ -40,11 +40,15 @@ def create_data():
     print me
 
 @cli.command()
-def last():
+def test(): 
     """Get last data Entry."""
-    entry = Chaudiere.last(Chaudiere)
+    entry = ChaudiereMinute.last(ChaudiereMinute)
     print entry
-
+    prec = entry.prec()
+    print prec
+    precs = entry.precs(2)
+    print precs
+    print entry.precs_condition_at_least_one(2, 'prec.watt2 > 0') 
 
 if __name__ == '__main__':
     cli()

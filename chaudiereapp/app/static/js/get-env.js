@@ -5,3 +5,4 @@ flask-live-charts
 //var JSbaseURL = JSON.parse(document.getElementById("mydiv").dataset.HTMLbaseURL);
 //var JSbaseURL = '{{ baseURL }}';
 console.log(JSbaseURL);
+

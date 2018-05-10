@@ -110,6 +110,7 @@ def record_minute(begin):
         # Save to db
         ret = ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, watt1, watt2, watt3, None, None)
         logger.debug('ret = ' + str(ret))
+    # else if no log to process, we still create an entry with None fields
     else:
         ret = ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None)
 
@@ -125,6 +126,8 @@ if __name__ == '__main__':
     group.add_argument("--minute", action="store_true")
     args = parser.parse_args()
     logger.info('START (last Chaudiere recrod = ' + str(Chaudiere.last(Chaudiere).timestamp))
+    process_archive_minute()
+    """
     if args.minute:
         process_archive_minute()
-    
+    """

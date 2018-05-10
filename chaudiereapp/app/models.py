@@ -7,6 +7,25 @@ from datetime import datetime, timedelta
 from flask import current_app
 from app import db
 
+Phase = {
+    'UNDEFINED'  : 0, 
+    'COMBUSTION' : 6,
+    'ALLUMAGE'   : 7,
+    'MAINTIEN'   : 8,
+    'ARRET'      : 9
+}
+
+Inputs = {
+    'temp_chaudiere' :  {'db': 'temp0', 'name': 'Temp chaudière'},
+    'temp_fumee' :      {'db': 'temp1', 'name': 'Temp fumée'},
+    'temp_retour' :     {'db': 'temp2', 'name': 'Temp retour'},
+    'vent_secondaire' : {'db': 'watt0', 'name': 'Vent secondaire'},
+    'allumage' :        {'db': 'watt1', 'name': 'Allumage'},
+    'vent_primaire' :   {'db': 'watt2', 'name': 'Vent primaire'},
+    'alimentation' :    {'db': 'watt3', 'name': 'Alimentation'},
+    'phase' :           {'db': 'phase', 'name': 'Phase'}
+} 
+    
 def dump_timestamp(value):
     """Deserialize datetime object into string form for JSON processing."""
     if value is None:
@@ -75,12 +94,6 @@ class ChaudiereBase(db.Model):
             self.id
         ]
        
-    def watt0tolist(self):
-        return [
-            dump_timestamp(self.timestamp),
-            self.watt0,
-       ]
-
     """
     return one field called data in a list with timestamp
     [timestamp, data]

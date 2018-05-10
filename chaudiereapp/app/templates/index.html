@@ -4,8 +4,7 @@
 
 	<p>URL : {{baseURL}}</p>
 	<p>Dernier enregistrement : {{lastRecordAgo}}</p>
-	<p>debugData : {{debugData}}</p>
-	
+
 
 {% if staticchartraw %}
 	<div class="container-fluid">
@@ -28,10 +27,16 @@
 		</div>
 	</div>
 {% endif %}
-	
-
-	</div>
-
-    
+	</div>    
 	<hr>
+	
+<script type="text/javascript">
+	// Those parameters are :
+	//	- set in flask view
+	//  - copied in a JS variable to be accessible to javascript
+	var JSbaseURL = "{{ baseURL.value }}";
+	var JShistory_date = "{{ history_date }}";
+	var JShistory_hours = "{{ history_hours }}";
+ </script>
+
 {% include "_footer.html" %}

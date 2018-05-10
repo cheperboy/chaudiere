@@ -72,13 +72,36 @@ function requestConf(url_part){
 
 	return myoptions;
 }
-function requestData(data_type, sensor_type, sensor_id, hour_length){
-	var url = JSbaseURL+'webapi/'+data_type+'/'+hour_length+'/'+sensor_type
+/*
+	Call webapi to request data
+	serie: method to call : getchaudiere or getminute
+	hour_length : Int
+	db_field : temp0, temp1, watt0, ..
+*/
+function requestData(serie, db_field, hour_length){
+	var url = JSbaseURL+'webapi/'+serie+'/'+hour_length+'/'+db_field
 	//TODO verrue uniquement pour recuperer "phase"
 	//il faut appeler differement et passer en parametre "temp0 au lieur de temp et 0"
-	if(sensor_id != ''){
-		url = url + '/'+sensor_id;
-	}
+	console.log(url);
+	var datas = $.ajax({ 
+		url: url, 
+		async: false
+	}).responseText;
+	var datas = JSON.parse(datas);
+	return datas;
+}
+
+/*
+	Call webapi to request data
+	serie: method to call : getchaudierehistory or getminutehistory
+	date : 
+	hour_length : Int
+	db_field : temp0, temp1, watt0, ..
+*/
+function requestDataHistory(serie, date, db_field, hour_length){
+	var url = JSbaseURL+'webapi/'+serie+'/'+date+'/'+hour_length+'/'+db_field
+	//TODO verrue uniquement pour recuperer "phase"
+	//il faut appeler differement et passer en parametre "temp0 au lieur de temp et 0"
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 
@@ -100,14 +123,26 @@ $(document).ready(function() {
 */
 	div_id = 'staticchartraw-container'
 	if(document.getElementById(div_id)){
+		
 		var conf = requestConf('staticconf/raw');
-		//conf.series[0].data = [datas[0], datas[1]]
-		hour_length = parseURL(window.location.href)
-		series_length = Object.keys(conf.series).length;
-		for (i = 0; i < series_length; i++) {
-			sensor_type = conf.series[i].sensor_type
-			sensor_id = conf.series[i].sensor_id
-			conf.series[i].data = requestData('getchaudiere', sensor_type, sensor_id, hour_length)
+		// if JShistory_date is set then we are in history mode and call getchaudierehistory
+		// Note : parameters JShistory_date and JShistory_hours is get from chart.py view and passed to javascript via index.html
+		if(JShistory_date){
+			series_length = Object.keys(conf.series).length;
+			for (i = 0; i < series_length; i++) {
+				db_field = conf.series[i].db
+				conf.series[i].data = requestDataHistory('getchaudierehistory', JShistory_date, db_field, JShistory_hours)
+			}
+		}
+		// if JShistory_date is NOT set then we are in normal mode and call getchaudiere
+		// Note : parameters hour_length is parsed from url by javascript
+		else{
+			hour_length = parseURL(window.location.href)
+			series_length = Object.keys(conf.series).length;
+			for (i = 0; i < series_length; i++) {
+				db_field = conf.series[i].db
+				conf.series[i].data = requestData('getchaudiere', db_field, hour_length)
+			}
 		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}
@@ -118,9 +153,8 @@ $(document).ready(function() {
 		hour_length = parseURL(window.location.href)
 		series_length = Object.keys(conf.series).length;
 		for (i = 0; i < series_length; i++) {
-			sensor_type = conf.series[i].sensor_type
-			sensor_id = conf.series[i].sensor_id
-			conf.series[i].data = requestData('getminute', sensor_type, sensor_id, hour_length)
+			db_field = conf.series[i].db
+			conf.series[i].data = requestData('getminute', db_field, hour_length)
 		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}

@@ -9,7 +9,8 @@ import util
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
 from app.auth import auth
-from app.models import Chaudiere, Inputs
+from app.models import Chaudiere, ChaudiereMinute, dump_timestamp
+from app.constantes import *
 
 import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
@@ -138,9 +139,7 @@ static_conf_raw = {
         ]
 }
 static_conf_minute = {
-        "chart": {
-            "defaultSeriesType": 'spline',
-        },
+        "chart": {"defaultSeriesType": 'spline'},
         'rangeSelector' : {
             'inputEnabled': 'false',
             'selected' : 2,
@@ -170,51 +169,49 @@ static_conf_minute = {
                     'text': 'All'
                 }]
         },
+        'title': {'text': 'Chaudière'},
 
-        'title': {
-            'text': 'Chaudière'
-        },
-
+        'xAxis': [],
         'yAxis': [
-        {
-            'labels': {'align': 'right','x': -3},
-            'title': {'text': 'Température'},
-            'softMin': 55,
-            'softMax': 70,
-            'top': str((100/4)*0+3*0)+'%',
-            'height': '25%',
-            'lineWidth': 1,
-        },
-        {
-            'labels': {'align': 'right','x': -3},
-            'title': {'text': 'Vent'},
-            'softMin': 0,
-            'softMax': 20,
-            'top': str((100/4)*1+3*1)+'%',
-            'height': '25%',
-            'offset': 0,
-            'lineWidth': 1,
-        },
-        {
-            'labels': {'align': 'right','x': -3},
-            'title': {'text': 'Alimentation'},
-            'softMin': 0,
-            'softMax': 30,
-            'top': str((100/4)*2+3*2)+'%',
-            'height': '25%',
-            'offset': 0,
-            'lineWidth': 1,
-        },
-        {
-            'labels': {'align': 'right','x': -3},
-            'title': {'text': 'Allumage'},
-            'softMin': 0,
-            'softMax': 15,
-            'top': str((100/4)*3+3*3)+'%',
-            'height': '12%',
-            'offset': 0,
-            'lineWidth': 1,
-        },
+            {
+                'labels': {'align': 'right','x': -3},
+                'title': {'text': 'Température'},
+                'softMin': 55,
+                'softMax': 70,
+                'top': str((100/4)*0+3*0)+'%',
+                'height': '25%',
+                'lineWidth': 1,
+            },
+            {
+                'labels': {'align': 'right','x': -3},
+                'title': {'text': 'Vent'},
+                'softMin': 0,
+                'softMax': 20,
+                'top': str((100/4)*1+3*1)+'%',
+                'height': '25%',
+                'offset': 0,
+                'lineWidth': 1,
+            },
+            {
+                'labels': {'align': 'right','x': -3},
+                'title': {'text': 'Alimentation'},
+                'softMin': 0,
+                'softMax': 30,
+                'top': str((100/4)*2+3*2)+'%',
+                'height': '25%',
+                'offset': 0,
+                'lineWidth': 1,
+            },
+            {
+                'labels': {'align': 'right','x': -3},
+                'title': {'text': 'Allumage'},
+                'softMin': 0,
+                'softMax': 15,
+                'top': str((100/4)*3+3*3)+'%',
+                'height': '12%',
+                'offset': 0,
+                'lineWidth': 1,
+            },
         ],
         'tooltip': {
             'shared': True,
@@ -339,10 +336,10 @@ def history(year, month, day, hour, hours):
     date = year+'/'+month+'/'+day+'/'+hour
     return render_template('index.html', 
                             baseURL=baseURL, 
-                            staticchartraw=True,
+                            staticchartraw=False,
                             history_date = date,
                             history_hours = hours,
-                            staticchartminute=False)
+                            staticchartminute=True)
 
 
  
@@ -361,7 +358,6 @@ def liveconf():
     return response
 
 """
-data : temp OR watt
 """
 @charts_blueprint.route('/staticconf/<string:type>', methods=['GET'])
 def staticconf(type):
@@ -371,3 +367,49 @@ def staticconf(type):
         response = make_response(json.dumps(static_conf_minute))
     response.content_type = 'application/json'
     return response
+
+"""
+return xAxis option with plptBands
+    mode : normal | history
+
+'xAxis': {
+            'plotBands': [
+                {
+                    'color': 'orange',
+                    'from': 3,
+                    'to': 50
+                }
+            ]
+        }
+"""
+@charts_blueprint.route('/staticminutehistoryconf/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>', methods=['GET'])
+def staticminutehistoryconf(year, month, day, hour, hours):
+    xAxis = {
+        'xAxis': {
+                'plotBands': []
+            }
+        }
+
+
+
+    ts_end = datetime(year, month, day, hour, 0)
+    ts_begin = ts_end - timedelta(hours=hours)
+    entries = list()
+    for entry in ChaudiereMinute.query\
+                     .order_by(ChaudiereMinute.timestamp)\
+                     .filter(ChaudiereMinute.timestamp >= ts_begin)\
+                     .filter(ChaudiereMinute.timestamp <= ts_end)\
+                     .all():
+        plotBand = {
+                        'color': PhaseColor[entry.phase],
+                        'from': dump_timestamp(entry.timestamp),
+                        'to': dump_timestamp(entry.timestamp + timedelta(minutes=1))
+                    }
+        xAxis['xAxis']['plotBands'].append(plotBand)
+    conf = static_conf_minute
+    conf.update(xAxis)
+    print 'CONF '+ str(conf)
+    response = make_response(json.dumps(conf))
+    response.content_type = 'application/json'
+    return response
+

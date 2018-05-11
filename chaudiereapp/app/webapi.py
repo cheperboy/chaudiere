@@ -40,8 +40,8 @@ def getchaudiere(hours, db_field):
         entries.append(entry.datatolist(str(db_field))) # e.g. 'temp0'
     return jsonify(entries), 200
 
-@webapi.route('/getchaudierehistory/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>/<string:db_field>', methods=['GET'])
-def getchaudierehistory(year, month, day, hour, hours, db_field):
+@webapi.route('/getminutehistory/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>/<string:db_field>', methods=['GET'])
+def getminutehistory(year, month, day, hour, hours, db_field):
     ts_end = datetime(year, month, day, hour, 0)
     ts_begin = ts_end - timedelta(hours=hours)
     entries = list()

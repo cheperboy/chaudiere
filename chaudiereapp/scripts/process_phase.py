@@ -31,15 +31,10 @@ envname = os.path.basename(envpath)                      # Dev
 app_path = os.path.join(chaudiereapp, 'app')
 sys.path.append(chaudiereapp)
 from app import db
-from app.models import ChaudiereMinute, Phase
+from app.models import ChaudiereMinute
+from app.constantes import *
 from app import create_app
 app = create_app().app_context().push()
-
-PHASE_UNDEFINED  = 0
-PHASE_COMBUSTION = 6
-PHASE_ALLUMAGE   = 7
-PHASE_MAINTIEN   = 8
-PHASE_ARRET      = 9
 
 # import ../../script/logger_config to get logger
 chaudierescript = os.path.join(projectpath, 'script')
@@ -78,7 +73,15 @@ def find_rework_start_date(hour):
     logger.info('timestamp : '+str(timestamp))
     return timestamp
         
-
+def find_timestamp_end(date):
+    last_ChMinuteTimestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
+    entry = ChaudiereMinute.get_by_date(ChaudiereMinute, date)
+    while ((entry is None) and (date<last_ChMinuteTimestamp)):
+        date = date + timedelta(minutes=1)
+        entry = ChaudiereMinute.get_by_date(ChaudiereMinute, date)
+    print ('ChaudiereMinute.timestamp end:'+ str(entry.timestamp))
+    return entry.timestamp
+        
 #run every 15 min
 def process_phase(mode='normal', hours=None, date=None):
     logger.info('process_phase()')
@@ -89,21 +92,24 @@ def process_phase(mode='normal', hours=None, date=None):
         # end = (maintenant) - 1 minute        
         # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
         begin = find_last_phase()
+        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
+        end = ChaudiereMinute.last(ChaudiereMinute).timestamp
     elif mode is 'rework_from_now':
         #negin is last existing ChaudiereMinute - N hours
         timestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
         begin = timestamp - timedelta(hours=hours)
+        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
+        end = ChaudiereMinute.last(ChaudiereMinute).timestamp
     elif mode is 'rework_from_date':
-        timestamp = ChaudiereMinute.get_by_date(ChaudiereMinute, date).timestamp 
-        begin = timestamp - timedelta(hours=hours)
+        end = find_timestamp_end(date)
+        print ('ChaudiereMinute.timestamp end:'+ str(end))
+        begin = end - timedelta(hours=hours)
     else:
         logger.error('wrong arguments')
         return
     if begin is None:
         logger.info('No records')
         return
-    # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
-    end = ChaudiereMinute.last(ChaudiereMinute).timestamp
     logger.info('Entries to process ' + str(begin) + ' -> ' + str(end))
     
     if ((begin + timedelta(minutes=1)) > end):
@@ -141,7 +147,7 @@ def update_phase_allumage(entry, timestamp):
     """ Process Allumage"""
     if entry.watt1 is not None: #watt allumage
         if entry.watt1 > 0:
-            entry.phase = Phase['ALLUMAGE']
+            entry.phase = PHASE_ALLUMAGE
             db.session.commit()
             logger.debug(str(entry.watt1)+' '+ str(entry.timestamp) +' Phase Allumage')
     
@@ -152,14 +158,14 @@ def update_phase_allumage(entry, timestamp):
             """si vent > 0 and prec(4) was > 0 => COMBUSTION"""
             condition = 'prec.watt2 > 0'
             if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = Phase['COMBUSTION']
+                entry.phase = PHASE_COMBUSTION
                 db.session.commit()
                 logger.debug(str(entry.timestamp) +' vent > 0 and prec(4) was > 0 => COMBUSTION')
 
             """si vent > 0 and pas d'historique (prec(4) was None) => COMBUSTION"""
             condition = '((prec is None) or (prec.watt2 is None))'
             if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = Phase['COMBUSTION']
+                entry.phase = PHASE_COMBUSTION
                 db.session.commit()
                 logger.debug(str(entry.timestamp) +' si vent > 0 and pas dhistorique (prec(4) was None) => COMBUSTION')
             
@@ -167,14 +173,14 @@ def update_phase_allumage(entry, timestamp):
             """si prec(4) was combustion and vent = 0 => MAINTIEN"""
             condition = '((prec is not None) and (prec.phase is 6))'
             if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = Phase['MAINTIEN']
+                entry.phase = PHASE_MAINTIEN
                 db.session.commit()
                 logger.debug(str(entry.timestamp) +' si vent = 0 and prec(4) was combustion => MAINTIEN')
 
     else: #(entry.phase is None)
-        entry.phase = Phase['UNDEFINED']
+        entry.phase = PHASE_UNDEFINED
         db.session.commit()
-        logger.debug(str(entry.timestamp) +' PHASE_UNDEFINED')
+        logger.debug(str(entry.timestamp) +' '+PhaseName[PHASE_UNDEFINED])
     
     
 if __name__ == '__main__':
@@ -205,13 +211,16 @@ if __name__ == '__main__':
             exit()
 
         date = args.date.split('/')
+        print date
         try:
             ts_end = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), 0, 0)
+            print ts_end
+            print str(ts_end)
         except IndexError:
             print('Argument error : --date must be YYYY/MM/DD/HH')
             exit()
         print('mode=rework_from_date date='+str(ts_end)+' hours='+str(args.hours))
-        process_phase(mode='rework_from_now', date=ts_end, hours=args.hours)
+        process_phase(mode='rework_from_date', date=ts_end, hours=args.hours)
     else:
         print('mode=normal')
         process_phase(mode='normal')

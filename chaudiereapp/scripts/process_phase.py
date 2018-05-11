@@ -63,16 +63,6 @@ def find_last_phase():
     logger.info('timestamp : '+str(timestamp))
     return timestamp
         
-def find_rework_start_date(hour):
-    logger.info('find_history()')
-    if ChaudiereMinute.last(ChaudiereMinute) == None:
-        logger.debug('return None')
-        return None
-    timestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
-    timestamp = timestamp - timedelta(hours=hour)
-    logger.info('timestamp : '+str(timestamp))
-    return timestamp
-        
 def find_timestamp_end(date):
     last_ChMinuteTimestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
     entry = ChaudiereMinute.get_by_date(ChaudiereMinute, date)
@@ -120,9 +110,8 @@ def process_phase(mode='normal', hours=None, date=None):
         if entry is None:
             #shall be deleted, now done in archive_minute
             logger.error('create missing ChaudiereMinute entry')
-            ChaudiereMinute.create(ChaudiereMinute, timestamp, None, None, None, None, None, None, None, None, None)
+            ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None)
         entry = ChaudiereMinute.get_by_timestamp(ChaudiereMinute, begin)
-        logger.info('update_phase_allumage(entry, begin)' +str(entry)+' '+ str(begin))
         update_phase_allumage(entry, begin)
         begin = begin + timedelta(minutes=1)
 
@@ -134,6 +123,38 @@ begin et (begin + 1 minute)
 Calcule des moyennes et enregistre
 '''
 """
+ALGO 2
+Si vent = 0 => MAintien
+Si vent > 0 => combustion
+"""
+
+def update_phase_allumage(entry, timestamp):    
+    if entry.watt1 is not None and entry.watt2 is not None:
+        """ Process Allumage"""
+        if entry.watt1 > 0: #watt allumage
+            entry.phase = PHASE_ALLUMAGE
+            db.session.commit()
+            print(str(entry.timestamp)+' watt1 :'+str(entry.watt1)+' '+ PhaseName[PHASE_ALLUMAGE])
+
+        elif entry.watt2 > 0: #watt vent primaire
+            """Si vent > 0 => combustion"""
+            entry.phase = PHASE_COMBUSTION
+            db.session.commit()
+            print(str(entry.timestamp)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_COMBUSTION])
+
+        elif entry.watt2 == 0: #watt vent primaire
+            """si vent == 0 => MAINTIEN"""
+            entry.phase = PHASE_MAINTIEN
+            db.session.commit()
+            print(str(entry.timestamp)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_MAINTIEN])
+
+    else: #(entry.phase is None)
+        entry.phase = PHASE_UNDEFINED
+        db.session.commit()
+        print(str(entry.timestamp) +' '+PhaseName[PHASE_UNDEFINED])
+
+"""
+ALGO 1
 si vent > 0 and prec(4) was > 0 => COMBUSTION
 
 gestion debut du process (pas dhistorique donc jamais de combustion)
@@ -141,9 +162,7 @@ si vent > 0 and pas dhistorique (prec(4) was None) => COMBUSTION
 
 si vent = 0 and prec(4) was combustion => MAINTIEN  
 """
-
-""" Process Combustion or Maintien"""
-def update_phase_allumage(entry, timestamp):
+def update_phase_allumage_old(entry, timestamp):
     """ Process Allumage"""
     if entry.watt1 is not None: #watt allumage
         if entry.watt1 > 0:
@@ -153,14 +172,13 @@ def update_phase_allumage(entry, timestamp):
     
     elif (entry.watt2 is not None):
         if entry.watt2 > 0: #watt vent primaire
-
             """ Process Maintien"""
             """si vent > 0 and prec(4) was > 0 => COMBUSTION"""
-            condition = 'prec.watt2 > 0'
-            if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = PHASE_COMBUSTION
-                db.session.commit()
-                logger.debug(str(entry.timestamp) +' vent > 0 and prec(4) was > 0 => COMBUSTION')
+            #condition = 'prec.watt2 > 0'
+            #if entry.at_least_one_prec_verify_condition(5, condition):
+            entry.phase = PHASE_COMBUSTION
+            db.session.commit()
+            logger.debug(str(entry.timestamp) +' vent > 0 and prec(4) was > 0 => COMBUSTION')
 
             """si vent > 0 and pas d'historique (prec(4) was None) => COMBUSTION"""
             condition = '((prec is None) or (prec.watt2 is None))'
@@ -170,13 +188,20 @@ def update_phase_allumage(entry, timestamp):
                 logger.debug(str(entry.timestamp) +' si vent > 0 and pas dhistorique (prec(4) was None) => COMBUSTION')
             
         if entry.watt2 == 0: #watt vent primaire
-            """si prec(4) was combustion and vent = 0 => MAINTIEN"""
+            """si vent = 0 and prec(4) was combustion => MAINTIEN"""
             condition = '((prec is not None) and (prec.phase is 6))'
             if entry.at_least_one_prec_verify_condition(5, condition):
                 entry.phase = PHASE_MAINTIEN
                 db.session.commit()
                 logger.debug(str(entry.timestamp) +' si vent = 0 and prec(4) was combustion => MAINTIEN')
-
+            else:
+                """si vent = 0 and prec(4) was Maintien => MAINTIEN"""
+                condition = '((prec is not None) and (prec.phase is 8))'
+                if entry.at_least_one_prec_verify_condition(6, condition):
+                    entry.phase = PHASE_MAINTIEN
+                    db.session.commit()
+                    logger.debug(str(entry.timestamp) +' si vent = 0 and prec(4) was combustion => MAINTIEN')
+ 
     else: #(entry.phase is None)
         entry.phase = PHASE_UNDEFINED
         db.session.commit()

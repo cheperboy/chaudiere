@@ -142,7 +142,7 @@ static_conf_minute = {
         "chart": {"defaultSeriesType": 'spline'},
         'rangeSelector' : {
             'inputEnabled': 'false',
-            'selected' : 2,
+            'selected' : 5,
             'buttons': [
                 {
                     'type': 'minute',
@@ -167,11 +167,14 @@ static_conf_minute = {
                 },{
                     'type': 'all',
                     'text': 'All'
-                }]
+                }
+            ]
         },
         'title': {'text': 'Chaudière'},
 
-        'xAxis': [],
+        'xAxis': {
+                'plotBands': None
+            },
         'yAxis': [
             {
                 'labels': {'align': 'right','x': -3},
@@ -371,45 +374,38 @@ def staticconf(type):
 """
 return xAxis option with plptBands
     mode : normal | history
-
-'xAxis': {
-            'plotBands': [
-                {
-                    'color': 'orange',
-                    'from': 3,
-                    'to': 50
-                }
-            ]
-        }
 """
 @charts_blueprint.route('/staticminutehistoryconf/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>', methods=['GET'])
 def staticminutehistoryconf(year, month, day, hour, hours):
-    xAxis = {
-        'xAxis': {
-                'plotBands': []
-            }
-        }
-
-
-
+    conf = static_conf_minute
     ts_end = datetime(year, month, day, hour, 0)
     ts_begin = ts_end - timedelta(hours=hours)
-    entries = list()
-    for entry in ChaudiereMinute.query\
-                     .order_by(ChaudiereMinute.timestamp)\
-                     .filter(ChaudiereMinute.timestamp >= ts_begin)\
-                     .filter(ChaudiereMinute.timestamp <= ts_end)\
-                     .all():
+    entries = ChaudiereMinute.query\
+                         .order_by(ChaudiereMinute.timestamp)\
+                         .filter(ChaudiereMinute.timestamp >= ts_begin)\
+                         .filter(ChaudiereMinute.timestamp <= ts_end)\
+                         .all()
+    """ Update Datas """
+    serie_index = 0
+    for serie in conf['series']:
+        data = []
+        for entry in entries:
+            data.append(entry.datatolist(str(serie['db'])))
+        conf['series'][serie_index]['data'] = data
+        serie_index += 1
+    
+    """ Update PlotBands """ 
+    plotBands = []
+    for entry in entries:
         plotBand = {
                         'color': PhaseColor[entry.phase],
                         'from': dump_timestamp(entry.timestamp),
                         'to': dump_timestamp(entry.timestamp + timedelta(minutes=1))
                     }
-        xAxis['xAxis']['plotBands'].append(plotBand)
-    conf = static_conf_minute
-    conf.update(xAxis)
-    print 'CONF '+ str(conf)
+        plotBands.append(plotBand)
+    conf['xAxis']['plotBands'] = plotBands
+    
+    """ Html Response """    
     response = make_response(json.dumps(conf))
     response.content_type = 'application/json'
     return response
-

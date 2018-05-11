@@ -141,11 +141,13 @@ $(document).ready(function() {
 		if(JShistory_date){
 			console.log(JShistory_date)
 			var conf = requestConfPlotbands(JShistory_date, JShistory_hours)
+			/*
 			series_length = Object.keys(conf.series).length;
 			for (i = 0; i < series_length; i++) {
 				db_field = conf.series[i].db
 				conf.series[i].data = requestDataHistory('getminutehistory', JShistory_date, db_field, JShistory_hours)
 			}
+			*/
 		}
 		// if JShistory_date is NOT set then we are in normal mode and call getchaudiere
 		// Note : parameters hour_length is parsed from url by javascript

@@ -34,3 +34,19 @@ Run every odd minutes
 ## ToDo
 
 Rework modes shall delete existing entries before creating new ones
+
+
+# script process_phase.py
+
+## Summary
+
+python script used to process phase value of ChaudiereMinute entries.
+supposed to be run every 1 or 2 minutes by cron
+
+## CLI Usage :
+
+Idem archive_minute.py
+
+## CRON Config :
+
+    1-59/2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/process_phase.py

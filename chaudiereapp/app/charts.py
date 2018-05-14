@@ -17,260 +17,277 @@ import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
 
 static_conf_raw = {
-        "chart": { 
-            "renderTo": 'mystaticchart-container',
-            "defaultSeriesType": 'spline',
-        },
-        "credits": {
-            "enabled": False
-        },
-        "exporting": {
-            "filename": 'chaudiere'
-        },
+    "chart": {"defaultSeriesType": 'spline'},
+    "credits": {"enabled": False},
+    "exporting": {"filename": 'chaudiere'},
+    'rangeSelector' : {
+        'inputEnabled': 'false',
+        'selected' : 2,
+        'buttons': [
+            {
+                'type': 'minute',
+                'count': 15,
+                'text': '15m'
+            },{
+                'type': 'hour',
+                'count': 1,
+                'text': '1h'
+            },{
+                'type': 'hour',
+                'count': 2,
+                'text': '2h'
+            },{
+                'type': 'hour',
+                'count': 4,
+                'text': '4h'
+            },{
+                'type': 'hour',
+                'count': 6,
+                'text': '6h'
+            },{
+                'type': 'all',
+                'text': 'All'
+            }]
+    },
 
-        
-        'rangeSelector' : {
-            'inputEnabled': 'false',
-            'selected' : 2,
-            'buttons': [
-                {
-                    'type': 'minute',
-                    'count': 15,
-                    'text': '15m'
-                },{
-                    'type': 'hour',
-                    'count': 1,
-                    'text': '1h'
-                },{
-                    'type': 'hour',
-                    'count': 2,
-                    'text': '2h'
-                },{
-                    'type': 'hour',
-                    'count': 4,
-                    'text': '4h'
-                },{
-                    'type': 'hour',
-                    'count': 6,
-                    'text': '6h'
-                },{
-                    'type': 'all',
-                    'text': 'All'
-                }]
-        },
+    'title': {
+        'text': 'Chaudière'
+    },
 
-        'title': {
-            'text': 'Chaudière'
+    'yAxis': [
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Température'},
+            'softMin': 55,
+            'softMax': 70,
+            'top': str((100/4)*0+3*0)+'%',
+            'height': '25%',
+            'lineWidth': 1,
         },
-
-        'yAxis': [
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Température'},
-                'softMin': 55,
-                'softMax': 70,
-                'top': str((100/4)*0+3*0)+'%',
-                'height': '25%',
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Vent'},
-                'softMin': 0,
-                'softMax': 20,
-                'top': str((100/4)*1+3*1)+'%',
-                'height': '25%',
-                'offset': 0,
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Alimentation'},
-                'softMin': 0,
-                'softMax': 30,
-                'top': str((100/4)*2+3*2)+'%',
-                'height': '25%',
-                'offset': 0,
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Allumage'},
-                'softMin': 0,
-                'softMax': 100,
-                'top': str((100/4)*3+3*3)+'%',
-                'height': '12%',
-                'offset': 0,
-                'lineWidth': 1,
-            }
-        ],
-        'tooltip': {
-            'shared': True,
-            'split': False,
-            'crosshairs': True
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Vent'},
+            'softMin': 0,
+            'softMax': 20,
+            'top': str((100/4)*1+3*1)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
         },
-        "series": [
-            {
-                "name": Inputs['temp_chaudiere']['name'],
-                "db": Inputs['temp_chaudiere']['db'],
-                "data": [],
-                "yAxis": 0,
-                "tooltip": {"valueDecimals": 1}
-            }, 
-            {
-                "name": Inputs['temp_fumee']['name'],
-                "db": Inputs['temp_fumee']['db'],
-                "data": [],
-                "yAxis": 0,
-                "tooltip": {"valueDecimals": 1}
-            },
-            {
-                "name": Inputs['vent_primaire']['name'],
-                "db": Inputs['vent_primaire']['db'],
-                "data": [],
-                "yAxis": 1,
-                "tooltip": {"valueDecimals": 0}
-            },
-            {
-                "name": Inputs['alimentation']['name'],
-                "db": Inputs['alimentation']['db'],
-                "data": [],
-                "yAxis": 2,
-                "tooltip": {"valueDecimals": 0}
-            },
-            {
-                "name": Inputs['allumage']['name'],
-                "db": Inputs['allumage']['db'],
-                "data": [],
-                "yAxis": 3,
-                "tooltip": {"valueDecimals": 0}
-            }
-        ]
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Alimentation'},
+            'softMin': 0,
+            'softMax': 30,
+            'top': str((100/4)*2+3*2)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Allumage'},
+            'softMin': 0,
+            'softMax': 100,
+            'top': str((100/4)*3+3*3)+'%',
+            'height': '12%',
+            'offset': 0,
+            'lineWidth': 1,
+        }
+    ],
+    'tooltip': {
+        'shared': True,
+        'split': False,
+        'crosshairs': True
+    },
+    "series": [
+        {
+            "name": InputName[TEMP_CHAUDIERE],
+            "db": InputDb[TEMP_CHAUDIERE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        }, 
+        {
+            "name": InputName[TEMP_FUMEE],
+            "db": InputDb[TEMP_FUMEE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        },
+        {
+            "name": InputName[VENT_PRIMAIRE],
+            "db": InputDb[VENT_PRIMAIRE],
+            "data": [],
+            "yAxis": 1,
+            "tooltip": {"valueDecimals": 0}
+        },
+        {
+            "name": InputName[ALIMENTATION],
+            "db": InputDb[ALIMENTATION],
+            "data": [],
+            "yAxis": 2,
+            "tooltip": {"valueDecimals": 0}
+        },
+        {
+            "name": InputName[ALLUMAGE],
+            "db": InputDb[ALLUMAGE],
+            "data": [],
+            "yAxis": 3,
+            "tooltip": {"valueDecimals": 0}
+        }
+    ]
 }
 static_conf_minute_full = {
-        "chart": {"defaultSeriesType": 'spline'},
-        'rangeSelector' : {
-            'inputEnabled': 'false',
-            'selected' : 5,
-            'buttons': [
-                {
-                    'type': 'minute',
-                    'count': 15,
-                    'text': '15m'
-                },{
-                    'type': 'hour',
-                    'count': 1,
-                    'text': '1h'
-                },{
-                    'type': 'hour',
-                    'count': 2,
-                    'text': '2h'
-                },{
-                    'type': 'hour',
-                    'count': 4,
-                    'text': '4h'
-                },{
-                    'type': 'hour',
-                    'count': 6,
-                    'text': '6h'
-                },{
-                    'type': 'all',
-                    'text': 'All'
-                }
-            ]
-        },
-        'title': {'text': 'Chaudière'},
-
-        'xAxis': {
-                'plotBands': None
-            },
-        'yAxis': [
+    "chart": {"defaultSeriesType": 'spline'},
+    "credits": {"enabled": False},
+    "exporting": {"filename": 'chaudiere'},       
+    'rangeSelector' : {
+        'inputEnabled': 'false',
+        'selected' : 5,
+        'buttons': [
             {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Température'},
-                'softMin': 55,
-                'softMax': 70,
-                'top': str((100/4)*0+3*0)+'%',
-                'height': '25%',
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Vent'},
-                'softMin': 0,
-                'softMax': 20,
-                'top': str((100/4)*1+3*1)+'%',
-                'height': '25%',
-                'offset': 0,
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Alimentation'},
-                'softMin': 0,
-                'softMax': 30,
-                'top': str((100/4)*2+3*2)+'%',
-                'height': '25%',
-                'offset': 0,
-                'lineWidth': 1,
-            },
-            {
-                'labels': {'align': 'right','x': -3},
-                'title': {'text': 'Allumage'},
-                'softMin': 0,
-                'softMax': 15,
-                'top': str((100/4)*3+3*3)+'%',
-                'height': '12%',
-                'offset': 0,
-                'lineWidth': 1,
-            },
-        ],
-        'tooltip': {
-            'shared': True,
-            'split': False,
-            'crosshairs': True
-        },
-        "series": [
-            {
-                "name": Inputs['temp_chaudiere']['name'],
-                "db": Inputs['temp_chaudiere']['db'],
-                "data": [],
-                "yAxis": 0,
-                "tooltip": {"valueDecimals": 1}
-            }, 
-            {
-                "name": Inputs['temp_fumee']['name'],
-                "db": Inputs['temp_fumee']['db'],
-                "data": [],
-                "yAxis": 0,
-                "tooltip": {"valueDecimals": 1}
-            },
-            {
-                "name": Inputs['vent_primaire']['name'],
-                "db": Inputs['vent_primaire']['db'],
-                "data": [],
-                "yAxis": 1,
-                "tooltip": {"valueDecimals": 0}
-            },
-            {
-                "name": Inputs['alimentation']['name'],
-                "db": Inputs['alimentation']['db'],
-                "data": [],
-                "yAxis": 2,
-                "tooltip": {"valueDecimals": 0}
-            },
-            {
-                "name": Inputs['allumage']['name'],
-                "db": Inputs['allumage']['db'],
-                "data": [],
-                "yAxis": 3,
-                "tooltip": {"valueDecimals": 0}
+                'type': 'minute',
+                'count': 15,
+                'text': '15m'
+            },{
+                'type': 'hour',
+                'count': 1,
+                'text': '1h'
+            },{
+                'type': 'hour',
+                'count': 2,
+                'text': '2h'
+            },{
+                'type': 'hour',
+                'count': 4,
+                'text': '4h'
+            },{
+                'type': 'hour',
+                'count': 6,
+                'text': '6h'
+            },{
+                'type': 'all',
+                'text': 'All'
             }
         ]
+    },
+    'title': {'text': 'Chaudière'},
+
+    'xAxis': {
+            'plotBands': None
+        },
+    'yAxis': [
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Température'},
+            'softMin': 55,
+            'softMax': 70,
+            'top': str((100/4)*0+3*0)+'%',
+            'height': '25%',
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Vent'},
+            'softMin': 0,
+            'softMax': 20,
+            'top': str((100/4)*1+3*1)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Alimentation'},
+            'softMin': 0,
+            'softMax': 30,
+            'top': str((100/4)*2+3*2)+'%',
+            'height': '25%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Allumage'},
+            'softMin': 0,
+            'softMax': 15,
+            'top': str((100/4)*3+3*3)+'%',
+            'height': '12%',
+            'offset': 0,
+            'lineWidth': 1,
+        },
+    ],
+    'tooltip': {
+        'shared': True,
+        'split': False,
+        'crosshairs': True
+    },
+    "series": [
+        {
+            "name": InputName[TEMP_CHAUDIERE],
+            "db": InputDb[TEMP_CHAUDIERE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        }, 
+        {
+            "name": InputName[TEMP_FUMEE],
+            "db": InputDb[TEMP_FUMEE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        },
+        {
+            "name": InputName[VENT_PRIMAIRE],
+            "db": InputDb[VENT_PRIMAIRE],
+            "data": [],
+            "yAxis": 1,
+            "tooltip": {"valueDecimals": 0}
+        },
+        {
+            "name": InputName[ALIMENTATION],
+            "db": InputDb[ALIMENTATION],
+            "data": [],
+            "yAxis": 2,
+            "tooltip": {"valueDecimals": 0}
+        },
+        {
+            "name": InputName[ALLUMAGE],
+            "db": InputDb[ALLUMAGE],
+            "data": [],
+            "yAxis": 3,
+            "tooltip": {"valueDecimals": 0}
+        }
+    ]
 }
 
 static_conf_minute = {
     "chart": {"defaultSeriesType": 'spline'},
+    "subtitle": {
+        "text": '<span style="background-color: #55BF3B; border-radius: 2px; padding: 1px 2px;">' +
+              'Combustion' +
+          '</span>' +
+          '<span style="background-color: #DDDF0D; border-radius: 2px; padding: 1px 2px;">' +
+              '10-20' +
+          '</span>',
+        "useHTML": True,
+        "verticalAlign": 'top',
+        "y": 40,
+    },
+    "credits": {"enabled": False},
+    "exporting": {"filename": 'chaudiere'},
+    "legend" : {
+        "enabled": True,
+        "align": 'left',
+        "layout": 'vertical',
+        "verticalAlign": 'top',
+        "x": 10,
+        "y": 80,
+        "floating": True,
+        "borderWidth": 1,
+        "backgroundColor": '#FFFFFF'
+    },
     'rangeSelector' : {
         'inputEnabled': 'false',
         'selected' : 5,
@@ -324,15 +341,15 @@ static_conf_minute = {
     },
     "series": [
         {
-            "name": Inputs['temp_chaudiere']['name'],
-            "db": Inputs['temp_chaudiere']['db'],
+            "name": InputName[TEMP_CHAUDIERE],
+            "db": InputDb[TEMP_CHAUDIERE],
             "data": [],
             "yAxis": 0,
             "tooltip": {"valueDecimals": 1}
         }, 
         {
-            "name": Inputs['temp_fumee']['name'],
-            "db": Inputs['temp_fumee']['db'],
+            "name": InputName[TEMP_FUMEE],
+            "db": InputDb[TEMP_FUMEE],
             "data": [],
             "yAxis": 0,
             "tooltip": {"valueDecimals": 1}
@@ -464,58 +481,36 @@ def create_chart(conf, entries):
             plotBands.append(plotBand)
     conf['xAxis']['plotBands'] = plotBands
     
-    """ Add Labels """
-    """
-    TODO : rework label mus be this format
-    {
-            type: 'flags',
-            name: 'Flags on series',
-            data: [{
-                x: lastDate - 60 * days,
-                title: 'On series'
-            }, {
-                x: lastDate - 30 * days,
-                title: 'On series'
-            }],
-            onSeries: 'dataseries',
-            shape: 'squarepin'
-    }
-    """
+    """ Add Labels """ 
     condition_flag_allumage =   '((prec.phase is not None) and (prec.phase is not PHASE_ALLUMAGE))'
     condition_next_is_not_maintien = '((next.phase is not None) and (next.phase is not PHASE_MAINTIEN))'
-    labels = []
+    labels = json.loads(json.dumps(ChartLabel)) #make a copy of original object
+    labels['name'] = 'Labels'
     for entry in entries:
         if entry is not None and entry.phase is not None:
-            """ Label Allumage """    
+            #Label Allumage    
             if entry.phase == PHASE_ALLUMAGE and entry.all_prec_verify_condition(8, condition_flag_allumage):
-                label = {
-                    "type": 'flags',
-                    "name": 'Allumage',
-                    "data": [{
-                            "x": datetime_to_timestamp(entry.dt),
-                            "title": 'Allumage'
-                        }],
-                    "onSeries": 'dataseries',
-                    "shape": 'squarepin'
-                }
-                labels.append(label)
-
-            """ Label Combustion """    
+                data = {
+                        "x": datetime_to_timestamp(entry.dt),
+                        "title": 'Allumage'
+                       }
+                labels['data'].append(data)
+            """
+            # Label Combustion    
             if entry.phase == PHASE_COMBUSTION and\
                 entry.prec() is not None and\
                 entry.prec().phase is not PHASE_COMBUSTION and\
                 entry.all_next_verify_condition(5, condition_next_is_not_maintien):
-                label = {
-                    "type": 'flags',
-                    "name": 'Combustion',
-                    "data": [{
+                    data = {
                             "x": datetime_to_timestamp(entry.dt),
                             "title": 'Combustion'
-                        }],
-                    "onSeries": 'dataseries',
-                    "shape": 'squarepin'
-                }
-#                labels.append(label)
-                conf['series'].append(label)
+                           }
+                    labels['data'].append(data)
+            """
+    conf['series'].append(labels)
+
+    """ Add Subtitle (plotbands legend) """
+    conf["subtitle"] = ChartSubtitle
+
     return conf
- 
+     

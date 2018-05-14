@@ -1,35 +1,40 @@
 '''
---------
-Summary
-python script used to store average values (one per Minute) of Chaudiere Database.
+# script archive_minute.py
+
+## Summary
+
+Python script used to store average values (one per Minute) of Chaudiere Database.
 supposed to be run every 1 or 2 minutes by cron
 
----------
-CLI Usage
+## CLI Usage
 
-    -----------
-    Normal mode
+### Normal mode
+
     python archive_minute.py
-    search for last ChaudiereMinute entry.
-    start from this entry to create a ChaudiereMinute entry per minute, logging average values of Chaudiere
+    
+search for last ChaudiereMinute entry.
+start from this entry to create a ChaudiereMinute entry per minute, logging average values of Chaudiere
 
-    --------------------
-    rework_from_now mode
+### rework_from_now mode
+
     python archive_minute.py --rework_from_now --hours N
-    rework 
+    
+rework N hours from current datetime
 
-    ----------------
-    rework_from_date
+### rework_from_date
+
     python archive_minute.py --rework_from_date  --hours N --date YYYY/MM/DD/HH
 
------------
-CRON Config
-1-59/2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/archive_minute.py
+### CRON Config
 
-----
-ToDo
-rework modes shall delete existing entries before creating new ones
+Run every odd minutes
 
+    */2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/archive_minute.py
+
+
+## ToDo
+
+Rework modes shall delete existing entries before creating new ones
 '''
 
 
@@ -43,7 +48,6 @@ projectpath = os.path.dirname(chaudiereapp)              # /home/pi/Dev/chaudier
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-# import ../app/ 
 app_path = os.path.join(chaudiereapp, 'app')
 sys.path.append(chaudiereapp)
 from app import db
@@ -51,8 +55,6 @@ from app.models import Chaudiere, ChaudiereMinute
 from app import create_app
 app = create_app().app_context().push()
 
-
-# import ../../script/logger_config to get logger
 chaudierescript = os.path.join(projectpath, 'script')
 sys.path.append(chaudierescript)
 import logger_config
@@ -60,7 +62,9 @@ import logger_config
 # SET LOGGER
 logger = logging.getLogger(__name__)
 
-
+"""
+return the datetime of an existing Chaudiere entry close to the given *date* parameter
+"""
 def find_datetime_end(date):
     last_chaudiere_date = Chaudiere.last(Chaudiere).dt
     entry = Chaudiere.get_by_approx_date(Chaudiere, date)
@@ -71,7 +75,6 @@ def find_datetime_end(date):
     return entry.dt
 
 
-#run every 15 min
 # defini date de debut et de fin 
 # begin = (date du dernier record de la base Archive) + 1 minute
 # end = (maintenant) - 1 minute
@@ -119,9 +122,9 @@ def process_archive_minute(mode='normal', hours=None, date=None):
 #ASC : plus ancient 
 #DESC : plus recent
 '''
-recupere dans la base Logs l'ensenmble des objets dont la date est comprise entre 
-begin et (begin + 1 minute)
-Calcule des moyennes et enregistre
+recupere dans la base Logs l'ensemble des objets dont la date est comprise entre 
+les dates begin et (begin + 1 minute)
+Calcule des moyennes et enregistre dans une entry ChaudiereMinute
 '''
 def record_minute(begin):
     logger.debug('record minute')
@@ -174,7 +177,6 @@ if __name__ == '__main__':
         print('mode=rework_from_now '+str(args.hours))
         process_archive_minute(mode='rework_from_now', hours=args.hours)
     elif args.rework_from_date:
-        #python process_phase.py --rework_from_date --hours 10 --date 2018/05/9/10
         if not args.hours: 
             print('Argument error : --hours must be set')
             exit()
@@ -194,7 +196,3 @@ if __name__ == '__main__':
     else:
         print('mode=normal')
         process_archive_minute(mode='normal')
-    """
-    if args.minute:
-        process_archive_minute()
-    """

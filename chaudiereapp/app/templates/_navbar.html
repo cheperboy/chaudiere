@@ -11,8 +11,10 @@
 					</div>
 					<div id="navbar" class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
-							<li><a href="{{ url_for('charts.allchart') }}">All</a></li>
-							<li><a href="{{ url_for('charts.mylivechart') }}">live</a></li>
+							<li><a href="{{ url_for('charts.now') }}">1 heure</a></li>
+							<li><a href="{{ url_for('charts.now', hours=6) }}">6 heures</a></li>
+							<li><a href="{{ url_for('charts.now', hours=12) }}">12 heures</a></li>
+							<li><a href="{{ url_for('charts.now', hours=73) }}">3 jours</a></li>
 						</ul>
 				</div><!--/.nav-collapse -->
 			</div>

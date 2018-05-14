@@ -1,21 +1,20 @@
 '''
-Summary:
-python script used to store average values (Minutes, Hour, ...) of Teleino SQLA Database.
-supposed to be run every 10 minutes by cron
+# script process_phase.py
 
-CLI Usage :
-workon venv
-python teleinfo_archive.py --archive_hour
+## Summary
 
-CRON Config :
-python teleinfo_archive.py --archive_hour
+python script used to process phase value of ChaudiereMinute entries.
+supposed to be run every 1 or 2 minutes by cron
 
-Description
-Database Model and usefull models methods are imported from teleinfoapp (app.models and app.models_util)
-Le fait d'appeler l'option --archive_hour provoque d'abord l'appel de archive_minute
+## CLI Usage :
+
+Idem archive_minute.py
+
+## CRON Config :
+
+    1-59/2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/process_phase.py
 
 '''
-
 
 import os, sys, argparse
 from datetime import datetime, timedelta
@@ -27,7 +26,6 @@ projectpath = os.path.dirname(chaudiereapp)              # /home/pi/Dev/chaudier
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-# import ../app/ 
 app_path = os.path.join(chaudiereapp, 'app')
 sys.path.append(chaudiereapp)
 from app import db
@@ -36,7 +34,6 @@ from app.constantes import *
 from app import create_app
 app = create_app().app_context().push()
 
-# import ../../script/logger_config to get logger
 chaudierescript = os.path.join(projectpath, 'script')
 sys.path.append(chaudierescript)
 import logger_config
@@ -44,16 +41,22 @@ import logger_config
 # SET LOGGER
 logger = logging.getLogger(__name__)
 
+"""
+Return last processed ChaudiereMinute entry.dt or None
+"""
 def find_last_phase():
-    logger.info('find_last_phase()')
+    # if no ChaudiereMinute entry exists, return None
     if ChaudiereMinute.last(ChaudiereMinute) == None:
-        logger.debug('return None')
         return None
-    # if new db:
+    
+    # if some ChaudiereMinute entry exists but phase is None 
+    # (first call of this script since db creation) :
+    # return first ChaudiereMinute dt
     try_first = ChaudiereMinute.first(ChaudiereMinute)
     if try_first is not None and try_first.phase is None :
         logger.debug('returning first entry')
         return try_first.dt
+    
     # else search for lat processed entry 
     dt = ChaudiereMinute.last(ChaudiereMinute).dt
     phase = None
@@ -66,6 +69,9 @@ def find_last_phase():
     logger.info('date : '+str(dt))
     return dt
         
+"""
+return the datetime of an existing Chaudiere entry close to the given *date* parameter
+"""
 def find_date_end(date):
     last_ch_minute_date = ChaudiereMinute.last(ChaudiereMinute).dt
     entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, date)
@@ -75,27 +81,17 @@ def find_date_end(date):
     print ('ChaudiereMinute.dt end:'+ str(entry.dt))
     return entry.dt
         
-#run every 15 min
 def process_phase(mode='normal', hours=None, date=None):
     logger.info('process_phase()')
-    
-    # defini date de debut et de fin 
+    # determine begin and end date depending on given *mode*
     if mode is 'normal':
-        # begin = (date du dernier record de la base Archive) + 1 minute
-        # end = (maintenant) - 1 minute        
-        # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
-        begin = find_last_phase()
-        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
-        end = ChaudiereMinute.last(ChaudiereMinute).dt
+        begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
+        end = ChaudiereMinute.last(ChaudiereMinute).dt # end = last existing ChaudiereMinute entry.dt
     elif mode is 'rework_from_now':
-        #negin is last existing ChaudiereMinute - N hours
-        dt = ChaudiereMinute.last(ChaudiereMinute).dt 
-        begin = dt - timedelta(hours=hours)
-        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
         end = ChaudiereMinute.last(ChaudiereMinute).dt
+        begin = end - timedelta(hours=hours)
     elif mode is 'rework_from_date':
         end = find_date_end(date)
-        print ('ChaudiereMinute.dt end:'+ str(end))
         begin = end - timedelta(hours=hours)
     else:
         logger.error('wrong arguments')
@@ -103,66 +99,58 @@ def process_phase(mode='normal', hours=None, date=None):
     if begin is None:
         logger.info('No records')
         return
-    logger.info('Entries to process ' + str(begin) + ' -> ' + str(end))
+    logger.info('Processing Phase From' + str(begin) + ' To ' + str(end))
     
     if ((begin + timedelta(minutes=1)) > end):
         logger.info('Waiting more records')
-    # while some old Logs to Archive
+    
+    # while some entries to process
     while ((begin + timedelta(minutes=1)) <= end):
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin) 
+        # entry should not be missing, test just in case and create missing entry
         if entry is None:
-            #shall be deleted, now done in archive_minute
             logger.error('create missing ChaudiereMinute entry')
             ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
-        update_phase_allumage(entry)
+        update_phase(entry)
         begin = begin + timedelta(minutes=1)
+    logger.info('Done')
 
-#ASC : plus ancient 
-#DESC : plus recent
-'''
+"""
 recupere dans la base Logs l'ensenmble des objets dont la date est comprise entre 
 begin et (begin + 1 minute)
 Calcule des moyennes et enregistre
-'''
-"""
-ALGO 2
-Si vent = 0 => MAintien
+ALGO
+Si vent = 0 => Maintien
 Si vent > 0 => combustion
 """
-
-def update_phase_allumage(entry):
-    if entry.watt1 is not None and\
-       entry.watt2 is not None and\
-       entry.temp0 is not None:
+def update_phase(entry):
+    if entry.get(ALLUMAGE) is not None and\
+       entry.get(VENT_PRIMAIRE) is not None and\
+       entry.get(TEMP_CHAUDIERE) is not None:
         """ Process Allumage"""
-        if entry.watt1 > 0: #watt allumage
+        if (entry.get(ALLUMAGE) > 0):
             entry.phase = PHASE_ALLUMAGE
             db.session.commit()
-            print(str(entry.dt)+' watt1 :'+str(entry.watt1)+' '+ PhaseName[PHASE_ALLUMAGE])
 
-        elif entry.watt2 > 0: #watt vent primaire
+        elif entry.get(VENT_PRIMAIRE) > 0:
             """Si vent > 0 => combustion"""
             entry.phase = PHASE_COMBUSTION
             db.session.commit()
-            print(str(entry.dt)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_COMBUSTION])
 
-        elif entry.watt2 == 0: #watt vent primaire
+        elif entry.get(VENT_PRIMAIRE) == 0:
             """si vent == 0 => MAINTIEN"""
             entry.phase = PHASE_MAINTIEN
             db.session.commit()
-            print(str(entry.dt)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_MAINTIEN])
 
         if entry.temp0 < 40: #temp is too low
             """si temp_chaudiere < 40 => ARRET"""
             entry.phase = PHASE_ARRET
             db.session.commit()
-            print(str(entry.dt)+' temp0 :'+str(entry.temp0)+' '+ PhaseName[PHASE_ARRET])
     
     else: #(entry.phase is None)
         entry.phase = PHASE_UNDEFINED
         db.session.commit()
-        print(str(entry.dt) +' '+PhaseName[PHASE_UNDEFINED])
 
     
 if __name__ == '__main__':

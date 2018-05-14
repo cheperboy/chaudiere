@@ -465,7 +465,22 @@ def create_chart(conf, entries):
     conf['xAxis']['plotBands'] = plotBands
     
     """ Add Labels """
-    PHASE_COMBUSTION
+    """
+    TODO : rework label mus be this format
+    {
+            type: 'flags',
+            name: 'Flags on series',
+            data: [{
+                x: lastDate - 60 * days,
+                title: 'On series'
+            }, {
+                x: lastDate - 30 * days,
+                title: 'On series'
+            }],
+            onSeries: 'dataseries',
+            shape: 'squarepin'
+    }
+    """
     condition_flag_allumage =   '((prec.phase is not None) and (prec.phase is not PHASE_ALLUMAGE))'
     condition_next_is_not_maintien = '((next.phase is not None) and (next.phase is not PHASE_MAINTIEN))'
     labels = []

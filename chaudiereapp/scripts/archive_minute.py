@@ -1,18 +1,34 @@
 '''
-Summary:
-python script used to store average values (Minutes, Hour, ...) of Teleino SQLA Database.
-supposed to be run every 10 minutes by cron
+--------
+Summary
+python script used to store average values (one per Minute) of Chaudiere Database.
+supposed to be run every 1 or 2 minutes by cron
 
-CLI Usage :
-workon venv
-python teleinfo_archive.py --archive_hour
+---------
+CLI Usage
 
-CRON Config :
-python teleinfo_archive.py --archive_hour
+    -----------
+    Normal mode
+    python archive_minute.py
+    search for last ChaudiereMinute entry.
+    start from this entry to create a ChaudiereMinute entry per minute, logging average values of Chaudiere
 
-Description
-Database Model and usefull models methods are imported from teleinfoapp (app.models and app.models_util)
-Le fait d'appeler l'option --archive_hour provoque d'abord l'appel de archive_minute
+    --------------------
+    rework_from_now mode
+    python archive_minute.py --rework_from_now --hours N
+    rework 
+
+    ----------------
+    rework_from_date
+    python archive_minute.py --rework_from_date  --hours N --date YYYY/MM/DD/HH
+
+-----------
+CRON Config
+1-59/2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/archive_minute.py
+
+----
+ToDo
+rework modes shall delete existing entries before creating new ones
 
 '''
 

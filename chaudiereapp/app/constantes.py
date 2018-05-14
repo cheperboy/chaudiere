@@ -16,11 +16,11 @@ PhaseColor = {
     PHASE_ARRET      : '#b3b3b3', #'black'
 }
 PhaseName = {
-    PHASE_UNDEFINED  : 'UNDEFINED',  
-    PHASE_COMBUSTION : 'COMBUSTION',
-    PHASE_ALLUMAGE   : 'ALLUMAGE',
-    PHASE_MAINTIEN   : 'MAINTIEN',
-    PHASE_ARRET      : 'ARRET' 
+    PHASE_UNDEFINED  : 'Non defini',  
+    PHASE_COMBUSTION : 'Combustion',
+    PHASE_ALLUMAGE   : 'Allumage',
+    PHASE_MAINTIEN   : 'Maintien de feu',
+    PHASE_ARRET      : 'Arret' 
 }
 
 """

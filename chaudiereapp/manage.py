@@ -39,9 +39,10 @@ def create_data():
     db.session.commit()
     print me
 
+"""Get last data Entry."""
+"""
 @cli.command()
 def test(): 
-    """Get last data Entry."""
     entry = ChaudiereMinute.last(ChaudiereMinute)
     print entry
     prec = entry.prec()
@@ -49,6 +50,6 @@ def test():
     precs = entry.precs(2)
     print precs
     print entry.precs_condition_at_least_one(2, 'prec.watt2 > 0') 
-
+"""
 if __name__ == '__main__':
     cli()

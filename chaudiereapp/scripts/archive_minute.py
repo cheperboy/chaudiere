@@ -44,24 +44,54 @@ import logger_config
 # SET LOGGER
 logger = logging.getLogger(__name__)
 
-#run every 15 min
-def process_archive_minute():
-    # defini date de debut et de fin 
-    # begin = (date du dernier record de la base Archive) + 1 minute
-    # end = (maintenant) - 1 minute
-    
-    # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
-    if ChaudiereMinute.last(ChaudiereMinute) == None:
-        begin = Chaudiere.first(Chaudiere).timestamp.replace(second=0, microsecond=0) 
-        #begin = Chaudiere.last(Chaudiere).timestamp - timedelta(hours=6) 
 
-    # else ChaudiereMinute is NOT empty then we start with the last ChaudiereMinute record (newest)
+def find_datetime_end(date):
+    last_chaudiere_date = Chaudiere.last(Chaudiere).dt
+    entry = Chaudiere.get_by_approx_date(Chaudiere, date)
+    while ((entry is None) and (date < last_chaudiere_date)):
+        date = date + timedelta(minutes=1)
+        entry = Chaudiere.get_by_approx_date(Chaudiere, date)
+    print ('Chaudiere.dt end:'+ str(entry.dt))
+    return entry.dt
+
+
+#run every 15 min
+# defini date de debut et de fin 
+# begin = (date du dernier record de la base Archive) + 1 minute
+# end = (maintenant) - 1 minute
+def process_archive_minute(mode='normal', hours=None, date=None): 
+    if mode is 'normal':
+        # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
+        if ChaudiereMinute.last(ChaudiereMinute) == None:
+            print ('ChaudiereMinute.last(ChaudiereMinute) == None:')
+            begin = Chaudiere.first(Chaudiere).dt
+
+        # else ChaudiereMinute is NOT empty then we start with the last ChaudiereMinute record (newest)
+        else:
+            print ('ChaudiereMinute.last(ChaudiereMinute) != None:')
+            begin = (ChaudiereMinute.last(ChaudiereMinute).dt + timedelta(minutes=1))
+
+        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
+        end = Chaudiere.last(Chaudiere).dt
+    elif mode is 'rework_from_now':
+        #begin is last existing Chaudiere - N hours
+        dt = Chaudiere.last(Chaudiere).dt 
+        begin = dt - timedelta(hours=hours)
+        # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
+        end = Chaudiere.last(Chaudiere).dt
+    elif mode is 'rework_from_date':
+        end = find_datetime_end(date)
+        begin = end - timedelta(hours=hours)
     else:
-        begin = (ChaudiereMinute.last(ChaudiereMinute).timestamp + timedelta(minutes=1)).replace(second=0, microsecond=0)
+        logger.error('wrong arguments')
+        return
+    if begin is None:
+        logger.info('No records')
+        return
     
-    # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
-    end = (Chaudiere.last(Chaudiere).timestamp).replace(second=0, microsecond=0)
-    logger.info('Minute to archive ' + str(begin) + ' -> ' + str(end))
+    begin = begin.replace(second=0, microsecond=0)
+    end = end.replace(second=0, microsecond=0)
+    logger.info('Entries to archive ' + str(begin) + ' -> ' + str(end))
     
     if ((begin + timedelta(minutes=1)) > end):
         logger.info('Waiting more records')
@@ -79,9 +109,6 @@ Calcule des moyennes et enregistre
 '''
 def record_minute(begin):
     logger.debug('record minute')
-    #fake begin/end
-#    begin = datetime.now() - timedelta(minutes=3)
-    
     end = begin + timedelta(minutes=1)
     logger.info('Archiving minute ' + str(begin) + ' -> ' + str(end))
     #print('minute ' + str(begin) + ' -> ' + str(end))
@@ -118,15 +145,39 @@ if __name__ == '__main__':
     
     # PARSE ARGS
     parser = argparse.ArgumentParser(description = "Archive Chaudiere in Minute and Hour db", epilog = "" )
-    parser.add_argument("-v",
-                          "--verbose",
-                          help="increase output verbosity",
-                          action="store_true")
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--minute", action="store_true")
+    parser.add_argument('--rework_from_now',        action='store_true',  default=False, dest='rework_from_now',  help='rework N hours from now')
+    parser.add_argument('--rework_from_date',       action='store_true',  default=False, dest='rework_from_date',  help='rework N hours from given END date')
+    parser.add_argument('--hours',                  type=int,             default=None,   help='number of hour to rework')
+    parser.add_argument('--date',                                         default=None,   help='end date to rework YYYY/MM/DD/HH')
     args = parser.parse_args()
-    logger.info('START (last Chaudiere recrod = ' + str(Chaudiere.last(Chaudiere).timestamp))
-    process_archive_minute()
+    print(args)
+    if args.rework_from_now:
+        if not args.hours: 
+            print('Argument error : --hours must be set')
+            exit()
+        print('mode=rework_from_now '+str(args.hours))
+        process_archive_minute(mode='rework_from_now', hours=args.hours)
+    elif args.rework_from_date:
+        #python process_phase.py --rework_from_date --hours 10 --date 2018/05/9/10
+        if not args.hours: 
+            print('Argument error : --hours must be set')
+            exit()
+        if not args.date: 
+            print('Argument error : --date must be set')
+            exit()
+
+        date = args.date.split('/')
+        print date
+        try:
+            dt_end = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), 0, 0)
+        except IndexError:
+            print('Argument error : --date must be YYYY/MM/DD/HH')
+            exit()
+        print('mode=rework_from_date date='+str(dt_end)+' hours='+str(args.hours))
+        process_archive_minute(mode='rework_from_date', date=dt_end, hours=args.hours)
+    else:
+        print('mode=normal')
+        process_archive_minute(mode='normal')
     """
     if args.minute:
         process_archive_minute()

@@ -73,8 +73,8 @@ function requestConf(url_part){
 	return myoptions;
 }
 
-function requestConfPlotbands(date, hour_length){
-	var url = JSbaseURL+'charts/staticminutehistoryconf/'+date+'/'+hour_length
+function requestConfHistory(date, hour_length){
+	var url = JSbaseURL+'charts/api_history/'+date+'/'+hour_length
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 
@@ -83,42 +83,6 @@ function requestConfPlotbands(date, hour_length){
 	var datas = JSON.parse(datas);
 	return datas;
 }
-
-/*
-	Call webapi to request data
-	serie: method to call : getchaudiere or getminute
-	hour_length : Int
-	db_field : temp0, temp1, watt0, ..
-*/
-function requestData(serie, db_field, hour_length){
-	var url = JSbaseURL+'webapi/'+serie+'/'+hour_length+'/'+db_field
-	console.log(url);
-	var datas = $.ajax({ 
-		url: url, 
-		async: false
-	}).responseText;
-	var datas = JSON.parse(datas);
-	return datas;
-}
-
-/*
-	Call webapi to request data by (end) date and hours (begin = end_date - hours)
-	serie: method to call : getchaudierehistory or getminutehistory
-	date : 
-	hour_length : Int
-	db_field : temp0, temp1, watt0, ..
-*/
-function requestDataHistory(serie, date, db_field, hour_length){
-	var url = JSbaseURL+'webapi/'+serie+'/'+date+'/'+hour_length+'/'+db_field
-	console.log(url);
-	var datas = $.ajax({ 
-		url: url, 
-		async: false
-	}).responseText;
-	var datas = JSON.parse(datas);
-	return datas;
-}
-
 
 $(document).ready(function() {
 	div_id = 'staticchartraw-container'
@@ -134,7 +98,16 @@ $(document).ready(function() {
 		static_chart = new Highcharts.stockChart(div_id, conf);
 	}
 
-	div_id = 'staticchartminute-container'
+	div_id = 'staticchart-container'
+	if(document.getElementById(div_id)){
+		// Note : parameters JShistory_date and JShistory_hours is get from chart.py view and passed to javascript via index.html
+		if(JShistory_date){
+			console.log(JShistory_date)
+			var conf = requestConfHistory(JShistory_date, JShistory_hours)
+		}
+		static_chart = new Highcharts.stockChart(div_id, conf);
+	}
+	div_id = 'example-container'
 	if(document.getElementById(div_id)){
 		// if JShistory_date is set then we are in history mode and call getchaudierehistory
 		// Note : parameters JShistory_date and JShistory_hours is get from chart.py view and passed to javascript via index.html

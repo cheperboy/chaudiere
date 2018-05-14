@@ -6,22 +6,23 @@ import time, calendar
 from datetime import datetime, timedelta
 from flask import current_app
 from app import db
+from app.constantes import *
 
   
-def dump_timestamp(value):
+def datetime_to_timestamp(dt):
     """Deserialize datetime object into string form for JSON processing."""
-    if value is None:
+    if dt is None:
         return None
-#    return int(time.mktime(value.timetuple())*1000)
-    return int(calendar.timegm(value.timetuple())*1000)
+#    return int(time.mktime(dt.timetuple())*1000)
+    return int(calendar.timegm(dt.timetuple())*1000)
 
-def totimestamp(value):
-    return time.mktime(value.timetuple())
+def timestamp_to_datetime(ts):
+    return time.mktime(ts.timetuple())
 
 class ChaudiereBase(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime)
+    dt = db.Column(db.DateTime)
     temp0 = db.Column(db.Float)
     temp1 = db.Column(db.Float)
     temp2 = db.Column(db.Float)
@@ -32,8 +33,8 @@ class ChaudiereBase(db.Model):
     phase = db.Column(db.Integer)
     event = db.Column(db.String(100))
 
-    def __init__(self, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
-        self.timestamp = timestamp
+    def __init__(self, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
+        self.dt    = dt
         self.temp0 = temp0
         self.temp1 = temp1
         self.temp2 = temp2
@@ -45,12 +46,12 @@ class ChaudiereBase(db.Model):
         self.event = event
 
     def __repr__(self):
-        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.timestamp, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
+        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.dt, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
 
     @classmethod
-    def create(self, cls, timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
+    def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
         try:
-            entry = cls(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event)
+            entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event)
             db.session.add(entry)
             db.session.commit()
             ret = str(entry)
@@ -63,7 +64,7 @@ class ChaudiereBase(db.Model):
     def tolist(self):
         """Return Object data in list format"""
         return [
-            dump_timestamp(self.timestamp),
+            datetime_to_timestamp(self.dt),
             self.temp0, 
             self.temp1, 
             self.temp2, 
@@ -78,11 +79,11 @@ class ChaudiereBase(db.Model):
        
     """
     return one field called data in a list with timestamp
-    [timestamp, data]
+    [datetime, data]
     """
     def datatolist(self, data):
         return [
-            dump_timestamp(self.timestamp),
+            datetime_to_timestamp(self.dt),
             getattr(self, data) # same as e.g. self.temp0
        ]
 
@@ -95,21 +96,28 @@ class ChaudiereBase(db.Model):
         return(db.session.query(cls).order_by(cls.id.asc()).first())
 
     @classmethod
-    def get_between_date(self, cls, begin, end):
+    def get_between_date(self, cls, dt_begin, dt_end):
         return (db.session.query(cls) \
-                .filter(cls.timestamp > datetime(begin.year, begin.month, begin.day, begin.hour, begin.minute)) \
-                .filter(cls.timestamp < datetime(end.year, end.month, end.day, end.hour, end.minute)) \
+                .filter(cls.dt > dt_begin) \
+                .filter(cls.dt < dt_end) \
                 .order_by(cls.id.desc()) \
                 .all())
 
     @classmethod
-    def get_by_date(self, cls, dt):
-        ts = datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute)
-        return db.session.query(cls).filter_by(timestamp=ts).first()
+    def get_by_timestamp(self, cls, ts):
+        dt = datetime.fromtimestamp(ts)
+        return db.session.query(cls).filter_by(dt=dt).first()
 
     @classmethod
-    def get_by_timestamp(self, cls, ts):
-        return db.session.query(cls).filter_by(timestamp=ts).first()
+    def get_by_approx_date(self, cls, dt):
+        entry = db.session.query(cls)\
+            .filter(cls.dt > datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute)) \
+            .first()
+        return entry
+
+    @classmethod
+    def get_by_datetime(self, cls, dt):
+        return db.session.query(cls).filter_by(dt=dt).first()
 
                         
 class ChaudiereMinute(ChaudiereBase):
@@ -117,39 +125,59 @@ class ChaudiereMinute(ChaudiereBase):
     
     """ return precedent entry: one minute before self"""
     def prec(self):
-        ts = datetime(self.timestamp.year, self.timestamp.month, self.timestamp.day, self.timestamp.hour, self.timestamp.minute)
-        ts = ts - timedelta(minutes=1)
-        return db.session.query(self.__class__).filter_by(timestamp=ts).first()
+        dt = self.dt - timedelta(minutes=1)
+        return db.session.query(self.__class__).filter_by(dt=dt).first()
+        
+    """ return next entry: one minute after self"""
+    def next(self):
+        dt = self.dt + timedelta(minutes=1)
+        return db.session.query(self.__class__).filter_by(dt=dt).first()
         
     """ return a list of precedents entries: x minute before self"""
     def precs(self, minutes): 
         entries = []
-        ts = datetime(self.timestamp.year, self.timestamp.month, self.timestamp.day, self.timestamp.hour, self.timestamp.minute)
         for minute in range(1, minutes):
-            entry = db.session.query(self.__class__).filter_by(timestamp=ts - timedelta(minutes=minute)).first()
+            entry = db.session.query(self.__class__).filter_by(dt=self.dt - timedelta(minutes=minute)).first()
             entries.append(entry)
         return entries
         
-    """ at least onre prec respect condition """
+    """ return a list of precedents entries: x minute before self"""
+    def nexts(self, minutes): 
+        entries = []
+        for minute in range(1, minutes):
+            entry = db.session.query(self.__class__).filter_by(dt=self.dt + timedelta(minutes=minute)).first()
+            entries.append(entry)
+        return entries
+        
+    """ 
+    At least onre prec respect condition 
+    eg : 
+    condition = '((prec is not None) and (prec.phase is PHASE_ALLUMAGE))'
+    entry.at_least_one_prec_verify_condition(5, condition)
+    """
     def at_least_one_prec_verify_condition(self, minutes, condition):
         for prec in self.precs(minutes):
             if eval(condition):
                 return True
         return False
         
+    def all_prec_verify_condition(self, minutes, condition):
+        for prec in self.precs(minutes):
+            if prec is not None:
+                if not eval(condition):
+                    return False
+        return True
+        
+    def all_next_verify_condition(self, minutes, condition):
+        for next in self.nexts(minutes):
+            if next is not None:
+                if not eval(condition):
+                    return False
+        return True
+        
+        
 class ChaudiereHour(ChaudiereBase):
     __bind_key__ = 'chaudiere_hour'
     
 class Chaudiere(ChaudiereBase):
     __bind_key__ = 'chaudiere'
-"""    
-    def __init__(self, timestamp, temp0=1, temp1=1, temp2=2, watt0=1, watt1=1, watt2=1, watt3=1):
-        self.timestamp = timestamp
-        self.temp0 = temp0
-        self.temp1 = temp1
-        self.temp2 = temp2
-        self.watt0 = watt0
-        self.watt1 = watt1 
-        self.watt2 = watt2
-        self.watt3 = watt3
-"""

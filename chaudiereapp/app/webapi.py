@@ -31,24 +31,24 @@ sensor : integer from 0 to N sensor
 #@cache.cached(timeout=10)
 def getchaudiere(hours, db_field):
     last = Chaudiere.query.order_by(Chaudiere.id.desc()).limit(1)[0]
-    ts = last.timestamp - timedelta(hours=hours)
+    dt = last.dt - timedelta(hours=hours)
     entries = list()
     for entry in Chaudiere.query\
-                     .order_by(Chaudiere.timestamp)\
-                     .filter(Chaudiere.timestamp >= ts)\
+                     .order_by(Chaudiere.dt)\
+                     .filter(Chaudiere.dt >= dt)\
                      .all():
         entries.append(entry.datatolist(str(db_field))) # e.g. 'temp0'
     return jsonify(entries), 200
 
 @webapi.route('/getminutehistory/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>/<string:db_field>', methods=['GET'])
 def getminutehistory(year, month, day, hour, hours, db_field):
-    ts_end = datetime(year, month, day, hour, 0)
-    ts_begin = ts_end - timedelta(hours=hours)
+    dt_end = datetime(year, month, day, hour, 0)
+    dt_begin = dt_end - timedelta(hours=hours)
     entries = list()
     for entry in ChaudiereMinute.query\
-                     .order_by(ChaudiereMinute.timestamp)\
-                     .filter(ChaudiereMinute.timestamp >= ts_begin)\
-                     .filter(ChaudiereMinute.timestamp <= ts_end)\
+                     .order_by(ChaudiereMinute.dt)\
+                     .filter(ChaudiereMinute.dt >= dt_begin)\
+                     .filter(ChaudiereMinute.dt <= dt_end)\
                      .all():
         entries.append(entry.datatolist(str(db_field))) # e.g. 'temp0'
     return jsonify(entries), 200
@@ -58,11 +58,11 @@ def getminutehistory(year, month, day, hour, hours, db_field):
 #@cache.cached(timeout=10)
 def getminute(hours, type, sensor=''):
     last = ChaudiereMinute.query.order_by(ChaudiereMinute.id.desc()).limit(1)[0]
-    ts = last.timestamp - timedelta(hours=hours)
+    dt = last.dt - timedelta(hours=hours)
     entries = list()
     for entry in ChaudiereMinute.query\
-                     .order_by(ChaudiereMinute.timestamp)\
-                     .filter(ChaudiereMinute.timestamp >= ts)\
+                     .order_by(ChaudiereMinute.dt)\
+                     .filter(ChaudiereMinute.dt >= dt)\
                      .all():
         entries.append(entry.datatolist(str(type)+str(sensor))) # e.g. 'temp0'
     return jsonify(entries), 200

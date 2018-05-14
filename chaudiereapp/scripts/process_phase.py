@@ -45,32 +45,35 @@ import logger_config
 logger = logging.getLogger(__name__)
 
 def find_last_phase():
-    #for debug purpose
-    #return ChaudiereMinute.first(ChaudiereMinute).timestamp
-
     logger.info('find_last_phase()')
     if ChaudiereMinute.last(ChaudiereMinute) == None:
         logger.debug('return None')
         return None
-    timestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
+    # if new db:
+    try_first = ChaudiereMinute.first(ChaudiereMinute)
+    if try_first is not None and try_first.phase is None :
+        logger.debug('returning first entry')
+        return try_first.dt
+    # else search for lat processed entry 
+    dt = ChaudiereMinute.last(ChaudiereMinute).dt
     phase = None
     while (phase is None):
-        logger.info(str(timestamp))
-        timestamp = timestamp - timedelta(minutes=1)
-        entry = ChaudiereMinute.get_by_date(ChaudiereMinute, timestamp)
+        logger.info(str(dt))
+        dt = dt - timedelta(minutes=1)
+        entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, dt)
         if entry is not None:
-            phase = ChaudiereMinute.get_by_date(ChaudiereMinute, timestamp).phase
-    logger.info('timestamp : '+str(timestamp))
-    return timestamp
+            phase = ChaudiereMinute.get_by_datetime(ChaudiereMinute, dt).phase
+    logger.info('date : '+str(dt))
+    return dt
         
-def find_timestamp_end(date):
-    last_ChMinuteTimestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
-    entry = ChaudiereMinute.get_by_date(ChaudiereMinute, date)
-    while ((entry is None) and (date<last_ChMinuteTimestamp)):
+def find_date_end(date):
+    last_ch_minute_date = ChaudiereMinute.last(ChaudiereMinute).dt
+    entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, date)
+    while ((entry is None) and (date < last_ch_minute_date)):
         date = date + timedelta(minutes=1)
-        entry = ChaudiereMinute.get_by_date(ChaudiereMinute, date)
-    print ('ChaudiereMinute.timestamp end:'+ str(entry.timestamp))
-    return entry.timestamp
+        entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, date)
+    print ('ChaudiereMinute.dt end:'+ str(entry.dt))
+    return entry.dt
         
 #run every 15 min
 def process_phase(mode='normal', hours=None, date=None):
@@ -83,16 +86,16 @@ def process_phase(mode='normal', hours=None, date=None):
         # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
         begin = find_last_phase()
         # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
-        end = ChaudiereMinute.last(ChaudiereMinute).timestamp
+        end = ChaudiereMinute.last(ChaudiereMinute).dt
     elif mode is 'rework_from_now':
         #negin is last existing ChaudiereMinute - N hours
-        timestamp = ChaudiereMinute.last(ChaudiereMinute).timestamp 
-        begin = timestamp - timedelta(hours=hours)
+        dt = ChaudiereMinute.last(ChaudiereMinute).dt 
+        begin = dt - timedelta(hours=hours)
         # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
-        end = ChaudiereMinute.last(ChaudiereMinute).timestamp
+        end = ChaudiereMinute.last(ChaudiereMinute).dt
     elif mode is 'rework_from_date':
-        end = find_timestamp_end(date)
-        print ('ChaudiereMinute.timestamp end:'+ str(end))
+        end = find_date_end(date)
+        print ('ChaudiereMinute.dt end:'+ str(end))
         begin = end - timedelta(hours=hours)
     else:
         logger.error('wrong arguments')
@@ -106,13 +109,13 @@ def process_phase(mode='normal', hours=None, date=None):
         logger.info('Waiting more records')
     # while some old Logs to Archive
     while ((begin + timedelta(minutes=1)) <= end):
-        entry = ChaudiereMinute.get_by_timestamp(ChaudiereMinute, begin) 
+        entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin) 
         if entry is None:
             #shall be deleted, now done in archive_minute
             logger.error('create missing ChaudiereMinute entry')
             ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None)
-        entry = ChaudiereMinute.get_by_timestamp(ChaudiereMinute, begin)
-        update_phase_allumage(entry, begin)
+        entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
+        update_phase_allumage(entry)
         begin = begin + timedelta(minutes=1)
 
 #ASC : plus ancient 
@@ -128,85 +131,39 @@ Si vent = 0 => MAintien
 Si vent > 0 => combustion
 """
 
-def update_phase_allumage(entry, timestamp):    
-    if entry.watt1 is not None and entry.watt2 is not None:
+def update_phase_allumage(entry):
+    if entry.watt1 is not None and\
+       entry.watt2 is not None and\
+       entry.temp0 is not None:
         """ Process Allumage"""
         if entry.watt1 > 0: #watt allumage
             entry.phase = PHASE_ALLUMAGE
             db.session.commit()
-            print(str(entry.timestamp)+' watt1 :'+str(entry.watt1)+' '+ PhaseName[PHASE_ALLUMAGE])
+            print(str(entry.dt)+' watt1 :'+str(entry.watt1)+' '+ PhaseName[PHASE_ALLUMAGE])
 
         elif entry.watt2 > 0: #watt vent primaire
             """Si vent > 0 => combustion"""
             entry.phase = PHASE_COMBUSTION
             db.session.commit()
-            print(str(entry.timestamp)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_COMBUSTION])
+            print(str(entry.dt)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_COMBUSTION])
 
         elif entry.watt2 == 0: #watt vent primaire
             """si vent == 0 => MAINTIEN"""
             entry.phase = PHASE_MAINTIEN
             db.session.commit()
-            print(str(entry.timestamp)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_MAINTIEN])
+            print(str(entry.dt)+' watt2 :'+str(entry.watt2)+' '+ PhaseName[PHASE_MAINTIEN])
 
+        if entry.temp0 < 40: #temp is too low
+            """si temp_chaudiere < 40 => ARRET"""
+            entry.phase = PHASE_ARRET
+            db.session.commit()
+            print(str(entry.dt)+' temp0 :'+str(entry.temp0)+' '+ PhaseName[PHASE_ARRET])
+    
     else: #(entry.phase is None)
         entry.phase = PHASE_UNDEFINED
         db.session.commit()
-        print(str(entry.timestamp) +' '+PhaseName[PHASE_UNDEFINED])
+        print(str(entry.dt) +' '+PhaseName[PHASE_UNDEFINED])
 
-"""
-ALGO 1
-si vent > 0 and prec(4) was > 0 => COMBUSTION
-
-gestion debut du process (pas dhistorique donc jamais de combustion)
-si vent > 0 and pas dhistorique (prec(4) was None) => COMBUSTION
-
-si vent = 0 and prec(4) was combustion => MAINTIEN  
-"""
-def update_phase_allumage_old(entry, timestamp):
-    """ Process Allumage"""
-    if entry.watt1 is not None: #watt allumage
-        if entry.watt1 > 0:
-            entry.phase = PHASE_ALLUMAGE
-            db.session.commit()
-            logger.debug(str(entry.watt1)+' '+ str(entry.timestamp) +' Phase Allumage')
-    
-    elif (entry.watt2 is not None):
-        if entry.watt2 > 0: #watt vent primaire
-            """ Process Maintien"""
-            """si vent > 0 and prec(4) was > 0 => COMBUSTION"""
-            #condition = 'prec.watt2 > 0'
-            #if entry.at_least_one_prec_verify_condition(5, condition):
-            entry.phase = PHASE_COMBUSTION
-            db.session.commit()
-            logger.debug(str(entry.timestamp) +' vent > 0 and prec(4) was > 0 => COMBUSTION')
-
-            """si vent > 0 and pas d'historique (prec(4) was None) => COMBUSTION"""
-            condition = '((prec is None) or (prec.watt2 is None))'
-            if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = PHASE_COMBUSTION
-                db.session.commit()
-                logger.debug(str(entry.timestamp) +' si vent > 0 and pas dhistorique (prec(4) was None) => COMBUSTION')
-            
-        if entry.watt2 == 0: #watt vent primaire
-            """si vent = 0 and prec(4) was combustion => MAINTIEN"""
-            condition = '((prec is not None) and (prec.phase is 6))'
-            if entry.at_least_one_prec_verify_condition(5, condition):
-                entry.phase = PHASE_MAINTIEN
-                db.session.commit()
-                logger.debug(str(entry.timestamp) +' si vent = 0 and prec(4) was combustion => MAINTIEN')
-            else:
-                """si vent = 0 and prec(4) was Maintien => MAINTIEN"""
-                condition = '((prec is not None) and (prec.phase is 8))'
-                if entry.at_least_one_prec_verify_condition(6, condition):
-                    entry.phase = PHASE_MAINTIEN
-                    db.session.commit()
-                    logger.debug(str(entry.timestamp) +' si vent = 0 and prec(4) was combustion => MAINTIEN')
- 
-    else: #(entry.phase is None)
-        entry.phase = PHASE_UNDEFINED
-        db.session.commit()
-        logger.debug(str(entry.timestamp) +' '+PhaseName[PHASE_UNDEFINED])
-    
     
 if __name__ == '__main__':
     

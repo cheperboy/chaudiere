@@ -14,17 +14,15 @@ print 'ENVNAME : '+envname
 
 """Base configuration."""
 APP_NAME = "Chaudiere"
-SECRET_KEY = os.getenv('SECRET_KEY', default='my_secret')
+SECRET_KEY = os.getenv('SECRET_KEY', default='lkdsjfiozefkdv23168761JGDZYGU')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 WTF_CSRF_ENABLED = False
-PORT = 5007
-
 
 #detect env from filesystem location (Proc/Dev)
 if envname == 'Dev' :
     """Development configuration."""
     APP_NAME += ' Dev' 
-#    APP_BASE_URL = 'http://192.168.0.70:' + str(PORT) + '/'
+    PORT = 5007
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
@@ -35,6 +33,7 @@ if envname == 'Dev' :
     
 elif envname == 'Prod':
     """Production configuration."""
+    PORT = 5008
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     BCRYPT_LOG_ROUNDS = 13
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
@@ -49,6 +48,7 @@ elif envname == 'flask-dev' :
     """Windows Development configuration."""
     print 'db path '+os.path.join(projectpath + '\db\\', 'chaudiere.db')
 
+    PORT = 5007
     APP_NAME += ' Win Dev'
     APP_BASE_URL = 'http://localhost:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(

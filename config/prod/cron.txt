@@ -1,2 +1,5 @@
-# |-- Archive minute / hour every 10 minutes ------
-*/10 * * * * /home/pi/Envs/prodti2/bin/python /home/pi/Production/teleinfo-chart/teleinfoapp/teleinfo_archive.py --archive_hour 2>&1
+# Every even minute : archive_minute.py
+*/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/chaudiereapp/scripts/archive_minute.py
+
+# Every odd minute : process_phase.py
+1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/chaudiereapp/scripts/process_phase.py

@@ -67,8 +67,6 @@ class ChaudiereBase(db.Model):
     def get(self, ATTR_ID):
         return getattr(self, InputDb[ATTR_ID])
 
-    
-    
     def tolist(self):
         """Return Object data in list format"""
         return [

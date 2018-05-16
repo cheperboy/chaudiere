@@ -11,6 +11,11 @@ db = SQLAlchemy()
 from flask_caching import Cache
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 
+from flask_wtf.csrf import CSRFProtect
+csrf = CSRFProtect()
+
+from flask_datepicker import datepicker
+
 # app import
 from app.charts import charts_blueprint
 from app.webapi import webapi
@@ -18,6 +23,8 @@ from app.webapi import webapi
 import logging, os
 from logging.handlers import RotatingFileHandler
 
+def create_app():
+    app = Flask(__name__)
 
 def create_app():
     app = Flask(__name__,\
@@ -31,9 +38,14 @@ def create_app():
     # set up extensions
     cache.init_app(app)
     db.init_app(app)
+    datepicker(app)
     
+    # blueprints
     app.register_blueprint(charts_blueprint)
     app.register_blueprint(webapi)
+    
+    #form csrf
+    csrf.init_app(app)
 
     # Scss
     assets = Environment(app)

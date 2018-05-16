@@ -21,8 +21,9 @@ WTF_CSRF_ENABLED = False
 #detect env from filesystem location (Proc/Dev)
 if envname == 'Dev' :
     """Development configuration."""
+    TEMPLATES_AUTO_RELOAD = True
     APP_NAME += ' Dev' 
-    PORT = 5007
+    PORT = 5008
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
@@ -33,7 +34,7 @@ if envname == 'Dev' :
     
 elif envname == 'Prod':
     """Production configuration."""
-    PORT = 5008
+    PORT = 5007
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     BCRYPT_LOG_ROUNDS = 13
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))

@@ -2,46 +2,36 @@
 {% include "_navbar.html" %}
 	<div class="container">	
 
-{% if staticchart %}
-	<div class="container-fluid">
-	  <div class="row">
-		  <div class="container"  style="height: 400px" id="staticchart-container"></div>
+	{% if staticchart %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container"  style="height: 400px" id="staticchart-container"></div>
+			</div>
 		</div>
-	</div>
-{% endif %}
-{% if staticchartraw %}
-	<div class="container-fluid">
-	  <div class="row">
-		  <div class="container"  style="height: 800px" id="staticchartraw-container"></div>
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container">{{ chart_legend.text|safe}}</div>
+			</div>
 		</div>
-	</div>
-{% endif %}
-{% if staticchartminute %}
-	<div class="container-fluid">
-	  <div class="row">
-		  <div class="container"  style="height: 800px" id="staticchartminute-container"></div>
+	{% endif %}
+	{% if staticchartraw %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container"  style="height: 800px" id="staticchartraw-container"></div>
+			</div>
 		</div>
-	</div>
-{% endif %}
-{% if mylivechart %}
-	<div class="container-fluid">
-	  <div class="row">
-		  <div class="container-fluid" id="mylivechart-container"></div>
-		</div>
-	</div>
-{% endif %}
+	{% endif %}
 	</div>    
 	<hr>
  
-  
 <script type="text/javascript">
 	// Those parameters are :
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
 	var JSbaseURL = "{{ baseURL.value }}";
-
 	var JShistory_date = "{{ history_date }}";
 	var JShistory_hours = "{{ history_hours }}";
+ 
  </script>
-
+ 
 {% include "_footer.html" %}

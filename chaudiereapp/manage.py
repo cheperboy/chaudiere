@@ -28,7 +28,7 @@ def create_db():
     db.session.commit()
 
 @cli.command()
-def copy_prod_db_to_dev():
+def update_data():
     """ copy_prod_db_to_dev """
     if config.ENVNAME == 'Dev' :
         db.drop_all()

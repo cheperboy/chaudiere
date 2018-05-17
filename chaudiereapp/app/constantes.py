@@ -67,8 +67,8 @@ ChartLabel = {
     "showInLegend": False
     }
 
-""" ChartSubtitle """    
-ChartSubtitle = {
+""" ChartLegend """    
+ChartLegend = {
     "text": '<b>Phases</b> : ',
     "useHTML": True,
     "verticalAlign": 'top',
@@ -76,7 +76,7 @@ ChartSubtitle = {
     }
         
 for key in PhaseName.keys():
-    ChartSubtitle['text'] += '<span style="background-color: '+PhaseColor[key]+\
+    ChartLegend['text'] += '<span style="background-color: '+PhaseColor[key]+\
                                             '; border-radius: 3px; padding: 2px 6px; margin: 4px 5px;">' +\
                                             PhaseName[key] + '</span>'
 

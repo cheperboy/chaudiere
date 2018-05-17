@@ -1,10 +1,11 @@
-def pretty_date(time=False):
+from datetime import datetime
+
+def pretty_date_ago(time=False):
     """
     Get a datetime object or a int() Epoch timestamp and return a
     pretty string like 'an hour ago', 'Yesterday', '3 months ago',
     'just now', etc
     """
-    from datetime import datetime
     now = datetime.now()
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
@@ -40,3 +41,14 @@ def pretty_date(time=False):
     if day_diff < 365:
         return str(day_diff / 30) + " months ago"
     return str(day_diff / 365) + " years ago"
+    
+def pretty_date(given_date=False):
+    if type(given_date) is int:
+        dt = datetime.fromtimestamp(given_date)
+    elif isinstance(given_date,datetime):
+        dt = given_date
+    elif not given_date:
+        return ''
+    return('{0}/{1} {2}h{3}'.format(str(dt.day).zfill(2), str(dt.month).zfill(2), str(dt.hour).zfill(2), str(dt.minute).zfill(2)))
+        
+         

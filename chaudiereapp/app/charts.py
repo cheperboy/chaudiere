@@ -5,13 +5,14 @@ import urllib, requests
 import json
 from datetime import datetime, timedelta
 from random import random
-import util, pprint
+import pprint
 import copy
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
 from app.auth import auth
 from app.models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
 from app.constantes import *
+from util import *
 
 import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
@@ -274,12 +275,7 @@ static_conf_minute_full = {
 static_conf_minute = {
     "chart": {"defaultSeriesType": 'spline'},
     "subtitle": {
-        "text": '<span style="background-color: #55BF3B; border-radius: 2px; padding: 1px 2px;">' +
-              'Combustion' +
-          '</span>' +
-          '<span style="background-color: #DDDF0D; border-radius: 2px; padding: 1px 2px;">' +
-              '10-20' +
-          '</span>',
+        "text": '',
         "useHTML": True,
         "verticalAlign": 'top',
         "y": 40,
@@ -413,11 +409,9 @@ def raw(hour_length):
     lastRecorddate = Chaudiere.last(Chaudiere).dt
     debugData = None
     return render_template('index.html', 
-                            baseURL=baseURL, 
                             staticchartraw=True, 
                             staticchartminute=True, 
-                            staticchartraw_conf = False,
-                            lastRecordAgo=util.pretty_date(lastRecorddate),
+                            lastRecordAgo=util.pretty_date_ago(lastRecorddate),
                             debugData=debugData)
 
 """
@@ -439,11 +433,11 @@ params for date, hours : length
 @charts_blueprint.route('/history/<string:year>/<string:month>/<string:day>/<string:hour>/<string:minute>/<string:hours>', methods=['GET'])
 def history(year, month, day, hour, minute, hours):
     date = year+'/'+month+'/'+day+'/'+hour+'/'+minute
-    return render_template('index.html', 
-                            baseURL=baseURL, 
-                            staticchartraw=False,
+    return render_template('index.html',
+                            baseURL=baseURL,
                             history_date = date,
                             history_hours = hours,
+                            chart_legend=ChartLegend,
                             staticchart=True,
                             history_form_data=history_form_data())
 
@@ -453,15 +447,16 @@ def now(hours):
     dt = datetime.now().replace(second=0, microsecond=0)
     dt_end = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
     return render_template('index.html',
-                            baseURL=baseURL, 
+                            baseURL=baseURL,
                             history_date = dt_end,
                             history_hours = hours,
+                            chart_legend=ChartLegend,
                             staticchart=True,
                             history_form_data=history_form_data())
 
 """
 return xAxis option with plptBands
-    mode : normal | history
+    mode : normal | history 
 """
 @charts_blueprint.route('/api_now', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/api_now/<int:hours>', methods=['GET'])
@@ -548,7 +543,21 @@ def create_chart(conf, entries):
     conf['series'].append(labels)
 
     """ Add Subtitle (plotbands legend) """
-    conf["subtitle"] = ChartSubtitle
+    #conf["subtitle"] = ChartLegend
 
+    """ Add Title (date begin date end) """
+    if len(entries) > 3:
+        begin = pretty_date(entries[0].dt)
+        print 'begin'+str(entries[0].dt)
+        print begin
+        end = pretty_date(entries[len(entries)-1].dt)
+        #conf["title"]["text"] = 'Monitoring Chaudière du {0} au {1}'.format(begin, end)
+        conf["title"]["text"]       = 'Monitoring Chaudière'
+        conf["subtitle"]["text"]    = ' du {0} au {1}'.format(begin, end)
+
+    else:
+        conf["title"]["text"] = 'Monitoring Chaudière'
+
+    """ Return new conf """
     return conf
      

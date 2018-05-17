@@ -3,14 +3,14 @@ import os
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/chaudiereapp
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
-envname = os.path.basename(envpath)                      # Dev
+ENVNAME = os.path.basename(envpath)                      # Dev
 """
 print 'currentpath '+currentpath
 print 'projectpath '+projectpath
 print 'envpath '+envpath
-print 'ENVNAME '+envname
+print 'ENVNAME '+ENVNAME
 """
-print 'ENVNAME : '+envname
+print 'ENVNAME : '+ENVNAME
 
 """Base configuration."""
 APP_NAME = "Chaudiere"
@@ -19,47 +19,47 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 WTF_CSRF_ENABLED = False
 
 #detect env from filesystem location (Proc/Dev)
-if envname == 'Dev' :
+if ENVNAME == 'Dev' :
     """Development configuration."""
     TEMPLATES_AUTO_RELOAD = True
     APP_NAME += ' Dev' 
     PORT = 5008
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(envpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
-        'chaudiere':         'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere.db'),
-        'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_minute.db'),
-        'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_hour.db')
+        'chaudiere':         'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere.db'),
+        'chaudiere_minute':  'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_minute.db'),
+        'chaudiere_hour':    'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_hour.db')
     }
     
-elif envname == 'Prod':
+elif ENVNAME == 'Prod':
     """Production configuration."""
     PORT = 5007
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     BCRYPT_LOG_ROUNDS = 13
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '/db/', 'app.db'))
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(envpath + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
-        'chaudiere':         'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere.db'),
-        'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_minute.db'),
-        'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '/db/', 'chaudiere_hour.db')
+        'chaudiere':         'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere.db'),
+        'chaudiere_minute':  'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_minute.db'),
+        'chaudiere_hour':    'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_hour.db')
     }
     WTF_CSRF_ENABLED = True
     
-elif envname == 'flask-dev' :
+elif ENVNAME == 'flask-dev' :
     """Windows Development configuration."""
-    print 'db path '+os.path.join(projectpath + '\db\\', 'chaudiere.db')
+    print 'db path '+os.path.join(envpath + '\db\\', 'chaudiere.db')
 
     PORT = 5007
     APP_NAME += ' Win Dev'
     APP_BASE_URL = 'http://localhost:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(
-        os.path.join(projectpath + '\db\\', 'chaudiere.db'))
+        os.path.join(envpath + '\db\\', 'chaudiere.db'))
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(projectpath + '\db\\', 'app.db'))
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(envpath + '\db\\', 'app.db'))
     SQLALCHEMY_BINDS = {
-        'chaudiere':         'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere.db'),
-        'chaudiere_minute':  'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere_minute.db'),
-        'chaudiere_hour':    'sqlite:///' + os.path.join(projectpath + '\db\\', 'chaudiere_hour.db')
+        'chaudiere':         'sqlite:///' + os.path.join(envpath + '\db\\', 'chaudiere.db'),
+        'chaudiere_minute':  'sqlite:///' + os.path.join(envpath + '\db\\', 'chaudiere_minute.db'),
+        'chaudiere_hour':    'sqlite:///' + os.path.join(envpath + '\db\\', 'chaudiere_hour.db')
     }
     
 

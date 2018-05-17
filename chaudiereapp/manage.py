@@ -9,6 +9,7 @@ from flask.cli import FlaskGroup
 
 from app import create_app, db
 from app.models import Chaudiere, ChaudiereMinute
+import config
 
 
 def create_my_app(info):
@@ -27,9 +28,19 @@ def create_db():
     db.session.commit()
 
 @cli.command()
-def drop_db():
-    """Drops the db tables."""
-    db.drop_all()
+def copy_prod_db_to_dev():
+    """ copy_prod_db_to_dev """
+    if config.ENVNAME == 'Dev' :
+        db.drop_all()
+        db.create_all()
+        db.session.commit()
+        os.system("sudo rm -f /home/pi/Dev/db/chaudiere_minute.db")
+        os.system("sudo rm -f /home/pi/Dev/db/chaudiere.db")
+        os.system("cp /home/pi/Prod/db/chaudiere.db /home/pi/Dev/db/")
+        os.system("cp /home/pi/Prod/db/chaudiere_minute.db /home/pi/Dev/db/")
+        print 'Done'
+    else:
+        print 'Aborted. Env is '+config.ENVNAME
 
 @cli.command()
 def create_data():

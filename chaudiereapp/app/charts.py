@@ -362,7 +362,6 @@ static_conf_minute = {
     ]
 }
 
-
 live_conf = {
         "chart": { 
             "renderTo": 'data-container',
@@ -454,10 +453,8 @@ def now(hours):
                             staticchart=True,
                             history_form_data=history_form_data())
 
-"""
-return xAxis option with plptBands
-    mode : normal | history 
-"""
+
+""" """
 @charts_blueprint.route('/api_now', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/api_now/<int:hours>', methods=['GET'])
 def api_now(hours):

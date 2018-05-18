@@ -18,6 +18,7 @@ from flask_datepicker import datepicker
 
 # app import
 from app.charts import charts_blueprint
+from app.monitor import monitor_blueprint
 from app.webapi import webapi
 
 import logging, os
@@ -43,6 +44,7 @@ def create_app():
     # blueprints
     app.register_blueprint(charts_blueprint)
     app.register_blueprint(webapi)
+    app.register_blueprint(monitor_blueprint)
     
     #form csrf
     csrf.init_app(app)

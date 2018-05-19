@@ -143,10 +143,18 @@ def update_phase(entry):
             entry.phase = PHASE_MAINTIEN
             db.session.commit()
 
-        if entry.temp0 < 40: #temp is too low
-            """si temp_chaudiere < 40 => ARRET"""
+        if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_ALERT and\
+           entry.get(TEMP_CHAUDIERE) >= TEMP_CHAUDIERE_FAILURE: 
+            """si TEMP_CHAUDIERE_FAILURE < temp_chaudiere < TEMP_CHAUDIERE_ALERT => ALERT """
+            entry.phase = PHASE_ALERT
+            db.session.commit()
+
+        # Alert confirmed : Failure
+        if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE: 
+            """si TEMP_CHAUDIERE_FAILURE < temp_chaudiere < TEMP_CHAUDIERE_ALERT => ALERT """
             entry.phase = PHASE_ARRET
             db.session.commit()
+
     
     else: #(entry.phase is None)
         entry.phase = PHASE_UNDEFINED

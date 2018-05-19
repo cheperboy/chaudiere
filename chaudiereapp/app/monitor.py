@@ -70,7 +70,17 @@ def monitor():
                          .filter(ChaudiereMinute.dt >= dt_begin)\
                          .filter(ChaudiereMinute.dt <= dt_end)\
                          .all()
+    dt_begin = dt_end - timedelta(days=14)
+    entries_2week = ChaudiereMinute.query\
+                         .order_by(ChaudiereMinute.dt)\
+                         .filter(ChaudiereMinute.dt >= dt_begin)\
+                         .filter(ChaudiereMinute.dt <= dt_end)\
+                         .all()
     min_value_of_the_day = min_value(entries_day)
-    min_value_of_the_week = min_value(entries_week)
-    response = make_response('min value of day :'+str(min_value_of_the_day)+' <br>min value of week :'+str(min_value_of_the_week))
+    min_value_of_last_week = min_value(entries_week)
+    min_value_of_last_2week = min_value(entries_2week)
+    response = make_response('min value of day :'               +str(min_value_of_the_day)+\
+                             ' <br>min value of last week :'    +str(min_value_of_last_week)+\
+                             ' <br>min value of last 2 weeks :' +str(min_value_of_last_2week)+\
+                             ' <br>TEMP_CHAUDIERE_MIN :' +str(TEMP_CHAUDIERE_MIN))
     return response

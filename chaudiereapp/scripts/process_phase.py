@@ -32,6 +32,7 @@ from app import db
 from app.models import ChaudiereMinute
 from app.constantes import *
 from app import create_app
+from emails import Send_Mail_Chaudiere_Alert
 app = create_app().app_context().push()
 
 chaudierescript = os.path.join(projectpath, 'script')
@@ -110,20 +111,14 @@ def process_phase(mode='normal', hours=None, date=None):
         # entry should not be missing, test just in case and create missing entry
         if entry is None:
             logger.error('create missing ChaudiereMinute entry')
-            ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None)
+            ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
         update_phase(entry)
+        update_change(entry)
+        process_alerts(entry)
         begin = begin + timedelta(minutes=1)
     logger.info('Done')
 
-"""
-recupere dans la base Logs l'ensenmble des objets dont la date est comprise entre 
-begin et (begin + 1 minute)
-Calcule des moyennes et enregistre
-ALGO
-Si vent = 0 => Maintien
-Si vent > 0 => combustion
-"""
 def update_phase(entry):
     if entry.get(ALLUMAGE) is not None and\
        entry.get(VENT_PRIMAIRE) is not None and\
@@ -155,10 +150,34 @@ def update_phase(entry):
             entry.phase = PHASE_ARRET
             db.session.commit()
 
-    
     else: #(entry.phase is None)
         entry.phase = PHASE_UNDEFINED
         db.session.commit()
+
+"""
+Met a jour le champ "chaudiere.change" 
+"""
+def update_change(entry):
+    #condition_prec_has_same_phase = '((prec is not None) and (prec.phase == '+str(entry.get(PHASE))+' or prec.phase == PHASE_UNDEFINED ))'
+    if entry.prec() is not None and entry.prec().phase != entry.phase:
+        entry.change = True
+    else:
+        entry.change = False
+    db.session.commit()
+
+"""
+Alert if:
+Change is True 
+    and phase == ALERT 
+    and no one of precs was ALERT # gestion des cas ou on passe de UNDEFINED a ALERT 
+"""
+def process_alerts(entry):
+    condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ALERT)+' ))'
+    if entry.change is True and\
+      entry.phase == PHASE_ALERT and\
+      all_prec_verify_condition(10, condition_precs_was_not_alert):
+        Send_Mail_Chaudiere_Alert(entry.dt)
+
 
     
 if __name__ == '__main__':

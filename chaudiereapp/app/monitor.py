@@ -82,5 +82,7 @@ def monitor():
     response = make_response('min value of day :'               +str(min_value_of_the_day)+\
                              ' <br>min value of last week :'    +str(min_value_of_last_week)+\
                              ' <br>min value of last 2 weeks :' +str(min_value_of_last_2week)+\
-                             ' <br>TEMP_CHAUDIERE_MIN :' +str(TEMP_CHAUDIERE_MIN))
+                             ' <br>TEMP_CHAUDIERE_ALERT :'      +str(TEMP_CHAUDIERE_ALERT)+\
+                             ' <br>TEMP_CHAUDIERE_FAILURE :'    +str(TEMP_CHAUDIERE_FAILURE))
     return response
+    

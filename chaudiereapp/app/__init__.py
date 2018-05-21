@@ -14,6 +14,9 @@ cache = Cache(config={'CACHE_TYPE': 'simple'})
 from flask_wtf.csrf import CSRFProtect
 csrf = CSRFProtect()
 
+from flask_mail import Mail
+mail = Mail()
+
 from flask_datepicker import datepicker
 
 # app import
@@ -23,9 +26,6 @@ from app.webapi import webapi
 
 import logging, os
 from logging.handlers import RotatingFileHandler
-
-def create_app():
-    app = Flask(__name__)
 
 def create_app():
     app = Flask(__name__,\
@@ -40,6 +40,7 @@ def create_app():
     cache.init_app(app)
     db.init_app(app)
     datepicker(app)
+    mail.init_app(app)
     
     # blueprints
     app.register_blueprint(charts_blueprint)

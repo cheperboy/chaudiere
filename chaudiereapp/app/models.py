@@ -21,37 +21,39 @@ def timestamp_to_datetime(ts):
 
 class ChaudiereBase(db.Model):
     __abstract__ = True
-    id = db.Column(db.Integer, primary_key=True)
-    dt = db.Column(db.DateTime)
-    temp0 = db.Column(db.Float)
-    temp1 = db.Column(db.Float)
-    temp2 = db.Column(db.Float)
-    watt0 = db.Column(db.Integer)
-    watt1 = db.Column(db.Integer)
-    watt2 = db.Column(db.Integer)
-    watt3 = db.Column(db.Integer)
-    phase = db.Column(db.Integer)
-    event = db.Column(db.String(100))
+    id      = db.Column(db.Integer, primary_key=True)
+    dt      = db.Column(db.DateTime)
+    temp0   = db.Column(db.Float)
+    temp1   = db.Column(db.Float)
+    temp2   = db.Column(db.Float)
+    watt0   = db.Column(db.Integer)
+    watt1   = db.Column(db.Integer)
+    watt2   = db.Column(db.Integer)
+    watt3   = db.Column(db.Integer)
+    phase   = db.Column(db.Integer)
+    change  = db.Column(db.Boolean)
+    event   = db.Column(db.String(100))
 
-    def __init__(self, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
-        self.dt    = dt
-        self.temp0 = temp0
-        self.temp1 = temp1
-        self.temp2 = temp2
-        self.watt0 = watt0
-        self.watt1 = watt1 
-        self.watt2 = watt2
-        self.watt3 = watt3
-        self.phase = phase
-        self.event = event
+    def __init__(self, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
+        self.dt     = dt
+        self.temp0  = temp0
+        self.temp1  = temp1
+        self.temp2  = temp2
+        self.watt0  = watt0
+        self.watt1  = watt1 
+        self.watt2  = watt2
+        self.watt3  = watt3
+        self.phase  = phase
+        self.change = change
+        self.event  = event
 
     def __repr__(self):
         return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.dt, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
 
     @classmethod
-    def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event):
+    def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
         try:
-            entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, event)
+            entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event)
             db.session.add(entry)
             db.session.commit()
             ret = str(entry)
@@ -79,6 +81,7 @@ class ChaudiereBase(db.Model):
             self.watt2,
             self.watt3,
             self.phase,
+            self.change,
             self.event,
             self.id
         ]

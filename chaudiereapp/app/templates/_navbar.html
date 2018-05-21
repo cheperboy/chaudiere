@@ -10,6 +10,7 @@
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=6) }}">6 heures</a></li>
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=12) }}">12 heures</a></li>
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=73) }}">3 jours</a></li>
+		<li class="nav-item"><a class="nav-link" href="{{ url_for('monitor.monitor') }}">Monitor</a></li>
     </ul>
     <form class="form-inline my-2 my-lg-0" action="/charts/history_form" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

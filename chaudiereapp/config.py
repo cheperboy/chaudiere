@@ -18,6 +18,14 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='lkdsjfiozefkdv23168761JGDZYGU')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 WTF_CSRF_ENABLED = False
 
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'chaudiere.montlevic@gmail.com' #os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = 'Montlevic36' #os.environ.get('MAIL_PASSWORD')
+
 #detect env from filesystem location (Proc/Dev)
 if ENVNAME == 'Dev' :
     """Development configuration."""
@@ -31,6 +39,10 @@ if ENVNAME == 'Dev' :
         'chaudiere_minute':  'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_minute.db'),
         'chaudiere_hour':    'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_hour.db')
     }
+    # Users emails
+    USERS = ['matthieujouve']
+    USERS_EMAILS = list(map(lambda x: x+'@gmail.com', USERS))
+
     
 elif ENVNAME == 'Prod':
     """Production configuration."""
@@ -44,6 +56,10 @@ elif ENVNAME == 'Prod':
         'chaudiere_hour':    'sqlite:///' + os.path.join(envpath + '/db/', 'chaudiere_hour.db')
     }
     WTF_CSRF_ENABLED = True
+
+    # Users emails
+    USERS = ['matthieujouve']
+    USERS_EMAILS = list(map(lambda x: x+'@gmail.com', USERS))
     
 elif ENVNAME == 'flask-dev' :
     """Windows Development configuration."""

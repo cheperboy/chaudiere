@@ -140,7 +140,7 @@ def update_phase(entry):
 
         # Failure
         if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE: 
-            """si TEMP_CHAUDIERE_FAILURE < temp_chaudiere < TEMP_CHAUDIERE_ALERT => ALERT """
+            """si temp_chaudiere < TEMP_CHAUDIERE_FAILURE => ALERT """
             entry.phase = PHASE_ARRET
             db.session.commit()
 

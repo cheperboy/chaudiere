@@ -13,7 +13,6 @@ PHASE_COMBUSTION = 6
 PHASE_ALLUMAGE   = 7
 PHASE_MAINTIEN   = 8
 PHASE_ARRET      = 9
-PHASE_ALERT      = 10
 
 PhaseColor = {
     PHASE_UNDEFINED  : '#f2f2f2', # grey
@@ -21,7 +20,6 @@ PhaseColor = {
     PHASE_ALLUMAGE   : '#ffff99', # yellow
     PHASE_MAINTIEN   : '#e6ffe6', # green
     PHASE_ARRET      : '#ff4d4d', # red
-    PHASE_ALERT      : '#ffe6e6', # light red
     }
 PhaseName = {
     PHASE_UNDEFINED  : 'Non defini',  
@@ -29,7 +27,6 @@ PhaseName = {
     PHASE_ALLUMAGE   : 'Allumage',
     PHASE_MAINTIEN   : 'Maintien de feu',
     PHASE_ARRET      : 'Arret',
-    PHASE_ALERT      : 'Alert',
     }
 
 """

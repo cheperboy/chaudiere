@@ -138,13 +138,7 @@ def update_phase(entry):
             entry.phase = PHASE_MAINTIEN
             db.session.commit()
 
-        if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_ALERT and\
-           entry.get(TEMP_CHAUDIERE) >= TEMP_CHAUDIERE_FAILURE: 
-            """si TEMP_CHAUDIERE_FAILURE < temp_chaudiere < TEMP_CHAUDIERE_ALERT => ALERT """
-            entry.phase = PHASE_ALERT
-            db.session.commit()
-
-        # Alert confirmed : Failure
+        # Failure
         if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE: 
             """si TEMP_CHAUDIERE_FAILURE < temp_chaudiere < TEMP_CHAUDIERE_ALERT => ALERT """
             entry.phase = PHASE_ARRET
@@ -172,9 +166,9 @@ Change is True
     and no one of precs was ALERT # gestion des cas ou on passe de UNDEFINED a ALERT 
 """
 def process_alerts(entry):
-    condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ALERT)+' ))'
+    condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ARRET)+' ))'
     if entry.change is True and\
-      entry.phase == PHASE_ALERT and\
+      entry.phase == PHASE_ARRET and\
       all_prec_verify_condition(10, condition_precs_was_not_alert):
         Send_Mail_Chaudiere_Alert(entry.dt)
 

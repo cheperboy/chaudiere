@@ -71,7 +71,7 @@ def find_datetime_end(date):
     while ((entry is None) and (date < last_chaudiere_date)):
         date = date + timedelta(minutes=1)
         entry = Chaudiere.get_by_approx_date(Chaudiere, date)
-    print ('Chaudiere.dt end:'+ str(entry.dt))
+    logger.debug('Chaudiere.dt end:'+ str(entry.dt))
     return entry.dt
 
 
@@ -82,12 +82,12 @@ def process_archive_minute(mode='normal', hours=None, date=None):
     if mode is 'normal':
         # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
         if ChaudiereMinute.last(ChaudiereMinute) == None:
-            print ('ChaudiereMinute.last(ChaudiereMinute) == None:')
+            logger.debug('ChaudiereMinute.last(ChaudiereMinute) == None:')
             begin = Chaudiere.first(Chaudiere).dt
 
         # else ChaudiereMinute is NOT empty then we start with the last ChaudiereMinute record (newest)
         else:
-            print ('ChaudiereMinute.last(ChaudiereMinute) != None:')
+            logger.debug('ChaudiereMinute.last(ChaudiereMinute) != None:')
             begin = (ChaudiereMinute.last(ChaudiereMinute).dt + timedelta(minutes=1))
 
         # we finish with the last Chaudiere record (replace second to zero to avoid incomplete current minute)
@@ -110,10 +110,12 @@ def process_archive_minute(mode='normal', hours=None, date=None):
     
     begin = begin.replace(second=0, microsecond=0)
     end = end.replace(second=0, microsecond=0)
-    logger.info('Entries to archive ' + str(begin) + ' -> ' + str(end))
     
     if ((begin + timedelta(minutes=1)) > end):
-        logger.info('Waiting more records')
+        logger.info('Starting From '+ str(begin) + ' ...Waiting more records')
+    else:
+        logger.info('Archiving From '+ str(begin) +' To ' + str(end))
+
     # while some old Logs to Archive
     while ((begin + timedelta(minutes=1)) <= end):
         record_minute(begin)
@@ -127,10 +129,7 @@ les dates begin et (begin + 1 minute)
 Calcule des moyennes et enregistre dans une entry ChaudiereMinute
 '''
 def record_minute(begin):
-    logger.debug('record minute')
     end = begin + timedelta(minutes=1)
-    logger.info('Archiving minute ' + str(begin) + ' -> ' + str(end))
-    #print('minute ' + str(begin) + ' -> ' + str(end))
     temp0 = 0.0
     temp1 = 0.0
     watt1 = 0
@@ -139,7 +138,7 @@ def record_minute(begin):
     # get logs
     logs = Chaudiere.get_between_date(Chaudiere, begin, end)
     nb_logs = len(logs)
-    logger.debug('nb_logs=' + str(nb_logs))
+    logger.info('minute ' + str(begin)+' logs :'+nb_logs)
     if nb_logs > 0:
         for log in logs:
             if (log.temp0 is not None): temp0 += float(log.temp0)
@@ -154,11 +153,10 @@ def record_minute(begin):
         watt2 = watt2 / nb_logs
         watt3 = watt3 / nb_logs
         # Save to db
-        ret = ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, watt1, watt2, watt3, None, None, None)
-        logger.debug('ret = ' + str(ret))
+        ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, watt1, watt2, watt3, None, None, None)
     # else if no log to process, we still create an entry with None fields
     else:
-        ret = ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
+        ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
 
 if __name__ == '__main__':
     
@@ -169,7 +167,7 @@ if __name__ == '__main__':
     parser.add_argument('--hours',                  type=int,             default=None,   help='number of hour to rework')
     parser.add_argument('--date',                                         default=None,   help='end date to rework YYYY/MM/DD/HH')
     args = parser.parse_args()
-    print(args)
+    #print(args)
     if args.rework_from_now:
         if not args.hours: 
             print('Argument error : --hours must be set')

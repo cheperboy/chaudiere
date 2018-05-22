@@ -62,12 +62,11 @@ def find_last_phase():
     dt = ChaudiereMinute.last(ChaudiereMinute).dt
     phase = None
     while (phase is None):
-        logger.info(str(dt))
         dt = dt - timedelta(minutes=1)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, dt)
         if entry is not None:
             phase = ChaudiereMinute.get_by_datetime(ChaudiereMinute, dt).phase
-    logger.info('date : '+str(dt))
+    logger.debug('last phase found is at : '+str(dt))
     return dt
         
 """
@@ -79,11 +78,10 @@ def find_date_end(date):
     while ((entry is None) and (date < last_ch_minute_date)):
         date = date + timedelta(minutes=1)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, date)
-    print ('ChaudiereMinute.dt end:'+ str(entry.dt))
+    logger.debug('found ChaudiereMinute at (dt end):'+ str(entry.dt))
     return entry.dt
         
 def process_phase(mode='normal', hours=None, date=None):
-    logger.info('process_phase()')
     # determine begin and end date depending on given *mode*
     if mode is 'normal':
         begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
@@ -100,24 +98,24 @@ def process_phase(mode='normal', hours=None, date=None):
     if begin is None:
         logger.info('No records')
         return
-    logger.info('Processing Phase From' + str(begin) + ' To ' + str(end))
     
-    if ((begin + timedelta(minutes=1)) > end):
-        logger.info('Waiting more records')
-    
+    if ((begin + timedelta(minutes=1)) >= end):
+        logger.info('Strating from '+str(begin)+' ...Waiting more records')
+    else:
+        logger.info('processing phase From ' + str(begin) + ' To ' + str(end))
+
     # while some entries to process
     while ((begin + timedelta(minutes=1)) <= end):
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin) 
         # entry should not be missing, test just in case and create missing entry
         if entry is None:
-            logger.error('create missing ChaudiereMinute entry')
+            logger.warning('create missing ChaudiereMinute entry (should not be the case')
             ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
         update_phase(entry)
         update_change(entry)
         process_alerts(entry)
         begin = begin + timedelta(minutes=1)
-    logger.info('Done')
 
 def update_phase(entry):
     if entry.get(ALLUMAGE) is not None and\
@@ -170,6 +168,7 @@ def process_alerts(entry):
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
+        logger.info('Sending email alert for entry :'+str(entry.dt))
         Send_Mail_Chaudiere_Alert(entry.dt)
 
 
@@ -215,3 +214,4 @@ if __name__ == '__main__':
     else:
         print('mode=normal')
         process_phase(mode='normal')
+    logger.info('Done')

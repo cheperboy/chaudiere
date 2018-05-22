@@ -101,7 +101,7 @@ def api_get_temp_values():
     if not temp1:
         logger.critical("temp2 Fail, returning wrong value")
         temp2 = DEFAULT_SENSOR_VALUE
-    logger.info(str("%.3f" % temp0)+" "+str("%.3f" % temp1)+" "+str("%.3f" % temp2))
+    logger.debug(str("%.3f" % temp0)+" "+str("%.3f" % temp1)+" "+str("%.3f" % temp2))
     return( [temp0, temp1, temp2] )
 
 def main():

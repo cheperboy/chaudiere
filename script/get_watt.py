@@ -41,7 +41,6 @@ logger = logging.getLogger(__name__)
 """
 Config for special watt buffer
 """
-
 def checkCRC(values):
     sum = 0
     try:
@@ -67,8 +66,8 @@ power on usb : sudo uhubctl -p 2 -a 1
 delay
 cat Prog port
 """
-def restart_serial_port_old():
-    logger.debug('restart_serial_port')
+def power_off_serial_port():
+    logger.debug('power_off_serial_port')
     try:
         command = 'sudo /home/pi/Dev/chaudiere/script/usb/uhubctl/uhubctl -p 2 -a 0'
         logger.debug('executing '+ command)
@@ -82,15 +81,15 @@ def restart_serial_port_old():
     except SerialException:
         logger.error('SerialException while executing cat /dev/ttyA*, ', exc_info=True)
 
+"""
+Execute cat command on serial ports with a timeout of 8 seconds
+"""
 def restart_serial_port():
-    logger.debug('restart_serial_port')
+    logger.info('restarting serial port')
     try:
         command = ' timeout 8 cat '+ prog_port()
-        logger.debug('executing '+ command)
         os.system(command)
-
         command = ' timeout 8 cat '+ native_port()
-        logger.debug('executing '+ command)
         os.system(command)
     except SerialException:
         logger.error('SerialException while executing command', exc_info=True)
@@ -102,12 +101,12 @@ delete the N first value that are not relevant (first reading from arduino ADC)
 def api_get_watt_values():
     values = get_watt_values()
     if not values:
-        logger.critical("get watt Fail, returning wrong value")
+        logger.warning("get watt failed, returning default sensor value")
         values = []
         for n in range(0, WATT_SENSOR_SIZE):
             values.append(DEFAULT_SENSOR_VALUE)
     return (values)
-
+ 
 def main():
     while True:
         values = get_watt_values()
@@ -115,7 +114,7 @@ def main():
 
 def close_port(port, caller):
     try:
-        logger.info('Closing port '+ port.name)
+        #logger.debug('Closing port '+ port.name)
         port.close()       
     except Exception as e:
         logger.error('Cant close Port : caller '+str(caller)+'({0})'.format(e))
@@ -123,13 +122,13 @@ def close_port(port, caller):
 def get_watt_values():
     try:
         checkedValues = read_serial_port()
-        logger.debug('ecretage')
         #convert values to int and to 0 if sensor value < MIN_VALUE
         if checkedValues:
             values = [0 if int(x)<MIN_VALUE else int(x) for x in checkedValues]
-        logger.debug(values)
-        return values 
-        
+            #logger.debug(values)
+            return values
+        else:
+            return False
     except Exception as e:
         logger.warning("General Exception 1 ({0})".format(e))
         return False
@@ -160,7 +159,6 @@ def read_serial_port():
             #read data and close port
             data = port.readline()
             close_port(port, 2)
-            logger.debug('raw data : '+str(data))
         #end of while
 
         #If no data is set restart serial port (for next call) and return false
@@ -172,20 +170,20 @@ def read_serial_port():
         else:
             values = data.split(';')
             values.pop() #remove EOL \n\r
-            #logger.debug(values)
             crc = checkCRC(values)
-            logger.debug("port "+ str(PORT) +" "+ "values "+ str(values) +" CRC "+ str(crc))
-            if crc == False:
-                logger.warning("CRC Error")
-                return (False)
-            return (values)
+            if crc == True:
+                logger.debug(str(PORT) +" "+ str(values) +" CRC "+ str(crc))
+                return values
+            else:
+                logger.warning(str(PORT) +" "+ str(values) +" CRC "+ str(crc))
+                return False
     
     except serial.SerialException as e:
         logger.error('Exception when reading port', exc_info=True)
         close_port(port, 4)
         return False
     except Exception as e:
-        logger.warning("General Exception 2 ({0})".format(e))
+        logger.error("General Exception 2 ({0})".format(e))
         return False
 
 if __name__ == '__main__':

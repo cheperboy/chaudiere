@@ -37,15 +37,15 @@ def get_temp():
 
 def main():
     while True:
-        watts = get_watt()
-        temps = get_temp()
-        dt = datetime.datetime.now()
-        ret = createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
-        if ret:
-            logger.info(str(dt)+" createSensorRecord : Ok")
-        else:
-            logger.warning("createSensorRecord : Fail")
-        time.sleep(2)
+        try:
+            watts = get_watt()
+            temps = get_temp()
+            logger.info('createSensorRecord: watts '+str(watts)+' temps '+ str(temps))
+            dt = datetime.datetime.now()
+            createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
+            time.sleep(2)
+        except IndexError:
+            logger.error('IndexError ', exc_info=True)
 
 if __name__ == '__main__':
     # CALL MAIN

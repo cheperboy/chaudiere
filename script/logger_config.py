@@ -11,7 +11,8 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(currentpath, 'log')
-logfile_name = os.path.join(logfile_base, 'script_chaudiere.log')
+error_logfile_name = os.path.join(logfile_base, 'simple_log.log')
+debug_logfile_name = os.path.join(logfile_base, 'full_log.log')
 
 CONFIG_PY = {
     "version": 1,
@@ -21,7 +22,7 @@ CONFIG_PY = {
             "format": "%(asctime)s | %(name)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         },
         "simple": {
-            "format": "%(message)s"
+            "format": "%(filename)s | %(levelname)s | %(message)s"
         }
     },
 
@@ -29,62 +30,37 @@ CONFIG_PY = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "level": "DEBUG",
-            "formatter": "default",
-            "stream": "ext://sys.stdout"
-        },
-
-        "simple": {
-            "class": "logging.StreamHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
 
-        "file_handler": {
+        "error_log": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "default",
+            "filename": error_logfile_name,
+            "maxBytes": 1000000,
+            "backupCount": 10,
+            "encoding": "utf8"
+        },
+        "debug_log": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "default",
-            "filename": logfile_name,
+            "filename": debug_logfile_name,
             "maxBytes": 1000000,
             "backupCount": 10,
             "encoding": "utf8"
         },
     },
 
-# logger level is overriden by the handler level
-# logger propagate: if yes, root logger records also this logger datas
-    "loggers": {
-        "create_data": {
-            "level": "DEBUG",
-            "handlers": [],
-            "propagate": "no"
-        },
-        "get_temp": {
-            "level": "DEBUG",
-            "handlers": [],
-            "propagate": "no"
-        },
-        "get_watt": {
-            "level": "DEBUG",
-            "handlers": [],
-            "propagate": "no"
-        },
-        "chaudiere_archive": {
-            "level": "DEBUG",
-            "handlers": [],
-            "propagate": "no"
-        },
-        "process_phase": {
-            "level": "DEBUG",
-            "handlers": [],
-            "propagate": "no"
-        },
-    },
-    
+# logger level is always set to the lower level => the logger sends all stream. 
+# then the stream will be filtered be the handler level
+
     "root": {
         "level": "DEBUG",
-        "handlers": ["console", "file_handler"]
+        "handlers": ["console", "error_log", "debug_log"]
     },
 }
 

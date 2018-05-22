@@ -214,4 +214,3 @@ if __name__ == '__main__':
     else:
         print('mode=normal')
         process_phase(mode='normal')
-    logger.info('Done')

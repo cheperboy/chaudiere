@@ -129,6 +129,7 @@ les dates begin et (begin + 1 minute)
 Calcule des moyennes et enregistre dans une entry ChaudiereMinute
 '''
 def record_minute(begin):
+    logger.debug('Minute '+ str(begin))    
     end = begin + timedelta(minutes=1)
     temp0 = 0.0
     temp1 = 0.0
@@ -138,7 +139,7 @@ def record_minute(begin):
     # get logs
     logs = Chaudiere.get_between_date(Chaudiere, begin, end)
     nb_logs = len(logs)
-    logger.info('minute ' + str(begin)+' logs :'+nb_logs)
+    logger.info('minute ' + str(begin)+' logs :'+str(nb_logs))
     if nb_logs > 0:
         for log in logs:
             if (log.temp0 is not None): temp0 += float(log.temp0)

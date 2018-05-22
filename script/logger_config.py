@@ -19,7 +19,7 @@ CONFIG_PY = {
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "format": "%(asctime)s | %(name)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+            "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         },
         "simple": {
             "format": "%(filename)s | %(levelname)s | %(message)s"

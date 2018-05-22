@@ -169,7 +169,7 @@ def process_alerts(entry):
     condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ARRET)+' ))'
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\
-      all_prec_verify_condition(10, condition_precs_was_not_alert):
+      entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
         Send_Mail_Chaudiere_Alert(entry.dt)
 
 

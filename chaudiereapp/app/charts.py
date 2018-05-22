@@ -501,14 +501,20 @@ def create_chart(conf, entries):
     
     """ Add PlotBands """ 
     plotBands = []
-    for entry in entries:
-        if entry is not None and entry.phase is not None:
-            plotBand = {
-                            'color': PhaseColor[entry.phase],
-                            'from': datetime_to_timestamp(entry.dt),
-                            'to': datetime_to_timestamp(entry.dt + timedelta(minutes=1))
-                        }
-            plotBands.append(plotBand)
+    n = 0
+    while n < len(entries)-1:
+        begin = entries[n].dt
+        phase = entries[n].phase
+        n += 1
+        while entries[n].phase == phase:
+            n += 1
+        end = entries[n].dt
+        plotBand = {
+                        'color': PhaseColor[phase],
+                        'from': datetime_to_timestamp(begin),
+                        'to': datetime_to_timestamp(end)
+                    }
+        plotBands.append(plotBand)
     conf['xAxis']['plotBands'] = plotBands
     
     """ Add Labels """ 

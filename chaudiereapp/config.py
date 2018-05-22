@@ -58,7 +58,7 @@ elif ENVNAME == 'Prod':
     WTF_CSRF_ENABLED = True
 
     # Users emails
-    USERS = ['matthieujouve']
+    USERS = ['matthieujouve', 'thierryjouve', 'elisabethjouve', 'acjouve']
     USERS_EMAILS = list(map(lambda x: x+'@gmail.com', USERS))
     
 elif ENVNAME == 'flask-dev' :

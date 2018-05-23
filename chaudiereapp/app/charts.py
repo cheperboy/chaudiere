@@ -503,15 +503,12 @@ def create_chart(conf, entries):
     plotBands = []
     n = 0
     len_entries = len(entries)-1
-    print ('LEN ENTRIES : '+str(len_entries))
     while n < len_entries:
-        print('LOOP N='+str(n))
         begin = entries[n].dt
         phase = entries[n].phase
         n += 1
         while entries[n].phase == phase and n < len_entries:
             n += 1
-            print('JUMP N='+str(n))
         end = entries[n].dt
         plotBand = {
                         'color': PhaseColor[phase],
@@ -555,8 +552,6 @@ def create_chart(conf, entries):
     """ Add Title (date begin date end) """
     if len(entries) > 3:
         begin = pretty_date(entries[0].dt)
-        print 'begin'+str(entries[0].dt)
-        print begin
         end = pretty_date(entries[len(entries)-1].dt)
         #conf["title"]["text"] = 'Monitoring Chaudière du {0} au {1}'.format(begin, end)
         conf["title"]["text"]       = 'Monitoring Chaudière'

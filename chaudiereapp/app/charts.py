@@ -502,12 +502,16 @@ def create_chart(conf, entries):
     """ Add PlotBands """ 
     plotBands = []
     n = 0
-    while n < len(entries)-1:
+    len_entries = len(entries)-1
+    print ('LEN ENTRIES : '+str(len_entries))
+    while n < len_entries:
+        print('LOOP N='+str(n))
         begin = entries[n].dt
         phase = entries[n].phase
         n += 1
-        while entries[n].phase == phase:
+        while entries[n].phase == phase and n < len_entries:
             n += 1
+            print('JUMP N='+str(n))
         end = entries[n].dt
         plotBand = {
                         'color': PhaseColor[phase],

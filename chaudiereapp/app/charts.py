@@ -501,15 +501,23 @@ def create_chart(conf, entries):
     
     """ Add PlotBands """ 
     plotBands = []
+    len_entries = len(entries)
     n = 0
-    len_entries = len(entries)-1
-    while n < len_entries:
+    while n < len_entries and\
+      entries[n].phase is not None and\
+      entries[n].next() is not None and\
+      entries[n].next().phase is not None:
         begin = entries[n].dt
         phase = entries[n].phase
         n += 1
-        while entries[n].phase == phase and n < len_entries:
+        while entries[n].phase is not None and\
+          entries[n].phase == phase and\
+          n < len_entries:
             n += 1
+        print('N : '+ str(n))
         end = entries[n].dt
+        print str(entries[n].dt)
+        print str(entries[n].phase)
         plotBand = {
                         'color': PhaseColor[phase],
                         'from': datetime_to_timestamp(begin),

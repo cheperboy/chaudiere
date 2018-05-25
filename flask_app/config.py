@@ -2,7 +2,7 @@
 import os
 
 # Detect ENV type from path
-currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/chaudiereapp
+currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/flask_app
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 ENVNAME = os.path.basename(envpath)                      # Dev

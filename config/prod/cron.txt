@@ -1,5 +1,5 @@
 # Every even minute : archive_minute.py
-*/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/chaudiereapp/scripts/archive_minute.py
+*/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/archive_minute.py
 
 # Every odd minute : process_phase.py
-1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/chaudiereapp/scripts/process_phase.py
+1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py

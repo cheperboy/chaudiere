@@ -5,12 +5,12 @@ import yaml
 #CONFIG_TYPE = "YAML"
 CONFIG_TYPE = "PY"
 
-currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
+currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/logger
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-logfile_base = os.path.join(currentpath, 'log')
+logfile_base = os.path.join(projectpath, 'log')
 error_logfile_name = os.path.join(logfile_base, 'simple_log.log')
 debug_logfile_name = os.path.join(logfile_base, 'full_log.log')
 

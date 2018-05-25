@@ -4,14 +4,16 @@
 import os, sys, argparse, string, datetime, time
 import logging
 import glob
-import logger_config
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-# SET LOGGER
+# import and get logger
+logger_directory = os.path.join(projectpath, 'logger')
+sys.path.append(logger_directory)
+import logger_config
 logger = logging.getLogger(__name__)
 
 # Sensor Config

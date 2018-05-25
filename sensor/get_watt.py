@@ -35,7 +35,10 @@ projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudier
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-# SET LOGGER
+# import and get logger
+logger_directory = os.path.join(projectpath, 'logger')
+sys.path.append(logger_directory)
+import logger_config
 logger = logging.getLogger(__name__)
 
 """

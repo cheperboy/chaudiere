@@ -36,11 +36,10 @@ from app import create_app
 from emails import Send_Mail_Chaudiere_Alert
 app = create_app().app_context().push()
 
-chaudierescript = os.path.join(projectpath, 'script')
-sys.path.append(chaudierescript)
+# import and get logger
+logger_directory = os.path.join(projectpath, 'logger')
+sys.path.append(logger_directory)
 import logger_config
-
-# SET LOGGER
 logger = logging.getLogger(__name__)
 
 def temperature_variation(entry, periode):

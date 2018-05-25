@@ -12,12 +12,14 @@ envname = os.path.basename(envpath)                      # Dev
 from get_temp import api_get_temp_values
 from get_watt import api_get_watt_values
 
-# import Database API
-flask_app = os.path.join(projectpath, 'flask_app')
-sys.path.append(flask_app)
+# import Database API from flask_app
+flask_app_directory = os.path.join(projectpath, 'flask_app')
+sys.path.append(flask_app_directory)
 from db_api import createSensorRecord
 
-# SET LOGGER
+# import and get logger
+logger_directory = os.path.join(projectpath, 'logger')
+sys.path.append(logger_directory)
 import logger_config
 logger = logging.getLogger(__name__)
 

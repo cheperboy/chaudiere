@@ -10,7 +10,7 @@ projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudier
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
-logfile_base = os.path.join(projectpath, 'log')
+logfile_base = os.path.join(envpath, 'log')
 error_logfile_name = os.path.join(logfile_base, 'simple_log.log')
 debug_logfile_name = os.path.join(logfile_base, 'full_log.log')
 

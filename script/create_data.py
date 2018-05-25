@@ -13,8 +13,8 @@ from get_temp import api_get_temp_values
 from get_watt import api_get_watt_values
 
 # import Database API
-chaudiereapp = os.path.join(projectpath, 'chaudiereapp')
-sys.path.append(chaudiereapp)
+flask_app = os.path.join(projectpath, 'flask_app')
+sys.path.append(flask_app)
 from db_api import createSensorRecord
 
 # SET LOGGER

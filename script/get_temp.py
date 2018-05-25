@@ -26,17 +26,17 @@ DEFAULT_SENSOR_VALUE = -1
 BY_NAME = 1
 BY_INDEX = 2
 
-"""
-Read sensor buffer in /sys/bus/w1/devices/28xxxx[N]/w1_slave
-    28xxxx : sensor base name
-    [N] iter on all sensors that match base name
-    w1_slave : sensor buffer (temp & CRC)
-28-8000002817f6
-28-80000028212d
-28-800000281fef
-
-"""
 def get_raw_sensor_buffer(sensor, retrive_method):
+    """
+    Read sensor buffer in /sys/bus/w1/devices/28xxxx[N]/w1_slave
+        28xxxx : sensor base name
+        [N] iter on all sensors that match base name
+        w1_slave : sensor buffer (temp & CRC)
+    28-8000002817f6
+    28-80000028212d
+    28-800000281fef
+
+    """
     try:
         if retrive_method == BY_INDEX:
             device_folder = glob.glob(base_dir + '28*')[sensor]
@@ -56,10 +56,10 @@ def get_raw_sensor_buffer(sensor, retrive_method):
         return ''
     return w1_slave
 
-"""
-Parse temperature value from sensor buffer and returns
-"""
 def get_temp_value(sensor, retrive_method):
+    """
+    Parse temperature value from sensor buffer and returns
+    """
     try:
         sensor_buffer = get_raw_sensor_buffer(sensor, retrive_method)
         # if CRC Fail, read again (if fail too much, stop)
@@ -84,11 +84,11 @@ def get_temp_value(sensor, retrive_method):
         logger.error("Invalid datas from serial port ({0})".format(e))
         return -1
 
-"""
-External API : returns list of sensor values
-if get a wrong value, set it to default value -1
-"""
 def api_get_temp_values():
+    """
+    External API : returns list of sensor values
+    if get a wrong value, set it to default value -1
+    """
     temp0 = get_temp_value(0, BY_INDEX)
     temp1 = get_temp_value(1, BY_INDEX)
     temp2 = get_temp_value(2, BY_INDEX)

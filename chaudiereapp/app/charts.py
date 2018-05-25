@@ -271,7 +271,6 @@ static_conf_minute_full = {
         }
     ]
 }
-
 static_conf_minute = {
     "chart": {"defaultSeriesType": 'spline'},
     "subtitle": {
@@ -361,7 +360,6 @@ static_conf_minute = {
         },
     ]
 }
-
 live_conf = {
         "chart": { 
             "renderTo": 'data-container',
@@ -382,9 +380,14 @@ live_conf = {
         }]
 }
 
-baseURL = {'value' : config.APP_BASE_URL}
+def json_context():
+    context = {
+        'app_base_url' : config.APP_BASE_URL,
+        'app_name' : config.APP_NAME
+    }
+    return context
 
-def history_form_data():
+def json_date_picker():
     min = ChaudiereMinute.first(ChaudiereMinute).dt
     min_year =  min.strftime("%Y")
     min_month = str(int(min.strftime("%m")) - 1)
@@ -431,33 +434,42 @@ params for date, hours : length
 """
 @charts_blueprint.route('/history/<string:year>/<string:month>/<string:day>/<string:hour>/<string:minute>/<string:hours>', methods=['GET'])
 def history(year, month, day, hour, minute, hours):
-    date = year+'/'+month+'/'+day+'/'+hour+'/'+minute
+    begin_date = year+'/'+month+'/'+day+'/'+hour+'/'+minute
+    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
-                            baseURL=baseURL,
-                            history_date = date,
-                            history_hours = hours,
-                            chart_legend=ChartLegend,
-                            staticchart=True,
-                            history_form_data=history_form_data())
+                            context =             json_context(),
+                            chart_date_hours =    chart_date_hours,
+                            chart_legend =        ChartLegend,
+                            render_static_chart = True,
+                            history_form_data =   json_date_picker())
 
 @charts_blueprint.route('/now', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/now/<int:hours>', methods=['GET'])
 def now(hours):
-    dt = datetime.now().replace(second=0, microsecond=0)
-    dt_end = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
+    """ 
+    print a chart with datas 
+    from : N `hours` ago 
+    to : now
+    """
+    dt_now = datetime.now().replace(second=0, microsecond=0)
+    dt = dt_now - timedelta(hours=hours)
+    begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
+    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
-                            baseURL=baseURL,
-                            history_date = dt_end,
-                            history_hours = hours,
-                            chart_legend=ChartLegend,
-                            staticchart=True,
-                            history_form_data=history_form_data())
+                            context =             json_context(),
+                            chart_date_hours =    chart_date_hours,
+                            chart_legend =        ChartLegend,
+                            render_static_chart = True,
+                            history_form_data =   json_date_picker())
 
-
-""" """
 @charts_blueprint.route('/api_now', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/api_now/<int:hours>', methods=['GET'])
 def api_now(hours):
+    """ 
+    returns a json chart with datas 
+    from : N `hours` ago 
+    to : now
+    """
     conf = json.loads(json.dumps(static_conf_minute)) #make a copy of original object
     dt_end = datetime.now().replace(second=0, microsecond=0)
     dt_begin = dt_end - timedelta(hours=hours)
@@ -467,29 +479,36 @@ def api_now(hours):
                          .filter(ChaudiereMinute.dt <= dt_end)\
                          .all()
     conf = create_chart(conf, entries)
-    """ Html Response """    
+    # Html Response
     response = make_response(json.dumps(conf))
     response.content_type = 'application/json'
     return response
     
 @charts_blueprint.route('/api_history/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:hours>', methods=['GET'])
 def api_history(year, month, day, hour, minute, hours):
+    """ 
+    returns a json chart with datas 
+    from : given date (y m d h m) 
+    to : given date + `hours`
+    """
     conf = json.loads(json.dumps(static_conf_minute))#make a copy of original object
-    dt_end = datetime(year, month, day, hour, minute)
-    dt_begin = dt_end - timedelta(hours=hours)
+    dt_begin = datetime(year, month, day, hour, minute)
+    dt_end = dt_begin + timedelta(hours=hours)
     entries = ChaudiereMinute.query\
                          .order_by(ChaudiereMinute.dt)\
                          .filter(ChaudiereMinute.dt >= dt_begin)\
                          .filter(ChaudiereMinute.dt <= dt_end)\
                          .all()
     conf = create_chart(conf, entries)
-    """ Html Response """    
+    # Html Response
     response = make_response(json.dumps(conf))
     response.content_type = 'application/json'
     return response
 
 def create_chart(conf, entries):
-    """ Update Datas """
+    """ 
+    Update Chart configuration and Datas 
+    """
     serie_index = 0
     for serie in conf['series']:
         data = []
@@ -501,23 +520,21 @@ def create_chart(conf, entries):
     
     """ Add PlotBands """ 
     plotBands = []
-    len_entries = len(entries)
-    n = 0
-    while n < len_entries and\
-      entries[n].phase is not None and\
-      entries[n].next() is not None and\
-      entries[n].next().phase is not None:
+    last_entry = len(entries)-1
+    n = 1
+    while n < last_entry and\
+    entries[n].phase is not None and\
+    entries[n] is not None and\
+    entries[n].next().phase is not None:
         begin = entries[n].dt
         phase = entries[n].phase
         n += 1
-        while entries[n].phase is not None and\
-          entries[n].phase == phase and\
-          n < len_entries:
+        while entries[n] is not None and\
+        entries[n].phase is not None and\
+        entries[n].phase == phase and\
+        n < last_entry:
             n += 1
-        print('N : '+ str(n))
         end = entries[n].dt
-        print str(entries[n].dt)
-        print str(entries[n].phase)
         plotBand = {
                         'color': PhaseColor[phase],
                         'from': datetime_to_timestamp(begin),

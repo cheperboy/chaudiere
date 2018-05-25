@@ -2,7 +2,7 @@
 {% include "_navbar.html" %}
 	<div class="container">	
 
-	{% if staticchart %}
+	{% if render_static_chart %}
 		<div class="container-fluid">
 		  <div class="row">
 			  <div class="container"  style="height: 400px" id="staticchart-container"></div>
@@ -28,9 +28,9 @@
 	// Those parameters are :
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
-	var JSbaseURL = "{{ baseURL.value }}";
-	var JShistory_date = "{{ history_date }}";
-	var JShistory_hours = "{{ history_hours }}";
+	var JS_base_URL = "{{ context.app_base_url}}";
+	var JS_begin_date = "{{ chart_date_hours.begin_date }}";
+	var JS_hours_lenth = "{{ chart_date_hours.hours_length }}";
  
  </script>
  

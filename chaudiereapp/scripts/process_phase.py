@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 # script process_phase.py
 
@@ -42,10 +43,33 @@ import logger_config
 # SET LOGGER
 logger = logging.getLogger(__name__)
 
-"""
-Return last processed ChaudiereMinute entry.dt or None
-"""
+def temperature_variation(entry, periode):
+    """
+    retourne la variation de température (+/- Float) sur la période (minutes)
+    retourne None si pas d'information
+    si la période est incomplete (info capteurs absente), calcule avec une valeur plus récente
+    """
+    try:
+        first_dt = entry.dt - timedelta(minutes=periode)
+        last_dt = entry.dt
+        minute = 0
+        # retourne la plus ancienne entry existante dans la période
+        while old_entry is None and dt < last_dt:
+            dt = first_dt + timedelta(minutes=minute)
+            old_entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, dt)
+            minute += 1
+        
+        old_temp = old_entry.get(TEMP_CHAUDIERE)
+        temp = entry.get(TEMP_CHAUDIERE)
+        return temp - old_temp
+    except Exception as e:
+        logger.warning("temperature variation failed ({0})".format(e))
+        return None
+
 def find_last_phase():
+    """
+    Return last processed ChaudiereMinute entry.dt or None
+    """
     # if no ChaudiereMinute entry exists, return None
     if ChaudiereMinute.last(ChaudiereMinute) == None:
         return None
@@ -69,10 +93,10 @@ def find_last_phase():
     logger.debug('last phase found is at : '+str(dt))
     return dt
         
-"""
-return the datetime of an existing Chaudiere entry close to the given *date* parameter
-"""
 def find_date_end(date):
+    """
+    return the datetime of an existing Chaudiere entry close to the given *date* parameter
+    """
     last_ch_minute_date = ChaudiereMinute.last(ChaudiereMinute).dt
     entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, date)
     while ((entry is None) and (date < last_ch_minute_date)):
@@ -82,7 +106,9 @@ def find_date_end(date):
     return entry.dt
         
 def process_phase(mode='normal', hours=None, date=None):
-    # determine begin and end date depending on given *mode*
+    """ 
+    Détermine la ate de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
+    """
     if mode is 'normal':
         begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
         end = ChaudiereMinute.last(ChaudiereMinute).dt # end = last existing ChaudiereMinute entry.dt
@@ -118,38 +144,49 @@ def process_phase(mode='normal', hours=None, date=None):
         begin = begin + timedelta(minutes=1)
 
 def update_phase(entry):
+    """
+    Met à jour le champ phase en fonction des valeur ventilateur, température, allumeur
+    """
+    # Si des informations capteurs sont disponibles
     if entry.get(ALLUMAGE) is not None and\
-       entry.get(VENT_PRIMAIRE) is not None and\
-       entry.get(TEMP_CHAUDIERE) is not None:
-        """ Process Allumage"""
-        if (entry.get(ALLUMAGE) > 0):
-            entry.phase = PHASE_ALLUMAGE
-            db.session.commit()
+        entry.get(VENT_PRIMAIRE) is not None and\
+        entry.get(TEMP_CHAUDIERE) is not None:
 
-        elif entry.get(VENT_PRIMAIRE) > 0:
-            """Si vent > 0 => combustion"""
-            entry.phase = PHASE_COMBUSTION
-            db.session.commit()
+            # détecter l'allumage (allumeur > 0)
+            if (entry.get(ALLUMAGE) > 0):
+                entry.phase = PHASE_ALLUMAGE
+                db.session.commit()
 
-        elif entry.get(VENT_PRIMAIRE) == 0:
-            """si vent == 0 => MAINTIEN"""
-            entry.phase = PHASE_MAINTIEN
-            db.session.commit()
+            # Détecter la combustion (ventilateur > 0 et allumeur == 0)
+            elif entry.get(VENT_PRIMAIRE) > 0:
+                entry.phase = PHASE_COMBUSTION
+                db.session.commit()
 
-        # Failure
-        if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE: 
-            """si temp_chaudiere < TEMP_CHAUDIERE_FAILURE => ALERT """
-            entry.phase = PHASE_ARRET
-            db.session.commit()
+            # Détecter le maintien de feu (vent == 0 et allumeur == 0)
+            elif entry.get(VENT_PRIMAIRE) == 0:
+                entry.phase = PHASE_MAINTIEN
+                db.session.commit()
 
-    else: #(entry.phase is None)
+            # Détecter l'arrêt (condition température basse : temp_chaudiere < TEMP_CHAUDIERE_FAILURE) 
+            # malgré la condition température basse, 
+            #   - si allumeur en marche => ALLUMAGE
+            #   - allumeur à été en marche [depuis moins de 20 minutes] et ventilateur en marche => COMBUSTION
+            #   - ventilateur en marche et température augmente => COMBUSTION
+            #   - si ventilateur en marche et température augmente [10 min] => COMBUSTION
+            #   - cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
+            if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
+                entry.phase = PHASE_ARRET
+                db.session.commit()
+            
+    # cas par défaut, aucune information des capteurs disponible, phase est UNDEFINED
+    else:
         entry.phase = PHASE_UNDEFINED
         db.session.commit()
 
-"""
-Met a jour le champ "chaudiere.change" 
-"""
 def update_change(entry):
+    """
+    Met a jour le champ "chaudiere.change" si phase courante est différent de phase prec
+    """
     #condition_prec_has_same_phase = '((prec is not None) and (prec.phase == '+str(entry.get(PHASE))+' or prec.phase == PHASE_UNDEFINED ))'
     if entry.prec() is not None and entry.prec().phase != entry.phase:
         entry.change = True
@@ -157,13 +194,12 @@ def update_change(entry):
         entry.change = False
     db.session.commit()
 
-"""
-Alert if:
-Change is True 
-    and phase == ALERT 
-    and no one of precs was ALERT # gestion des cas ou on passe de UNDEFINED a ALERT 
-"""
 def process_alerts(entry):
+    """
+    Envoi une alerte (mail, sms) si phase courante est ALERT et si change est True
+    et si aucun des precs n'etaient deja en ALERT (cette condition permet de la gestion de la séquence
+    ALERT -> UNDEFINED -> ALERT (change == True)
+    """
     condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ARRET)+' ))'
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\

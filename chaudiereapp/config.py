@@ -1,18 +1,14 @@
+""" App configuration."""
 import os
 
+# Detect ENV type from path
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/chaudiereapp
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
 envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 ENVNAME = os.path.basename(envpath)                      # Dev
-"""
-print 'currentpath '+currentpath
-print 'projectpath '+projectpath
-print 'envpath '+envpath
-print 'ENVNAME '+ENVNAME
-"""
-print 'ENVNAME : '+ENVNAME
+# print 'ENVNAME : '+ENVNAME
 
-"""Base configuration."""
+# Base configuration
 APP_NAME = "Chaudiere"
 SECRET_KEY = os.getenv('SECRET_KEY', default='lkdsjfiozefkdv23168761JGDZYGU')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -28,7 +24,8 @@ MAIL_PASSWORD = 'Montlevic36' #os.environ.get('MAIL_PASSWORD')
 
 #detect env from filesystem location (Proc/Dev)
 if ENVNAME == 'Dev' :
-    """Development configuration."""
+    # Development configuration
+    DEBUG=False
     TEMPLATES_AUTO_RELOAD = True
     APP_NAME += ' Dev' 
     PORT = 5008
@@ -45,7 +42,8 @@ if ENVNAME == 'Dev' :
 
     
 elif ENVNAME == 'Prod':
-    """Production configuration."""
+    # Production configuration
+    DEBUG=False
     PORT = 5007
     APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
     BCRYPT_LOG_ROUNDS = 13
@@ -62,7 +60,7 @@ elif ENVNAME == 'Prod':
     USERS_EMAILS = list(map(lambda x: x+'@gmail.com', USERS))
     
 elif ENVNAME == 'flask-dev' :
-    """Windows Development configuration."""
+    # Windows Development configuration
     print 'db path '+os.path.join(envpath + '\db\\', 'chaudiere.db')
 
     PORT = 5007

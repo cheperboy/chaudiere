@@ -48,7 +48,7 @@ class ChaudiereBase(db.Model):
         self.event  = event
 
     def __repr__(self):
-        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.dt, self.temp0, self.temp1, self.temp2, self.watt0, self.watt1, self.watt2, self.watt3)
+        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.dt, self.watt0, self.temp0, self.phase, self.change, self.event)
 
     @classmethod
     def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
@@ -158,13 +158,13 @@ class ChaudiereMinute(ChaudiereBase):
             entries.append(entry)
         return entries
         
-    """ 
-    At least onre prec respect condition 
-    eg : 
-    condition = '((prec is not None) and (prec.phase is PHASE_ALLUMAGE))'
-    entry.at_least_one_prec_verify_condition(5, condition)
-    """
     def at_least_one_prec_verify_condition(self, minutes, condition):
+        """ 
+        At least one prec respect condition 
+        eg : 
+        condition = '((prec is not None) and (prec.phase is PHASE_ALLUMAGE))'
+        entry.at_least_one_prec_verify_condition(5, condition)
+        """
         for prec in self.precs(minutes):
             if eval(condition):
                 return True

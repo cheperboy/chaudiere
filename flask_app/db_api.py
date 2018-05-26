@@ -21,6 +21,3 @@ def createSensorRecord(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt
         return False
     else:
         return True
-
-if __name__ == '__main__':
-    createChaudiere()

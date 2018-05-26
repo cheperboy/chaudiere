@@ -4,10 +4,10 @@ import json
 
 
 # Detect ENV type from path
-currentpath     = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/flask_app
-projectpath     = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
-ENVPATH         = os.path.dirname(projectpath)               # /home/pi/Dev
-ENVNAME         = os.path.basename(ENVPATH)                  # Dev
+FLASKPATH     = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/flask_app
+PROJECTPATH     = os.path.dirname(FLASKPATH)               # /home/pi/Dev/chaudiere
+ENVPATH         = os.path.dirname(PROJECTPATH)             # /home/pi/Dev
+ENVNAME         = os.path.basename(ENVPATH)                # Dev
 
 #Common conf
 SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -219,7 +219,6 @@ if __name__ == '__main__':
     parser.add_argument('--hours',                  type=int,             default=None,   help='number of hour to rework')
     parser.add_argument('--date',                                         default=None,   help='end date to rework YYYY/MM/DD/HH')
     args = parser.parse_args()
-    print(args)
     if args.rework_from_now:
         if not args.hours: 
             print('Argument error : --hours must be set')

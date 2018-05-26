@@ -9,12 +9,12 @@ import pprint
 import copy
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
+from flask import current_app as app
 from app.auth import auth
 from app.models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
 from app.constantes import *
 from util import *
 
-import config
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
 
 from flask_wtf import FlaskForm
@@ -382,8 +382,8 @@ live_conf = {
 
 def json_context():
     context = {
-        'app_base_url' : config.APP_BASE_URL,
-        'app_name' : config.APP_NAME
+        'app_base_url' : app.config['APP_BASE_URL'],
+        'app_name' : app.config['APP_NAME']
     }
     return context
 

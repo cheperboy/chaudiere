@@ -11,6 +11,7 @@ from app import create_app, db
 from app.models import Chaudiere, ChaudiereMinute
 import config
 
+from emails import Send_Mail_Test
 
 def create_my_app(info):
     from app import create_app
@@ -41,6 +42,11 @@ def update_data():
         print 'Done'
     else:
         print 'Aborted. Env is '+config.ENVNAME
+
+@cli.command()
+def test_mail():
+    """ Send a Email """
+    Send_Mail_Test(['chaudiere.montlevic@gmail.com'])
 
 @cli.command()
 def create_data():

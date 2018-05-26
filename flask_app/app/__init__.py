@@ -36,6 +36,24 @@ def set_config(app):
     secret file name must be : chaudiere_secret_config_{common|Dev|Prod}.py
     first overrinde with common secret conf file
     then override with specific env secret conf file
+    example of chaudiere_secret_config.py
+    {
+        "Common" : {
+            "MAIL_PASSWORD" : "mypassword",
+            "URL" : "http://myip:",
+            "SECRET_KEY" : "mysecret"    
+        },
+        "Prod" : {
+            "USERS" : [ "mj@gmail.com", 
+                        "tj@gmail.com", 
+                        "ej@gmail.com", 
+                        "acj@gmail.com"
+                       ]
+        },
+        "Dev" : {
+            "USERS" : ["mj@gmail.com"]
+        }
+    }    
     """
     # set config from config.py
     app.config.from_object('config')
@@ -43,32 +61,27 @@ def set_config(app):
     # override config from secret conf files
     pi_home                 = os.path.dirname(app.config['ENVPATH'])    # /home/pi
     secret_conf_dir         = os.path.join(pi_home, 'CONFIG_CHAUDIERE') # /home/pi/CONFIG_CHAUDIERE
-    secret_conf_com_file    = 'chaudiere_secret_config_common.py'
-    secret_conf_env_file    = 'chaudiere_secret_config_' + app.config['ENVNAME'] + '.py'
+    secret_conf_com_file    = 'chaudiere_secret_config.py'
     secret_conf_com         = secret_conf_dir+'/'+secret_conf_com_file
-    secret_conf_env         = secret_conf_dir+'/'+secret_conf_env_file
-    for file in [secret_conf_com, secret_conf_env]:
-        try:
-            with open(file) as f:
-                config = json.load(f)
-            app.config.update(config)
-        except IOError as e:
-            print('IOError loading conf file (file not existing?): ' + file + str(e))
-        except ValueError as e:
-            print('ValueError loading JSON : ' + file + str(e))
+    try:
+        with open(secret_conf_com) as f:
+            json_config = json.load(f)
+        for conf in ['Common', app.config['ENVNAME']]:
+            app.config.update(json_config[conf])
+    except IOError as e:
+        print('IOError loading conf file (file not existing?): ' + file + str(e))
+    except ValueError as e:
+        print('ValueError loading JSON : ' + secret_conf_com + ' ' + str(e))
 
     app.config['APP_BASE_URL'] = app.config['URL'] + str(app.config['PORT']) + '/'
 
 def create_app():
-    
     app = Flask(__name__,\
                 static_folder="static/",\
                 template_folder="templates/",\
                 static_url_path="/static")
 
     set_config(app)
-    print('APP: '+app.config['APP_NAME'])
-    print('USERS: '+str(app.config['USERS']))
     
     # set up extensions
     cache.init_app(app)

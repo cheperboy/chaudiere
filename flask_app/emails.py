@@ -29,7 +29,7 @@ send_email('test 4', 'chaudiere.montlevic@gmail.com', ['matthieujouve@gmail.com'
 
 def Send_Mail_Chaudiere_Alert(dt):
     date = pretty_date(dt)
-    subject = '''Alerte Arret Chaudiere le {0}'''.format(date)
+    subject   = '''Alerte Arret Chaudiere le {0}'''.format(date)
     html_body = '''
     Température basse atteinte (T<65°) <br>
     historique des 12 dernières heures : http://montlevic.hd.free.fr:5007/charts/now/12
@@ -38,20 +38,14 @@ def Send_Mail_Chaudiere_Alert(dt):
     Température basse atteinte (T<65°)
     http://montlevic.hd.free.fr:5007/charts/now/6
     '''
-    sender=app.config['MAIL_USERNAME']
-    recipients = app.config['USERS_EMAILS']
+    sender      = app.config['MAIL_USERNAME']
+    recipients  = app.config['USERS_EMAILS']
     send_email(subject, sender, recipients, body, html_body)
 
-def Send_Mail_Test():
-    subject = '''Alerte Arret Chaudiere le {0}'''.format(date)
-    html_body = '''
-    Température basse atteinte (T<65°) <br>
-    historique des 12 dernières heures : http://montlevic.hd.free.fr:5007/charts/now/12
-    '''
-    body = '''
-    Température basse atteinte (T<65°)
-    http://montlevic.hd.free.fr:5007/charts/now/6
-    '''
-    sender=MAIL_USERNAME
-    recipients = USERS_EMAILS
+def Send_Mail_Test(recipients):
+    date = datetime.datetime.now()
+    subject     = "Chaudiere Test Mail {0}".format(date)
+    html_body   = subject
+    body        = subject
+    sender      = app.config['MAIL_USERNAME']
     send_email(subject, sender, recipients, body, html_body)

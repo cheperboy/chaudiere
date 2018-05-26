@@ -10,13 +10,13 @@ ENVPATH         = os.path.dirname(projectpath)               # /home/pi/Dev
 ENVNAME         = os.path.basename(ENVPATH)                  # Dev
 
 # email server
-"""
 MAIL_SERVER = 'smtp.googlemail.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = 'chaudiere.mlv@gmail.com' #os.environ.get('MAIL_USERNAME')
-MAIL_PASSWORD = '' #os.environ.get('MAIL_PASSWORD')
+MAIL_USERNAME = 'chaudiere.montlevic@gmail.com'
+"""
+MAIL_PASSWORD = ''
 """
 
 #detect env from filesystem location (Proc/Dev)

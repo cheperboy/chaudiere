@@ -24,18 +24,52 @@ from app.charts import charts_blueprint
 from app.monitor import monitor_blueprint
 from app.webapi import webapi
 
-import logging, os
+import logging, os, json
 from logging.handlers import RotatingFileHandler
 
+import config, sys
+
+def set_config(app):
+    """
+    loads config then override from secret file
+    secret file directory must be : /home/pi/CONFIG_CHAUDIERE
+    secret file name must be : chaudiere_secret_config_{common|Dev|Prod}.py
+    first overrinde with common secret conf file
+    then override with specific env secret conf file
+    """
+    # set config from config.py
+    app.config.from_object('config')
+
+    # override config from secret conf files
+    pi_home                 = os.path.dirname(app.config['ENVPATH'])    # /home/pi
+    secret_conf_dir         = os.path.join(pi_home, 'CONFIG_CHAUDIERE') # /home/pi/CONFIG_CHAUDIERE
+    secret_conf_com_file    = 'chaudiere_secret_config_common.py'
+    secret_conf_env_file    = 'chaudiere_secret_config_' + app.config['ENVNAME'] + '.py'
+    secret_conf_com         = secret_conf_dir+'/'+secret_conf_com_file
+    secret_conf_env         = secret_conf_dir+'/'+secret_conf_env_file
+    for file in [secret_conf_com, secret_conf_env]:
+        try:
+            with open(file) as f:
+                config = json.load(f)
+            app.config.update(config)
+        except IOError as e:
+            print('IOError loading conf file (file not existing?): ' + file + str(e))
+        except ValueError as e:
+            print('ValueError loading JSON : ' + file + str(e))
+
+    app.config['APP_BASE_URL'] = app.config['URL'] + str(app.config['PORT']) + '/'
+
 def create_app():
+    
     app = Flask(__name__,\
                 static_folder="static/",\
                 template_folder="templates/",\
                 static_url_path="/static")
-    
-    # set config
-    app.config.from_object('config')
 
+    set_config(app)
+    print('APP: '+app.config['APP_NAME'])
+    print('USERS: '+str(app.config['USERS']))
+    
     # set up extensions
     cache.init_app(app)
     db.init_app(app)

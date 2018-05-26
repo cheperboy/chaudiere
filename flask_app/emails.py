@@ -4,7 +4,8 @@ import datetime
 from flask_mail import Message
 from app import mail, create_app
 from util import pretty_date
-from config import USERS_EMAILS, MAIL_USERNAME
+from flask import current_app as app
+#from config import USERS_EMAILS, MAIL_USERNAME
 
 app = create_app()
 
@@ -37,8 +38,8 @@ def Send_Mail_Chaudiere_Alert(dt):
     Température basse atteinte (T<65°)
     http://montlevic.hd.free.fr:5007/charts/now/6
     '''
-    sender=MAIL_USERNAME
-    recipients = USERS_EMAILS
+    sender=app.config['MAIL_USERNAME']
+    recipients = app.config['USERS_EMAILS']
     send_email(subject, sender, recipients, body, html_body)
 
 def Send_Mail_Test():

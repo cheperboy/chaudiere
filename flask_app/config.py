@@ -9,6 +9,9 @@ projectpath     = os.path.dirname(currentpath)               # /home/pi/Dev/chau
 ENVPATH         = os.path.dirname(projectpath)               # /home/pi/Dev
 ENVNAME         = os.path.basename(ENVPATH)                  # Dev
 
+#Common conf
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 # email server
 MAIL_SERVER = 'smtp.googlemail.com'
 MAIL_PORT = 465
@@ -25,7 +28,6 @@ if ENVNAME == 'Dev' :
     APP_NAME = 'Chaudiere Dev' 
     PORT = 5008
     DEBUG = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     TEMPLATES_AUTO_RELOAD = True
     #APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'

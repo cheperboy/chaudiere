@@ -1,13 +1,13 @@
 ##nginx virtual host setting
 
 server {
-    listen 5002;
+    listen 5007;
     server_name 81.56.250.29;
 
-    root /home/pi/Production/teleinfo-chart/teleinfoapp;
+    root /home/pi/Prod/chaudiere/flask_app;
 
-    access_log /home/pi/Production/teleinfo-chart/log/nginx_access.log;
-    error_log /home/pi/Production/teleinfo-chart/log/nginx_error.log;
+    access_log /home/pi/Prod/log/nginx_access.log;
+    error_log /home/pi/Prod/log/nginx_error.log;
 
     location / {
         proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
@@ -19,3 +19,9 @@ server {
 		}
 	}
 }
+
+
+
+##usefull commands
+##sudo service nginx restart
+##gunicorn --bind 0.0.0.0:8000 wsgi_gunicorn:app

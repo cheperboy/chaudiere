@@ -11,7 +11,7 @@ from app import create_app, db
 from app.models import Chaudiere, ChaudiereMinute
 import config
 
-from emails import Send_Mail_Test
+import send_email_sms
 
 def create_my_app(info):
     from app import create_app
@@ -45,9 +45,15 @@ def update_data():
 
 @cli.command()
 def test_mail():
-    """ Send a Email """
-    Send_Mail_Test(['chaudiere.montlevic@gmail.com'])
+    """ Send an Email """
+    send_email_sms.Send_Mail_Test(['chaudiere.montlevic@gmail.com'])
 
+@cli.command()
+def test_sms():
+    """ Send an SMS """
+    send_email_sms.Send_SMS_Test('33688649102')
+
+    
 @cli.command()
 def create_data():
     """Creates a data Entry."""

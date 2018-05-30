@@ -33,7 +33,7 @@ from app import db
 from app.models import ChaudiereMinute
 from app.constantes import *
 from app import create_app
-from emails import Send_Mail_Chaudiere_Alert
+import send_email_sms
 app = create_app().app_context().push()
 
 # import and get logger
@@ -204,22 +204,34 @@ def process_alerts(entry):
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
         logger.info('Sending email alert for entry :'+str(entry.dt))
-        Send_Mail_Chaudiere_Alert(entry.dt)
+        send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
+        send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+
+def test_alerts():
+    logger.debug('test_alerts()')
+    entry = ChaudiereMinute.last(ChaudiereMinute)
+    send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
+    send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
 
 
-    
+  
 if __name__ == '__main__':
     
     # PARSE ARGS 
     parser = argparse.ArgumentParser(description = "process phase calculation", epilog = "" )
     #group = parser.add_mutually_exclusive_group()
     
-    parser.add_argument('--rework_from_now',        action='store_true',  default=False, dest='rework_from_now',  help='rework N hours from now')
-    parser.add_argument('--rework_from_date',       action='store_true',  default=False, dest='rework_from_date',  help='rework N hours from given END date')
-    parser.add_argument('--hours',                  type=int,             default=None,   help='number of hour to rework')
-    parser.add_argument('--date',                                         default=None,   help='end date to rework YYYY/MM/DD/HH')
+    parser.add_argument('--test_alerts',            action='store_true',  default=False, dest='test_alerts',        help='test email and sms alerts')
+    parser.add_argument('--rework_from_now',        action='store_true',  default=False, dest='rework_from_now',    help='rework N hours from now')
+    parser.add_argument('--rework_from_date',       action='store_true',  default=False, dest='rework_from_date',   help='rework N hours from given END date')
+    parser.add_argument('--hours',                  type=int,             default=None,                             help='number of hour to rework')
+    parser.add_argument('--date',                                         default=None,                             help='end date to rework YYYY/MM/DD/HH')
     args = parser.parse_args()
-    if args.rework_from_now:
+    print args
+    if args.test_alerts:
+        print('sending test alerts')
+        test_alerts()
+    elif args.rework_from_now:
         if not args.hours: 
             print('Argument error : --hours must be set')
             exit()

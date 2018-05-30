@@ -74,6 +74,7 @@ def set_config(app):
         print('ValueError loading JSON : ' + secret_conf_com + ' ' + str(e))
 
     app.config['APP_BASE_URL'] = app.config['URL'] + str(app.config['PORT']) + '/'
+    #app.config['USERS_EMAILS'] = list(map(lambda x: x+'@gmail.com', app.config['USERS']))
 
 def create_app():
     app = Flask(__name__,\

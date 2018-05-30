@@ -39,7 +39,6 @@ if ENVNAME == 'Dev' :
     } 
     # Users emails
     USERS = ['matthieujouve']
-    USERS_EMAILS = list(map(lambda x: x+'@gmail.com', USERS))
 
 elif ENVNAME == 'Prod':
     # Production configuration

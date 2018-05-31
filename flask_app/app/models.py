@@ -30,9 +30,9 @@ class ChaudiereBase(db.Model):
     watt1   = db.Column(db.Integer)
     watt2   = db.Column(db.Integer)
     watt3   = db.Column(db.Integer)
-    phase   = db.Column(db.Integer)
-    change  = db.Column(db.Boolean)
-    event   = db.Column(db.String(100))
+    phase   = db.Column(db.Integer)     # filled with constant
+    change  = db.Column(db.Boolean)     # filled with constant in phase change
+    event   = db.Column(db.String(100)) # filled with constant in case of ALERT
 
     def __init__(self, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
         self.dt     = dt
@@ -99,6 +99,10 @@ class ChaudiereBase(db.Model):
     @classmethod
     def last(self, cls):
         return(db.session.query(cls).order_by(cls.id.desc()).first())
+
+    @classmethod
+    def all(self, cls):
+        return(db.session.query(cls).order_by(cls.id.desc()).all())
 
     @classmethod
     def first(self, cls):

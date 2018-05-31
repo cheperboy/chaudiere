@@ -5,7 +5,7 @@ Application Values
 TEMP_CHAUDIERE_FAILURE = 58 # Min Water temp before alerting of potential chaudiere failure
 
 """
-Phases constantes
+Phases
 """
 PHASE_UNDEFINED  = 0 
 PHASE_COMBUSTION = 6
@@ -26,6 +26,24 @@ PhaseName = {
     PHASE_ALLUMAGE   : 'Allumage',
     PHASE_MAINTIEN   : 'Maintien de feu',
     PHASE_ARRET      : 'Arret',
+    }
+
+"""
+Events
+"""
+EVENT_ALERT     = 0
+EVENT_ALLUMAGE  = 1
+EVENT_ARRET     = 2
+
+EventColor = {
+    EVENT_ALERT     : '#f2f2f2', # grey
+    EVENT_ALLUMAGE  : '#e6f2ff', # blue
+    EVENT_ARRET     : '#ffff99', # yellow
+    }
+EventName = {
+    EVENT_ALERT     : 'Alert mail/sms',  
+    EVENT_ALLUMAGE  : 'Allumage',
+    EVENT_ARRET     : 'Arret',
     }
 
 """

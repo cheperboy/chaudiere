@@ -108,13 +108,16 @@ def process_phase(mode='normal', hours=None, date=None):
     """ 
     Détermine la ate de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
     """
+    disable_alert = False
     if mode is 'normal':
         begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
         end = ChaudiereMinute.last(ChaudiereMinute).dt # end = last existing ChaudiereMinute entry.dt
     elif mode is 'rework_from_now':
+        disable_alert = True
         end = ChaudiereMinute.last(ChaudiereMinute).dt
         begin = end - timedelta(hours=hours)
     elif mode is 'rework_from_date':
+        disable_alert = True
         end = find_date_end(date)
         begin = end - timedelta(hours=hours)
     else:
@@ -139,7 +142,7 @@ def process_phase(mode='normal', hours=None, date=None):
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
         update_phase(entry)
         update_change(entry)
-        process_alerts(entry)
+        process_alerts(entry, disable_alert)
         begin = begin + timedelta(minutes=1)
 
 def update_phase(entry):
@@ -173,7 +176,7 @@ def update_phase(entry):
             #   - ventilateur en marche et température augmente => COMBUSTION
             #   - si ventilateur en marche et température augmente [10 min] => COMBUSTION
             #   - cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
-            if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
+            elif entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
                 entry.phase = PHASE_ARRET
                 db.session.commit()
             
@@ -193,19 +196,23 @@ def update_change(entry):
         entry.change = False
     db.session.commit()
 
-def process_alerts(entry):
+def process_alerts(entry, disable_alert):
     """
     Envoi une alerte (mail, sms) si phase courante est ALERT et si change est True
     et si aucun des precs n'etaient deja en ALERT (cette condition permet de la gestion de la séquence
     ALERT -> UNDEFINED -> ALERT (change == True)
+    Si une alerte est envoyee, alors le champ entry.event vaut "Alert mail/sms"
     """
     condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ARRET)+' ))'
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
         logger.info('Sending email alert for entry :'+str(entry.dt))
-        send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
-        send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+        if disable_alert is False:
+            send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
+            send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+        entry.event = EVENT_ALERT
+        db.session.commit()
 
 def test_alerts():
     logger.debug('test_alerts()')

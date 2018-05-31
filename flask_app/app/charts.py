@@ -551,7 +551,7 @@ def create_chart(conf, entries):
     for entry in entries:
         if entry is not None and entry.phase is not None:
             #Label Allumage    
-            if entry.phase == PHASE_ALLUMAGE and entry.all_prec_verify_condition(8, condition_flag_allumage):
+            if entry.event is not None:
                 data = {
                         "x": datetime_to_timestamp(entry.dt),
                         "title": 'Allumage'

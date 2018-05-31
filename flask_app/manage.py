@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import os, click
+import os, click, sys, time
 from random import randint
 from datetime import datetime, timedelta
 
@@ -62,17 +62,31 @@ def create_data():
     db.session.commit()
     print me
 
-"""Get last data Entry."""
-"""
+"""Get Events."""
+
 @cli.command()
 def test(): 
-    entry = ChaudiereMinute.last(ChaudiereMinute)
-    print entry
-    prec = entry.prec()
-    print prec
-    precs = entry.precs(2)
-    print precs
-    print entry.precs_condition_at_least_one(2, 'prec.watt2 > 0') 
-"""
+    entries = ChaudiereMinute.all(ChaudiereMinute)
+    out     = []
+    total = len(entries)
+    percent     = float(0)
+    percent_old = float(0)
+    iter        = float(0)
+    for entry in entries:
+        iter += 1
+        percent = 100*(iter/total)
+        #print ('iter : ' + str(iter/total))
+        percent = int(percent)
+        if percent != percent_old:
+            percent_old = percent
+            sys.stdout.write("\033[F")
+            print (str(percent) + ' %')
+        if entry.event is not None:
+            out.append(entry)
+    for entry in out:
+        print (str(entry.dt) + ' ' + str(entry.event))
+    print ('end')
+ 
+
 if __name__ == '__main__':
     cli()

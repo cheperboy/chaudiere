@@ -29,11 +29,12 @@ envname = os.path.basename(envpath)                      # Dev
 
 app_path = os.path.join(chaudiereapp, 'app')
 sys.path.append(chaudiereapp)
+import send_email_sms
+from progress_bar import print_bar
 from app import db
-from app.models import ChaudiereMinute
+from app.models import ChaudiereMinute, timedelta_in_minute
 from app.constantes import *
 from app import create_app
-import send_email_sms
 app = create_app().app_context().push()
 
 # import and get logger
@@ -132,6 +133,10 @@ def process_phase(mode='normal', hours=None, date=None):
     else:
         logger.info('processing phase From ' + str(begin) + ' To ' + str(end))
 
+    # Progress bar Init (for console mode)
+    bar_items = timedelta_in_minute(begin, end)
+    bar_item = 0
+    
     # while some entries to process
     while ((begin + timedelta(minutes=1)) <= end):
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin) 
@@ -140,10 +145,17 @@ def process_phase(mode='normal', hours=None, date=None):
             logger.warning('create missing ChaudiereMinute entry (should not be the case')
             ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
         entry = ChaudiereMinute.get_by_datetime(ChaudiereMinute, begin)
+        
+        # Progress bar Print (for console mode)
+        bar_item += 1
+        print_bar(bar_item, bar_items, prefix=str(entry.dt))
+        
         update_phase(entry)
         update_change(entry)
         process_alerts(entry, disable_alert)
         begin = begin + timedelta(minutes=1)
+        
+
 
 def update_phase(entry):
     """

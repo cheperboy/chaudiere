@@ -10,14 +10,28 @@ from app.constantes import *
 
   
 def datetime_to_timestamp(dt):
-    """Deserialize datetime object into string form for JSON processing."""
+    """ 
+    Return a timestamp(Int) from datetime object 
+    Take care of Summer/Spring variation
+    """
     if dt is None:
         return None
 #    return int(time.mktime(dt.timetuple())*1000)
     return int(calendar.timegm(dt.timetuple())*1000)
 
 def timestamp_to_datetime(ts):
+    """ 
+    Return a Datetime object from timestamp (Int) 
+    """
     return time.mktime(ts.timetuple())
+
+def timedelta_in_minute(dt_begin, dt_end):
+    """Return the number of minutes between 2 dates"""
+    ts_begin = time.mktime(dt_begin.timetuple())
+    ts_end = time.mktime(dt_end.timetuple())
+
+    # subtract values is in seconds then divide by 60 to get minutes.
+    return int(ts_end - ts_begin) / 60
 
 class ChaudiereBase(db.Model):
     __abstract__ = True

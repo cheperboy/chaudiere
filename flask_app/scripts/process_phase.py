@@ -51,8 +51,10 @@ def temperature_variation(entry, periode):
     """
     try:
         first_dt = entry.dt - timedelta(minutes=periode)
+        dt = first_dt
         last_dt = entry.dt
         minute = 0
+        old_entry = None
         # retourne la plus ancienne entry existante dans la période
         while old_entry is None and dt < last_dt:
             dt = first_dt + timedelta(minutes=minute)
@@ -183,15 +185,40 @@ def update_phase(entry):
 
             # Détecter l'arrêt (condition température basse : temp_chaudiere < TEMP_CHAUDIERE_FAILURE) 
             # malgré la condition température basse, 
-            #   - si allumeur en marche => ALLUMAGE
-            #   - allumeur à été en marche [depuis moins de 20 minutes] et ventilateur en marche => COMBUSTION
-            #   - ventilateur en marche et température augmente => COMBUSTION
-            #   - si ventilateur en marche et température augmente [10 min] => COMBUSTION
-            #   - cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
-            elif entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
-                entry.phase = PHASE_ARRET
-                db.session.commit()
+            # - si allumeur en marche => ALLUMAGE
+            # - si ventilateur en marche et allumeur à été en marche [depuis moins de 20 minutes] => COMBUSTION
+            # - si ventilateur en marche et température augmente [10 min] => COMBUSTION
+            # - cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
+            if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
+                # Si allumeur en marche => ALLUMAGE
+                if entry.get(ALLUMAGE) > 0:
+                    entry.phase = ALLUMAGE
+                    db.session.commit()
             
+                # Si ventilateur en marche et allumeur à été en marche [depuis moins de 20 minutes] => COMBUSTION
+                elif entry.get(VENT_PRIMAIRE) > 0:
+                    condition_precs_was_allumage = '((prec is not None) and (prec.phase == '+str(PHASE_ALLUMAGE)+' ))'
+                    if entry.at_least_one_prec_verify_condition(20, condition_precs_was_allumage):
+                        entry.phase = PHASE_SURVEILLANCE
+                        db.session.commit()
+                    
+                    # Si ventilateur en marche et température augmente [10 min] => COMBUSTION
+                    delta_temp = temperature_variation(entry, 10)
+                    if delta_temp is not None and delta_temp > 0.2:
+                        entry.phase = PHASE_SURVEILLANCE
+                        db.session.commit()
+
+                    # Cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
+                    delta_temp = temperature_variation(entry, 30)
+                    if delta_temp is not None and delta_temp < 1.0:
+                        entry.phase = PHASE_RISQUE_BOURAGE
+                        db.session.commit()
+                        
+                # Dans tout les autres cas (par défaut) => ARRET
+                else:
+                    entry.phase = PHASE_ARRET
+                    db.session.commit()
+                    
     # cas par défaut, aucune information des capteurs disponible, phase est UNDEFINED
     else:
         entry.phase = PHASE_UNDEFINED

@@ -7,25 +7,31 @@ TEMP_CHAUDIERE_FAILURE = 58 # Min Water temp before alerting of potential chaudi
 """
 Phases
 """
-PHASE_UNDEFINED  = 0 
-PHASE_COMBUSTION = 6
-PHASE_ALLUMAGE   = 7
-PHASE_MAINTIEN   = 8
-PHASE_ARRET      = 9
+PHASE_UNDEFINED         = 0 
+PHASE_COMBUSTION        = 6
+PHASE_ALLUMAGE          = 7
+PHASE_MAINTIEN          = 8
+PHASE_ARRET             = 9
+PHASE_RISQUE_BOURAGE    = 10
+PHASE_SURVEILLANCE      = 11 # idem COMBUSTION Mais mais fonctionnement à surveiller
 
 PhaseColor = {
-    PHASE_UNDEFINED  : '#f2f2f2', # grey
-    PHASE_COMBUSTION : '#e6f2ff', # blue
-    PHASE_ALLUMAGE   : '#ffff99', # yellow
-    PHASE_MAINTIEN   : '#e6ffe6', # green
-    PHASE_ARRET      : '#ff4d4d', # red
+    PHASE_UNDEFINED         : '#f2f2f2', # grey
+    PHASE_COMBUSTION        : '#e6f2ff', # blue
+    PHASE_ALLUMAGE          : '#ffff99', # yellow
+    PHASE_MAINTIEN          : '#e6ffe6', # green
+    PHASE_ARRET             : '#ff4d4d', # red
+    PHASE_RISQUE_BOURAGE    : '#b32400', # rouge sombre
+    PHASE_SURVEILLANCE      : '#ff80b3', # rose
     }
 PhaseName = {
-    PHASE_UNDEFINED  : 'Non defini',  
-    PHASE_COMBUSTION : 'Combustion',
-    PHASE_ALLUMAGE   : 'Allumage',
-    PHASE_MAINTIEN   : 'Maintien de feu',
-    PHASE_ARRET      : 'Arret',
+    PHASE_UNDEFINED         : 'Non defini',  
+    PHASE_COMBUSTION        : 'Combustion',
+    PHASE_ALLUMAGE          : 'Allumage',
+    PHASE_MAINTIEN          : 'Maintien de feu',
+    PHASE_ARRET             : 'Arret',
+    PHASE_RISQUE_BOURAGE    : 'Silo vide ou Risque Bourrage',
+    PHASE_SURVEILLANCE      : 'Combustion a surveiller',
     }
 
 """

@@ -192,7 +192,7 @@ def update_phase(entry):
             if entry.get(TEMP_CHAUDIERE) < TEMP_CHAUDIERE_FAILURE:
                 # Si allumeur en marche => ALLUMAGE
                 if entry.get(ALLUMAGE) > 0:
-                    entry.phase = ALLUMAGE
+                    entry.phase = PHASE_ALLUMAGE
                     db.session.commit()
             
                 # Si ventilateur en marche et allumeur à été en marche [depuis moins de 20 minutes] => COMBUSTION
@@ -246,10 +246,12 @@ def process_alerts(entry, disable_alert):
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
-        logger.info('Sending email alert for entry :'+str(entry.dt))
         if disable_alert is False:
+            logger.info('Sending email alert for entry :'+str(entry.dt))
             send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
             send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+        else:
+            logger.info('Not Sending (because disable) email alert for entry :'+str(entry.dt))
         entry.event = EVENT_ALERT
         db.session.commit()
 

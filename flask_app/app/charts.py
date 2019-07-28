@@ -379,6 +379,65 @@ live_conf = {
 			"data": []
         }]
 }
+local_display_static_conf_minute = {
+    "chart": {"defaultSeriesType": 'spline'},
+    "subtitle": {
+        "text": '',
+        "useHTML": True,
+        "verticalAlign": 'top',
+        "y": 40,
+    },
+    "credits": {"enabled": False},
+    "exporting": {"filename": 'chaudiere'},
+    "legend" : {
+        "enabled": True,
+        "align": 'left',
+        "layout": 'vertical',
+        "verticalAlign": 'top',
+        "x": 10,
+        "y": 80,
+        "floating": True,
+        "borderWidth": 1,
+        "backgroundColor": '#FFFFFF'
+    },
+    'title': {'text': 'Chaudière'},
+
+    'xAxis': {
+            'plotBands': None
+        },
+    'yAxis': [
+        {
+            'labels': {'align': 'right','x': -3},
+            'title': {'text': 'Température'},
+            'softMin': 55,
+            'softMax': 70,
+            'top': str((0))+'%',
+            'height': '100%',
+            'lineWidth': 1,
+        },
+    ],
+    'tooltip': {
+        'shared': True,
+        'split': False,
+        'crosshairs': True
+    },
+    "series": [
+        {
+            "name": InputName[TEMP_CHAUDIERE],
+            "db": InputDb[TEMP_CHAUDIERE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        }, 
+        {
+            "name": InputName[TEMP_FUMEE],
+            "db": InputDb[TEMP_FUMEE],
+            "data": [],
+            "yAxis": 0,
+            "tooltip": {"valueDecimals": 1}
+        },
+    ]
+}
 
 def json_context():
     context = {
@@ -462,30 +521,28 @@ def now(hours):
                             render_static_chart = True,
                             history_form_data =   json_date_picker())
 
-@charts_blueprint.route('/api_now', defaults={'hours': 1}, methods=['GET'])
-@charts_blueprint.route('/api_now/<int:hours>', methods=['GET'])
-def api_now(hours):
+@charts_blueprint.route('/', defaults={'hours': 1}, methods=['GET'])
+@charts_blueprint.route('/<int:hours>', methods=['GET'])
+
+def local_display(hours):
     """ 
-    returns a json chart with datas 
+    print a chart with datas 
     from : N `hours` ago 
     to : now
     """
-    conf = json.loads(json.dumps(static_conf_minute)) #make a copy of original object
-    dt_end = datetime.now().replace(second=0, microsecond=0)
-    dt_begin = dt_end - timedelta(hours=hours)
-    entries = ChaudiereMinute.query\
-                         .order_by(ChaudiereMinute.dt)\
-                         .filter(ChaudiereMinute.dt >= dt_begin)\
-                         .filter(ChaudiereMinute.dt <= dt_end)\
-                         .all()
-    conf = create_chart(conf, entries)
-    # Html Response
-    response = make_response(json.dumps(conf))
-    response.content_type = 'application/json'
-    return response
+    dt_now = datetime.now().replace(second=0, microsecond=0)
+    dt = dt_now - timedelta(hours=hours)
+    begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
+    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
+    return render_template('index.html',
+                            local_display =       True,
+                            context =             json_context(),
+                            chart_date_hours =    chart_date_hours,
+                            chart_legend =        ChartLegend,
+                            render_static_chart = True)
     
-@charts_blueprint.route('/api_history/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:hours>', methods=['GET'])
-def api_history(year, month, day, hour, minute, hours):
+@charts_blueprint.route('/api_chart_data/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:hours>', methods=['GET'])
+def api_chart_data(year, month, day, hour, minute, hours):
     """ 
     returns a json chart with datas 
     from : given date (y m d h m) 

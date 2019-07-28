@@ -4,7 +4,7 @@ flask-live-charts
 var chart;
  
 function requestConfHistory(begin_date, hour_length){
-	var url = JS_base_URL +'charts/api_history/'+ begin_date +'/'+ hour_length
+	var url = JS_base_URL +'charts/api_chart_data/'+ begin_date +'/'+ hour_length
 	console.log(url);
 	var datas = $.ajax({ 
 		url: url, 

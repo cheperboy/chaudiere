@@ -120,6 +120,5 @@ def create_app():
 
     assets.debug = False
     app.config['ASSETS_DEBUG'] = False
-
     return app
 

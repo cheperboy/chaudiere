@@ -15,10 +15,13 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>	
     <!-- END FOOTER -->
 	
-	{{ datepicker.loader(theme="base") }} {# to load jQuery-ui #}
-	{{ datepicker.picker(	id=".dp", 
-							maxDate=history_form_data.max_date, 
-							minDate=history_form_data.min_date) }}
+	{% if not local_display %}
+
+		{{ datepicker.loader(theme="base") }} {# to load jQuery-ui #}
+		{{ datepicker.picker(	id=".dp", 
+								maxDate=history_form_data.max_date, 
+								minDate=history_form_data.min_date) }}
+	{% endif %}
   
   </body>
 </html>

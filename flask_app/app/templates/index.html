@@ -1,5 +1,14 @@
+<!-- 
+La variable local_display est utilisée pour 
+- désactiver le menu et le formulaire de recherche par date si l'affichage est sur écran local.
+- si local_display, auto refres chaque minute
+-->
+
+
 {% include "_header.html" %}
-{% include "_navbar.html" %}
+{% if not local_display %}
+	{% include "_navbar.html" %}
+{% endif %}
 	<div class="container">	
 
 	{% if render_static_chart %}
@@ -31,7 +40,6 @@
 	var JS_base_URL = "{{ context.app_base_url}}";
 	var JS_begin_date = "{{ chart_date_hours.begin_date }}";
 	var JS_hours_lenth = "{{ chart_date_hours.hours_length }}";
- 
  </script>
  
 {% include "_footer.html" %}

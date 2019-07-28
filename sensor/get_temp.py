@@ -21,6 +21,10 @@ os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 base_dir = '/sys/bus/w1/devices/'
 
+# SENSOR CONFIG
+SENSOR_TEMP_0 = '28-00000a69bebf'
+SENSOR_TEMP_1 = '28-800000282141'
+
 # Constant
 DEFAULT_SENSOR_VALUE = -1
 
@@ -54,7 +58,7 @@ def get_raw_sensor_buffer(sensor, retrive_method):
         w1_slave = f.readlines()
         f.close()
     except Exception as e:
-        logger.error("Invalid datas from serial port ({0})".format(e))
+        logger.error("Invalid datas from OneWire ({0})".format(e))
         return ''
     return w1_slave
 
@@ -67,7 +71,10 @@ def get_temp_value(sensor, retrive_method):
         # if CRC Fail, read again (if fail too much, stop)
         fail_count = 0
         max_fail = 10
-        while sensor_buffer[0].strip()[-3:] != 'YES':
+        if sensor_buffer == '':
+            return False
+        
+        while sensor_buffer == '' or sensor_buffer[0].strip()[-3:] != 'YES':
             fail_count += 1
             if fail_count > max_fail:
                 logger.warning("CRC Fail many times for sensor "+str(sensor))
@@ -91,16 +98,16 @@ def api_get_temp_values():
     External API : returns list of sensor values
     if get a wrong value, set it to default value -1
     """
-    temp0 = get_temp_value(0, BY_INDEX)
-    temp1 = get_temp_value(1, BY_INDEX)
-    temp2 = get_temp_value(2, BY_INDEX)
+    temp0 = get_temp_value(SENSOR_TEMP_0, BY_NAME)
+    temp1 = get_temp_value(SENSOR_TEMP_1, BY_NAME)
+    temp2 = DEFAULT_SENSOR_VALUE
     if not temp0:
         logger.critical("temp0 Fail, returning wrong value")
         temp0 = DEFAULT_SENSOR_VALUE
     if not temp1:
         logger.critical("temp1 Fail, returning wrong value")
         temp1 = DEFAULT_SENSOR_VALUE
-    if not temp1:
+    if not temp2:
         logger.critical("temp2 Fail, returning wrong value")
         temp2 = DEFAULT_SENSOR_VALUE
     logger.debug(str("%.3f" % temp0)+" "+str("%.3f" % temp1)+" "+str("%.3f" % temp2))
@@ -113,15 +120,15 @@ def main():
         temp1 = get_temp_value(1, BY_INDEX)
         temp2 = get_temp_value(2, BY_INDEX)
         """
-        temp0 = get_temp_value('28-8000002817f6', BY_NAME)
-        temp1 = get_temp_value('28-80000028212d', BY_NAME)
-        temp2 = get_temp_value('28-800000281fef', BY_NAME)
+        temp0 = get_temp_value(SENSOR_TEMP_0, BY_NAME)
+        temp1 = get_temp_value(SENSOR_TEMP_1, BY_NAME)
+        temp2 = DEFAULT_SENSOR_VALUE
         if not temp0:
             logger.critical("temp0 Fail")
         if not temp1:
             logger.critical("temp1 Fail")
         if not temp2:
-            logger.critical("temp1 Fail")
+            logger.critical("temp2 Fail")
         logger.info(str("%.1f" % temp0)+" "+str("%.1f" % temp1)+" "+str("%.1f" % temp2))
         time.sleep(1)
 

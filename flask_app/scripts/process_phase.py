@@ -109,7 +109,7 @@ def find_date_end(date):
         
 def process_phase(mode='normal', hours=None, date=None):
     """ 
-    Détermine la ate de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
+    Détermine la date de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
     """
     disable_alert = False
     if mode is 'normal':
@@ -247,11 +247,14 @@ def process_alerts(entry, disable_alert):
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
         if disable_alert is False:
-            logger.info('Sending email alert for entry :'+str(entry.dt))
-            send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
-            send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+            if envname == 'Prod':
+                logger.info('Sending email/sms alert for entry :'+str(entry.dt))
+                send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
+                send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+            else:
+                logger.info('Not Sending email/sms alert (not Prod env) for entry :'+str(entry.dt))
         else:
-            logger.info('Not Sending (because disable) email alert for entry :'+str(entry.dt))
+            logger.info('Not Sending email/sms alert (already sent previously) for entry :'+str(entry.dt))
         entry.event = EVENT_ALERT
         db.session.commit()
 

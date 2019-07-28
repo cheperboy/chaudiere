@@ -413,7 +413,7 @@ def raw(hour_length):
     return render_template('index.html', 
                             staticchartraw=True, 
                             staticchartminute=True, 
-                            lastRecordAgo=util.pretty_date_ago(lastRecorddate),
+                            lastRecordAgo=pretty_date_ago(lastRecorddate),
                             debugData=debugData)
 
 """

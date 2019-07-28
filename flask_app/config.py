@@ -1,6 +1,7 @@
 """ App configuration."""
 import os, sys
 import json
+import socket # needed to get ip address
 
 
 # Detect ENV type from path
@@ -18,11 +19,9 @@ MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 MAIL_USERNAME = 'chaudiere.montlevic@gmail.com'
-"""
-MAIL_PASSWORD = ''
-"""
+# MAIL_PASSWORD is set in secret congig
 
-#detect env from filesystem location (Proc/Dev)
+# Detect env from filesystem location (Prod/Dev)
 if ENVNAME == 'Dev' :
     # Development configuration
     APP_NAME = 'Chaudiere Dev' 
@@ -30,7 +29,8 @@ if ENVNAME == 'Dev' :
     DEBUG = True
     WTF_CSRF_ENABLED = False
     TEMPLATES_AUTO_RELOAD = True
-    #APP_BASE_URL = 'http://montlevic.hd.free.fr:' + str(PORT) + '/'
+    url = socket.gethostbyname(socket.gethostname())
+    URL = 'http://'+ str(url) +':'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
         'chaudiere':         'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),

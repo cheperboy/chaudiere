@@ -37,23 +37,31 @@ def set_config(app):
     first overrinde with common secret conf file
     then override with specific env secret conf file
     example of chaudiere_secret_config.py
-    {
-        "Common" : {
-            "MAIL_PASSWORD" : "mypassword",
-            "URL" : "http://myip:",
-            "SECRET_KEY" : "mysecret"    
-        },
-        "Prod" : {
-            "USERS" : [ "mj@gmail.com", 
-                        "tj@gmail.com", 
-                        "ej@gmail.com", 
-                        "acj@gmail.com"
-                       ]
-        },
-        "Dev" : {
-            "USERS" : ["mj@gmail.com"]
-        }
-    }    
+{
+    "Common" : {
+        "MAIL_PASSWORD" : "xxx",
+        "SECRET_KEY" : "xxx",
+        "NEXMO_API_KEY" : "xxx",
+        "NEXMO_API_SECRET" : "xxx"
+    },
+    "Prod" : {
+        "URL" : "http://xxx.hd.free.fr:",
+        "USERS_EMAILS" :  ["xx@gmail.com", 
+                           "xx@gmail.com", 
+                           "xx@gmail.com", 
+                           "xx@gmail.com"
+                          ],
+        "USERS_PHONES" :  ["336xxxxxxxx", 
+                           "336xxxxxxxx", 
+                           "336xxxxxxxx", 
+                           "336xxxxxxxx"
+                          ]
+    },
+    "Dev" : {
+        "USERS_EMAILS" :  ["xx@gmail.com"],
+        "USERS_PHONES" :  ["336xxxxxxxx"]
+    }
+}
     """
     # set config from config.py
     app.config.from_object('config')
@@ -69,7 +77,7 @@ def set_config(app):
         for conf in ['Common', app.config['ENVNAME']]:
             app.config.update(json_config[conf])
     except IOError as e:
-        print('IOError loading conf file (file not existing?): ' + file + str(e))
+        print('IOError loading conf file (file not existing?): ' + secret_conf_com + str(e))
     except ValueError as e:
         print('ValueError loading JSON : ' + secret_conf_com + ' ' + str(e))
 

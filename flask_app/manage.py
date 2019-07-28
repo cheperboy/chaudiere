@@ -57,10 +57,11 @@ def test_sms():
 @cli.command()
 def create_data():
     """Creates a data Entry."""
-    me = Chaudiere(datetime.now())
-    db.session.add(me)
-    db.session.commit()
-    print me
+    for x in range(0, 100):
+        me = Chaudiere(datetime.now(), x, 0, 0, 0, 0, 0, 0, None, None, None)
+        db.session.add(me)
+        db.session.commit()
+        print me
 
 """Get Events."""
 
@@ -87,6 +88,19 @@ def test():
         print (str(entry.dt) + ' ' + str(entry.event))
     print ('end')
  
+ 
+# Supposed to be run every minute by cron to insert datas every minute in ChaudiereMinute database
+@cli.command()
+def insert_test_data_every_minute():
+    dt = datetime.now().replace(second=0, microsecond=0)
+    temp = dt.minute
+    watt = 1
+    # Save to db
+    ChaudiereMinute.create(ChaudiereMinute, dt, temp, temp, temp, watt, watt, watt, watt, None, None, None)
+
+@cli.command()
+def print_last_entry():
+    print(ChaudiereMinute.last(ChaudiereMinute))
 
 if __name__ == '__main__':
     cli()

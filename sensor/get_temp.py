@@ -17,8 +17,8 @@ import logger_config
 logger = logging.getLogger(__name__)
 
 # Sensor Config
-os.system('modprobe w1-gpio')
-os.system('modprobe w1-therm')
+# os.system('modprobe w1-gpio')
+# os.system('modprobe w1-therm')
 base_dir = '/sys/bus/w1/devices/'
 
 # SENSOR CONFIG

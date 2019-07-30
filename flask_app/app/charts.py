@@ -322,6 +322,9 @@ static_conf_minute = {
             }
         ]
     },
+    'navigator': {
+        'enabled': True
+    },
     'title': {'text': 'Chaudière'},
 
     'xAxis': {
@@ -400,14 +403,30 @@ local_display_static_conf_minute = {
         "borderWidth": 1,
         "backgroundColor": '#FFFFFF'
     },
-    'title': {'text': 'Chaudière'},
+    'rangeSelector': {
+        'selected': 4,
+        'inputEnabled': False,
+        'buttonTheme': {
+            'visibility': 'hidden'
+        },
+        'labelStyle': {
+            'visibility': 'hidden'
+        }
+    },
+    'navigator': {
+        'enabled': False
+    },
+    'scrollbar': {
+        'enabled': False
+    },
+    'title': {'text': 'chaudière'},
 
     'xAxis': {
             'plotBands': None
         },
     'yAxis': [
         {
-            'labels': {'align': 'right','x': -3},
+            'labels': {'align': 'right','x': -3, 'style':{"fontSize": "20px"}},
             'title': {'text': 'Température'},
             'softMin': 55,
             'softMax': 70,
@@ -494,10 +513,11 @@ params for date, hours : length
 @charts_blueprint.route('/history/<string:year>/<string:month>/<string:day>/<string:hour>/<string:minute>/<string:hours>', methods=['GET'])
 def history(year, month, day, hour, minute, hours):
     begin_date = year+'/'+month+'/'+day+'/'+hour+'/'+minute
-    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
+    json_template = static_conf_minute
+    chart_params = {'json_template': json_template, 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
                             context =             json_context(),
-                            chart_date_hours =    chart_date_hours,
+                            chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True,
                             history_form_data =   json_date_picker())
@@ -513,10 +533,10 @@ def now(hours):
     dt_now = datetime.now().replace(second=0, microsecond=0)
     dt = dt_now - timedelta(hours=hours)
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
-    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
+    chart_params = {'json_template': 'static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
                             context =             json_context(),
-                            chart_date_hours =    chart_date_hours,
+                            chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True,
                             history_form_data =   json_date_picker())
@@ -533,22 +553,24 @@ def local_display(hours):
     dt_now = datetime.now().replace(second=0, microsecond=0)
     dt = dt_now - timedelta(hours=hours)
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
-    chart_date_hours = {'begin_date': begin_date, 'hours_length' : hours}
+    chart_params = {'json_template': 'local_display_static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
                             local_display =       True,
                             context =             json_context(),
-                            chart_date_hours =    chart_date_hours,
+                            chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True)
     
-@charts_blueprint.route('/api_chart_data/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:hours>', methods=['GET'])
-def api_chart_data(year, month, day, hour, minute, hours):
+@charts_blueprint.route('/api_chart_data/<string:chart_json_template>/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:hours>', methods=['GET'])
+def api_chart_data(chart_json_template, year, month, day, hour, minute, hours):
     """ 
     returns a json chart with datas 
     from : given date (y m d h m) 
     to : given date + `hours`
+    the template of json conf is selected with chart_json_template passed by url. this parameter shall be equal to one of the json variable defined at the begining of this file (eg: static_conf_minute)
     """
-    conf = json.loads(json.dumps(static_conf_minute))#make a copy of original object
+    template = eval(chart_json_template) #retrive the json variable defined at the beginning of this file whose name is given by javascript
+    conf = json.loads(json.dumps(template))# make a copy of original object
     dt_begin = datetime(year, month, day, hour, minute)
     dt_end = dt_begin + timedelta(hours=hours)
     entries = ChaudiereMinute.query\

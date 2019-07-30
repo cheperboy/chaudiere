@@ -38,8 +38,9 @@ La variable local_display est utilisée pour
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
 	var JS_base_URL = "{{ context.app_base_url}}";
-	var JS_begin_date = "{{ chart_date_hours.begin_date }}";
-	var JS_hours_lenth = "{{ chart_date_hours.hours_length }}";
+	var JS_chart_json_template = "{{ chart_params.json_template }}";
+	var JS_begin_date = "{{ chart_params.begin_date }}";
+	var JS_hours_lenth = "{{ chart_params.hours_length }}";
  </script>
  
 {% include "_footer.html" %}

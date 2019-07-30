@@ -1,0 +1,38 @@
+## FIRST INSTALL
+## In this file, replace the ip after server_name with the public IP of the host network, then run the commands
+## Edit a new conf file and copy the content of this template conf file
+## sudo nano /etc/nginx/sites-available/chaudiere
+## sudo ln -s /etc/nginx/sites-available/chaudiere /etc/nginx/sites-enabled
+
+## Remove the sym link to default conf file (otherwise it causes errors)
+## sudo rm /etc/nginx/sites-enabled/default
+
+## To test configuration:
+## sudo nginx -t
+
+## Restart nginx
+## sudo service nginx restart
+
+## Usefull Cmmands
+## sudo service nginx status
+## gunicorn --bind 0.0.0.0:8000 wsgi_gunicorn:app
+
+server {
+    listen 5007;
+    server_name "";
+
+    root /home/pi/Prod/chaudiere/flask_app;
+
+    access_log /home/pi/Prod/log/nginx_access.log;
+    error_log /home/pi/Prod/log/nginx_error.log;
+
+    location / {
+        proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        if (!-f $request_filename) {
+            proxy_pass http://127.0.0.1:8000;
+            break;
+		}
+	}
+}

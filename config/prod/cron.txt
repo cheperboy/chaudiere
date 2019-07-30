@@ -4,5 +4,3 @@
 # Every odd minute : process_phase.py
 1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py
 
-# Every month : process_phase.py
-1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py

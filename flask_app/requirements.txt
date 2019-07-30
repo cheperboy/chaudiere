@@ -22,7 +22,7 @@ pyserial==3.4
 python-highcharts==0.4.1
 python-nvd3==0.14.2
 python-slugify==1.1.4
-PyYAML==3.12
+PyYAML==5.1
 requests==2.18.4
 serial==0.0.66
 six==1.11.0

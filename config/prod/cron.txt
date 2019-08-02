@@ -4,3 +4,8 @@
 # Every odd minute : process_phase.py
 1-59/2 * * * * /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py
 
+# Every time the system boot
+# Wait 30 second and launch local gui
+@reboot sleep 30 && /bin/sh /home/pi/gui.sh > /home/pi/cron.log 2>&1
+# @reboot sleep 30 && export DISPLAY=:0 && chromium-browser --kiosk --app=http://chaudiere.local:5007/charts/
+

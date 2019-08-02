@@ -20,6 +20,12 @@ then
 	return
 fi
 
+echo ""
+echo "The script shall test if the secret conf exists"
+echo "~/CONFIG_CHAUDIERE/chaudiere_secret_config.py"
+return
+
+
 echo "/!\ NGINX AND SUPERVISOR CONF WILL BE ERASED !"
 echo "ctrl C to exit now!"
 sleep 4
@@ -41,6 +47,8 @@ mkdir $DIR_PROD_CHAUDIERE
 
 mkdir $DIR_DEV/log
 mkdir $DIR_PROD/db
+
+mkdir ~/CONFIG_CHAUDIERE
 
 ######################
 # Clone repo in Prod #

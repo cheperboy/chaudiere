@@ -1,4 +1,11 @@
 #!/bin/sh
+
+############################################ 
+# Prerequis
+# run install_chaudiere.sh
+############################################
+
+
 DIR_DEV_CHAUDIERE=/home/pi/Dev/chaudiere
 DIR_PROD_CHAUDIERE=/home/pi/Prod/chaudiere
 GIT_REPO="https://github.com/cheperboy/chaudiere.git"
@@ -7,7 +14,7 @@ GIT_REPO="https://github.com/cheperboy/chaudiere.git"
 if [ $DIR_DEV_CHAUDIERE != `pwd` ]
 then
 	echo "Ce script doit être exécuté dans $DIR_DEV_CHAUDIERE"
-	exit 1
+	return
 fi
 
 echo "stop nging and supervisor"

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+########## HOWTO RUN THE SCRIPT ##########
+# This will output in terminal and in a log file
+#. install_chaudiere.sh |& tee install_chaudiere.sh.log
+
 ############################################ 
 # Prerequis
 # Install supervisor and nginx
@@ -13,6 +17,20 @@ DIR_DEV_CHAUDIERE=$DIR_DEV/chaudiere
 DIR_PROD_CHAUDIERE=$DIR_PROD/chaudiere
 GIT_REPO="https://github.com/cheperboy/chaudiere.git"
 
+# This function prints a command and run it
+run () {
+	echo $1 # print command
+	$1 # run command
+}
+
+say () {
+	length=$(printf "%s" "$1" | wc -c)
+	echo
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
+	echo $1
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
+}
+
 # Le scipt doit être exécuté dans un dossier particulier. Veérifier qu'on se trouve dans le bon dossier
 if [ $DIR_DEV_CHAUDIERE != `pwd` ]
 then
@@ -20,80 +38,102 @@ then
 	return
 fi
 
-echo ""
-echo "The script shall test if the secret conf exists"
-echo "~/CONFIG_CHAUDIERE/chaudiere_secret_config.py"
-return
+# Vérifie que nginx est installé
+if ! [ -f /usr/sbin/nginx ] ; then 
+	echo "nginx not installed"
+	return
+fi
+# Vérifie que supervisor est installé
+if ! [ -f /usr/bin/supervisorctl ] ; then 
+	echo "supervisor not installed"
+	return
+fi
 
+# Vérifie que chaudiere_secret_config.py existe
+if ! [ -f ~/CONFIG_CHAUDIERE/chaudiere_secret_config.py ] ; then 
+	echo "~/CONFIG_CHAUDIERE/chaudiere_secret_config.py not found"
+	return
+fi
 
-echo "/!\ NGINX AND SUPERVISOR CONF WILL BE ERASED !"
+# Alerte avant d'exécuter l'installation
+echo "/!\ NGINX AND SUPERVISOR CONF WILL BE OVERWRITTEN !"
 echo "ctrl C to exit now!"
 sleep 4
 
-#############################
+###################
 # Stop nginx and supervisor #
-#############################
-echo "stop nging and supervisor"
-sudo supervisorctl stop gunicorn sensor
-sudo service nginx stop
+###################
+say "Stop nginx and supervisor"
+run "sudo supervisorctl stop gunicorn sensor"
+run "sudo service nginx stop"
 
-######################
+##############
 # Create Directories #
-######################
-mkdir $DIR_PROD
-mkdir $DIR_PROD/log
-mkdir $DIR_PROD/db
-mkdir $DIR_PROD_CHAUDIERE
+##############
+say "Create Directories"
+run "rm -rf  $DIR_PROD_CHAUDIERE"
+run "mkdir $DIR_PROD"
+run "mkdir $DIR_PROD/log"
+run "mkdir $DIR_PROD/db"
+run "mkdir $DIR_PROD_CHAUDIERE"
 
-mkdir $DIR_DEV/log
-mkdir $DIR_PROD/db
+run "mkdir $DIR_DEV/log"
+run "mkdir $DIR_PROD/db"
 
-mkdir ~/CONFIG_CHAUDIERE
-
-######################
+##############
 # Clone repo in Prod #
-######################
-echo "clone $GIT_REPO $PROD_DIR"
-git clone $GIT_REPO $DIR_PROD_CHAUDIERE
-echo ""
+##############
+say "Clone repo in Prod"
+run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 
-######################
-# Install virtualenv #
-######################
-workon prod
-pip install -r $DIR_PROD_CHAUDIERE/requirements.txt
+############################
+# Create virtualenv and install requirements  #
+############################
+# say "Create virtualenv dev"
 
+# run "deactivate" # deactivate any virtualenv to run next command with system python
+# run "mkvirtualenv dev"
+# run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
 
-###################
-# Create database #
-###################
-python flask_app/manage.py create_db
+# say "Create virtualenv prod"
+# run "mkvirtualenv prod"
+# run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
 
-###################
+####################
+# Create chaudiere databases  #
+####################
+say "Create chaudiere databases" 
+run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
+run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
+
+#############
 # Configure nginx #
-###################
+#############
+say "Configure nginx"
 # Copy template conf file
-sudo cp $DIR_PROD_CHAUDIERE/config/prod/nginx_chaudiere_conf /etc/nginx/sites-available/
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/nginx_chaudiere_conf /etc/nginx/sites-available/"
 
 # Create sym link
-sudo ln -s /etc/nginx/sites-available/nginx_chaudiere_conf /etc/nginx/sites-enabled
+run "sudo ln -s /etc/nginx/sites-available/nginx_chaudiere_conf /etc/nginx/sites-enabled"
 
 # Remove the sym link to default conf file
-sudo rm /etc/nginx/sites-enabled/default
+run "sudo rm /etc/nginx/sites-enabled/default"
 
 # Test nginx conf
-sudo nginx -t
+run "sudo nginx -t"
 
-########################
+################
 # Configure supervisor #
-########################
-sudo supervisorctl stop all
-sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere.conf /etc/supervisor/conf.d/
+################
+say "Configure supervisor"
+run "sudo supervisorctl stop all"
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere.conf /etc/supervisor/conf.d/"
 
 
-#####################
+##############
 # Configure Crontab #
-#####################
+##############
+say "Configure Crontab"
 #write out current crontab
 crontab -l > tempcron
 #echo new cron into cron file
@@ -102,18 +142,19 @@ echo $DIR_PROD_CHAUDIERE/config/prod/cron.txt >> tempcron
 crontab tempcron
 rm tempcron
 
-echo "\n Check this new crontab"
+echo; echo "Check this new crontab"
 crontab -l
 
-##############################
+###################
 # Start nginx and supervisor #
-##############################
-echo "start nging and supervisor"
-sudo supervisorctl reread
-sudo supervisorctl reload
-sudo supervisorctl start sensor gunicorn
+###################
+say "Start nginx and supervisor"
+run "sudo supervisorctl reread"
+run "sudo supervisorctl reload"
+run "sudo supervisorctl start sensor gunicorn"
 
-sudo supervisorctl status
-sudo service nginx start
-sudo service nginx status
+run "sudo supervisorctl status"
+run "sudo service nginx start"
+sleep 2
+run "sudo service nginx status"
 

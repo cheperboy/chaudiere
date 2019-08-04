@@ -1,9 +1,25 @@
 #!/bin/bash
 
+###################################
+# This script install the required packages with apt-get #
+###################################
+
 # This function prints a command and run it
 run () {
 	echo $1 # print command
 	$1 # run command
+}
+
+# determine the lenght of the parameter and print it this way
+#########
+# parameter #
+#########
+say () {
+	length=$(printf "%s" "$1" | wc -c)
+	echo
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
+	echo $1
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
 }
 
 run "sudo apt-get update"
@@ -13,13 +29,13 @@ run "sudo apt-get -y install supervisor git python-pip nginx"
 run "pip install virtualenv virtualenvwrapper"
 
 # Specific packages for chaudiere app
-
 run "sudo apt-get install curl"
+
+# Specific packages for i2c
+run "sudo apt-get install python-smbus python3-smbus python-dev python3-dev"
 
 # NEXMO need cryptographie and cffi
 run "sudo apt-get install build-essential libssl-dev libffi-dev python-dev"
 
 # clean downloaded packages
 run "sudo apt-get clean"
-
-

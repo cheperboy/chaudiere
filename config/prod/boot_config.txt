@@ -1,0 +1,9 @@
+##########################################
+# chaudiere app configuration to add at the end of /boot/config.txt  #
+##########################################
+
+# Enable the kernel module for 1-wire communication on GPIO-4 (for DS18b20)
+dtoverlay=w1-gpio
+
+# Enable the kernel module for i2C (for ADC ADS1115)
+dtparam=i2c1=on

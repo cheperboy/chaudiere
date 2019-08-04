@@ -1,9 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
-############################################ 
-# Prerequis
-# run install_chaudiere.sh
-############################################
+##########################
+# This script updates the Prod repository #
+# Shall be run after install_chaudiere.sh  #
+##########################
+
+# This function prints a command and run it
+run () {
+	echo $1 # print command
+	$1 # run command
+}
+
+# determine the lenght of the parameter and print it this way
+#########
+# parameter #
+#########
+say () {
+	length=$(printf "%s" "$1" | wc -c)
+	echo
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
+	echo $1
+	for i in $( seq 0 $length ); do echo -n =; done; echo;
+}
 
 
 DIR_DEV_CHAUDIERE=/home/pi/Dev/chaudiere

@@ -23,6 +23,10 @@ run () {
 	$1 # run command
 }
 
+# determine the lenght of the parameter and print it this way
+#########
+# parameter #
+#########
 say () {
 	length=$(printf "%s" "$1" | wc -c)
 	echo

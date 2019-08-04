@@ -1,0 +1,8 @@
+#########################################
+# chaudiere app configuration to add at the end of /etc/modules  #
+# to load required modules at boot time                                    #
+#########################################
+
+w1-gpio
+W1-therm
+i2c-dev

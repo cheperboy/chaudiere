@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ########## HOWTO RUN THE SCRIPT ##########
 # This will output in terminal and in a log file
@@ -102,9 +102,9 @@ run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 ####################
 # Create chaudiere databases  #
 ####################
-say "Create chaudiere databases" 
-run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
-run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
+# say "Create chaudiere databases" 
+# run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
+# run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
 
 #############
 # Configure nginx #
@@ -135,15 +135,11 @@ run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere.conf /etc/supe
 ##############
 say "Configure Crontab"
 #write out current crontab
-crontab -l > tempcron
-#echo new cron into cron file
-echo $DIR_PROD_CHAUDIERE/config/prod/cron.txt >> tempcron
-#install new cron file
-crontab tempcron
-rm tempcron
-
-echo; echo "Check this new crontab"
-crontab -l
+cat $DIR_PROD_CHAUDIERE/config/prod/cron.txt >> tempcron
+# Copy template conf file in /etc/cron.d
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/chaudiere_cron.txt /etc/cron.d"
+# file in /etc/cron.d must be owned by root
+run "sudo chown root /etc/cron.d/chaudiere_cron.txt"
 
 ###################
 # Start nginx and supervisor #

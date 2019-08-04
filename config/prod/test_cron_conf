@@ -1,0 +1,10 @@
+####################################
+# Template cron config for chaudiere app                      #
+#                                                                             #
+# This file shall be copied in  /etc/cron.d directory         #
+# or create a symlink /etc/cron.d directory to this file     #
+# This file must be owned by root                                #
+#                                                                             #
+####################################
+
+* * * * * pi touch /home/pi/Dev/test_cron.txt

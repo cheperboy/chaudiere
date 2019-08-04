@@ -1,0 +1,22 @@
+####################################
+# Template cron config for chaudiere app                      #
+#                                                                             #
+# This file shall be copied in  /etc/cron.d directory         #
+# or create a symlink /etc/cron.d directory to this file     #
+# This file must be owned by root                                #
+#                                                                             #
+####################################
+
+* * * * * pi touch /home/pi/Dev/test_cron.txt
+
+# Every even minute : archive_minute.py
+*/2 * * * * pi /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/archive_minute.py
+
+# Every odd minute : process_phase.py
+1-59/2 * * * * pi /home/pi/Envs/prod/bin/python /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py
+
+# Every time the system boot
+# Wait 30 second and launch local gui
+@reboot pi sleep 30 && /bin/sh /home/pi/gui.sh > /home/pi/cron.log 2>&1
+# @reboot sleep 30 && export DISPLAY=:0 && chromium-browser --kiosk --app=http://chaudiere.local:5007/charts/
+

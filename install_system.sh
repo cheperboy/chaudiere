@@ -4,6 +4,10 @@
 # This script install the required packages with apt-get #
 ###################################
 
+########## HOWTO RUN THE SCRIPT ##########
+# This will output in terminal and in a log file
+#. install_system.sh |& tee install_system.sh.log
+
 # This function prints a command and run it
 run () {
 	echo $1 # print command

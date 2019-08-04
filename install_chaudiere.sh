@@ -89,22 +89,22 @@ run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 ############################
 # Create virtualenv and install requirements  #
 ############################
-# say "Create virtualenv dev"
+say "Create virtualenv dev"
 
-# run "deactivate" # deactivate any virtualenv to run next command with system python
-# run "mkvirtualenv dev"
-# run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
+run "deactivate" # deactivate any virtualenv to run next command with system python
+run "mkvirtualenv dev"
+run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
 
-# say "Create virtualenv prod"
-# run "mkvirtualenv prod"
-# run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
+say "Create virtualenv prod"
+run "mkvirtualenv prod"
+run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
 
 ####################
 # Create chaudiere databases  #
 ####################
-# say "Create chaudiere databases" 
-# run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
-# run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
+say "Create chaudiere databases" 
+run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
+run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
 
 #############
 # Configure nginx #
@@ -134,8 +134,6 @@ run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere.conf /etc/supe
 # Configure Crontab #
 ##############
 say "Configure Crontab"
-#write out current crontab
-cat $DIR_PROD_CHAUDIERE/config/prod/cron.txt >> tempcron
 # Copy template conf file in /etc/cron.d
 run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/chaudiere_cron.txt /etc/cron.d"
 # file in /etc/cron.d must be owned by root

@@ -5,8 +5,7 @@ run () {
 	$1 # run command
 }
 
-# Create sym link
-# run "sudo chown"
-# run "sudo ln -s /home/pi/Dev/chaudiere/config/prod/chaudiere_cron.txt /etc/cron.d"
-run "sudo cp /home/pi/Dev/chaudiere/config/prod/test_cron_conf /etc/cron.d"
-run "sudo chown root /etc/cron.d/test_cron_conf"
+# Copy template conf file in /etc/cron.d
+run "sudo cp /home/pi/Dev/chaudiere/config/prod/chaudiere_cron.txt /etc/cron.d"
+# file in /etc/cron.d must be owned by root
+run "sudo chown root /etc/cron.d/chaudiere_cron.txt"

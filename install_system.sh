@@ -7,7 +7,6 @@ run () {
 }
 
 run "sudo apt-get update"
-run "sudo apt-get update"
 run "sudo apt-get dist-upgrade -y"
 run "sudo apt-get upgrade -y"
 run "sudo apt-get -y install supervisor git python-pip nginx"

@@ -183,7 +183,7 @@ if __name__ == '__main__':
             exit()
 
         date = args.date.split('/')
-        print date
+        print (date)
         try:
             dt_end = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), 0, 0)
         except IndexError:

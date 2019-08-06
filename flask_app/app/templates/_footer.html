@@ -16,11 +16,13 @@
     <!-- END FOOTER -->
 	
 	{% if not local_display %}
+		{% if history_form_data %}
 
-		{{ datepicker.loader(theme="base") }} {# to load jQuery-ui #}
-		{{ datepicker.picker(	id=".dp", 
-								maxDate=history_form_data.max_date, 
-								minDate=history_form_data.min_date) }}
+			{{ datepicker.loader(theme="base") }} {# to load jQuery-ui #}
+			{{ datepicker.picker(	id=".dp", 
+									maxDate=history_form_data.max_date, 
+									minDate=history_form_data.min_date) }}
+		{% endif %}
 	{% endif %}
   
   </body>

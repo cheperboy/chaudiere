@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import time, datetime, urllib2
+import time, datetime
+# import urllib2
 import urllib, requests
 import json
 from datetime import datetime, timedelta
@@ -466,20 +467,22 @@ def json_context():
     return context
 
 def json_date_picker():
-    min = ChaudiereMinute.first(ChaudiereMinute).dt
-    min_year =  min.strftime("%Y")
-    min_month = str(int(min.strftime("%m")) - 1)
-    min_day =   min.strftime("%d")
-    max = ChaudiereMinute.last(ChaudiereMinute).dt
-    max_year =  max.strftime("%Y")
-    max_month = str(int(max.strftime("%m")) - 1)
-    max_day =   max.strftime("%d")
-    data = {
-        'min_date' : str(min_year+'-'+min_month+'-'+min_day),
-        'max_date' : str(max_year+'-'+max_month+'-'+max_day)
-    }
-    return data
-
+    if ChaudiereMinute.first(ChaudiereMinute):
+        min = ChaudiereMinute.first(ChaudiereMinute).dt
+        min_year =  min.strftime("%Y")
+        min_month = str(int(min.strftime("%m")) - 1)
+        min_day =   min.strftime("%d")
+        max = ChaudiereMinute.last(ChaudiereMinute).dt
+        max_year =  max.strftime("%Y")
+        max_month = str(int(max.strftime("%m")) - 1)
+        max_day =   max.strftime("%d")
+        data = {
+            'min_date' : str(min_year+'-'+min_month+'-'+min_day),
+            'max_date' : str(max_year+'-'+max_month+'-'+max_day)
+        }
+        return data
+    else:
+        return ""
 """
 hour_length param is not used in view but parsed by javascript to request datas
 """
@@ -543,7 +546,6 @@ def now(hours):
 
 @charts_blueprint.route('/', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/<int:hours>', methods=['GET'])
-
 def local_display(hours):
     """ 
     print a chart with datas 

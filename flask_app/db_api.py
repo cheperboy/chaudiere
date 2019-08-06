@@ -17,7 +17,7 @@ def createSensorRecord(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt
         db.session.add(entry)
         db.session.commit()
     except RuntimeError,e:
-        print e.message
+        print (e.message)
         return False
     else:
         return True

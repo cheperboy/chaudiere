@@ -58,7 +58,7 @@ elif ENVNAME == 'Prod':
     
 elif ENVNAME == 'flask-dev' :
     # Windows Development configuration
-    print 'db path '+os.path.join(ENVPATH + '\db\\', 'chaudiere.db')
+    print ('db path '+os.path.join(ENVPATH + '\db\\', 'chaudiere.db'))
 
     PORT = 5007
     APP_NAME += ' Win Dev'

@@ -33,25 +33,25 @@ def find_portname(port_info):
 
 def print_ports():
     ports = find_usb_ports()
-    print 'All Ports : '
+    print ('All Ports : ')
     for p in ports:
         print p
-    print ''
+    print ('')
 
     ports = find_arduino_ports()
-    print 'Arduino Ports : '
+    print ('Arduino Ports : ')
     for p in ports:
         print p
-    print ''
+    print ('')
 
     port = prog_port()
-    print 'Prog port : '
+    print ('Prog port : ')
     print port
-    print ''
+    print ('')
 
     port = native_port()
-    print 'Native port : '
-    print port
+    print ('Native port : ')
+    print (port)
 
 if __name__ == '__main__':
     print_ports()

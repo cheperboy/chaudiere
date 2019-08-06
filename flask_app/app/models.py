@@ -71,11 +71,11 @@ class ChaudiereBase(db.Model):
             db.session.add(entry)
             db.session.commit()
             ret = str(entry)
-            print ret
+            print (ret)
         except Exception as e:
             ret = 'Not Ok'
-            print e
-        return ret
+            print (e)
+        return (ret)
     
     """
     return one field corresponding to given InputDb constante (ATTR_ID)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import time, datetime, urllib2
+import time, datetime
+# import urllib2
 import urllib, requests
 import json
 from datetime import datetime, timedelta
@@ -35,7 +36,7 @@ def list_of_min_values(all_entries, interval=60):
     begin = 0
     end   = interval
     out_len = int(len(all_entries)/interval)
-    print out_len
+    print (out_len)
     while(begin < len(all_entries)):
         values = [entry.get(TEMP_CHAUDIERE) for entry in all_entries[begin:end] if (entry is not None and\
                                                                                     entry.get(TEMP_CHAUDIERE) is not None)]

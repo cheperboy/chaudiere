@@ -39,9 +39,9 @@ def update_data():
         os.system("sudo rm -f /home/pi/Dev/db/chaudiere.db")
         os.system("cp /home/pi/Prod/db/chaudiere.db /home/pi/Dev/db/")
         os.system("cp /home/pi/Prod/db/chaudiere_minute.db /home/pi/Dev/db/")
-        print 'Done'
+        print ('Done')
     else:
-        print 'Aborted. Env is '+config.ENVNAME
+        print ('Aborted. Env is '+config.ENVNAME)
 
 @cli.command()
 def test_mail():
@@ -61,7 +61,7 @@ def create_data():
         me = Chaudiere(datetime.now(), x, 0, 0, 0, 0, 0, 0, None, None, None)
         db.session.add(me)
         db.session.commit()
-        print me
+        print (me)
 
 """Get Events."""
 

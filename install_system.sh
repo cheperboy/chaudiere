@@ -30,7 +30,9 @@ run "sudo apt-get update"
 run "sudo apt-get dist-upgrade -y"
 run "sudo apt-get upgrade -y"
 run "sudo apt-get -y install supervisor git python-pip nginx"
-run "pip install virtualenv virtualenvwrapper"
+# installing virtualenv with sudo apt-get makes it working ok for python2 and python3
+run "sudo apt-get -y install virtualenv"
+run "pip install virtualenvwrapper"
 
 # Specific packages for chaudiere app
 run "sudo apt-get install curl"

@@ -1,5 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">{{context.app_name}}</a>
+  <a class="navbar-brand" href="#">
+{% if context %}
+		{{context.app_name}}
+{% endif %}	  
+</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -11,7 +15,14 @@
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=12) }}">12 heures</a></li>
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=73) }}">3 jours</a></li>
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('monitor.monitor') }}">Monitor</a></li>
-    </ul>
+		{% if current_user.is_authenticated %}
+			<li class="nav-item"><span class="nav-link" >{{ current_user.name }}</span></li>
+			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
+		{% endif %}
+		{% if not current_user.is_authenticated %}
+			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+		{% endif %}
+		</ul>
     <form class="form-inline my-2 my-lg-0" action="/charts/history_form" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 	  <input class="form-control mr-sm-2 form-control dp" name="date" type="search" placeholder="Chercher par date" aria-label="Search">
@@ -19,3 +30,4 @@
     </form>
   </div>
 </nav>
+

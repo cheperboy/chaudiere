@@ -4,13 +4,20 @@ La variable local_display est utilisée pour
 - si local_display, auto refres chaque minute
 -->
 
-
 {% include "_header.html" %}
 {% if not local_display %}
 	{% include "_navbar.html" %}
 {% endif %}
 	<div class="container">	
-
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container"  style="height: 400px" id="staticchart-container">
+			   {% block content %}
+			   {% endblock %}
+			  </div>
+			</div>
+		</div>
+   	
 	{% if render_static_chart %}
 		<div class="container-fluid">
 		  <div class="row">
@@ -37,10 +44,12 @@ La variable local_display est utilisée pour
 	// Those parameters are :
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
-	var JS_base_URL = "{{ context.app_base_url}}";
-	var JS_chart_json_template = "{{ chart_params.json_template }}";
-	var JS_begin_date = "{{ chart_params.begin_date }}";
-	var JS_hours_lenth = "{{ chart_params.hours_length }}";
+	{% if chart_params and context %}
+		var JS_base_URL = "{{ context.app_base_url}}";
+		var JS_chart_json_template = "{{ chart_params.json_template }}";
+		var JS_begin_date = "{{ chart_params.begin_date }}";
+		var JS_hours_lenth = "{{ chart_params.hours_length }}";
+	{% endif %}
  </script>
  
 {% include "_footer.html" %}

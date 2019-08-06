@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ISO-8859-1 -*-
 import os, sys
 from subprocess import call             # to execute a shell command
 from threading import Thread            # to launch an async thread

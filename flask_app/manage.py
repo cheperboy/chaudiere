@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ISO-8859-1 -*-
+
+
 from __future__ import absolute_import
 
 import os, click, sys, time

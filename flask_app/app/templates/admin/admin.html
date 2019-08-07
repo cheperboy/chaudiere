@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+
+{% block content %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container" >
+			  
+				{% for section_name, section_dict in params.items(): %}
+					<h2>{{ section_name }}</h2>
+					<table class="table table-condensed table-hover">
+					  <tbody>
+						{% for key, value in section_dict.items(): %}
+						<tr>
+						  <th scope="row">{{ key }}</th>
+						  <th>{{ value }}</th>
+						<tr>
+						{% endfor %}
+					  </tbody>
+					</table>
+				{% endfor %}
+			  
+			  </div>
+			</div>
+		</div>	
+{% endblock %}
+ 

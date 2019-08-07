@@ -9,34 +9,8 @@ La variable local_display est utilisée pour
 	{% include "_navbar.html" %}
 {% endif %}
 	<div class="container">	
-		<div class="container-fluid">
-		  <div class="row">
-			  <div class="container"  style="height: 400px" id="staticchart-container">
-			   {% block content %}
-			   {% endblock %}
-			  </div>
-			</div>
-		</div>
-   	
-	{% if render_static_chart %}
-		<div class="container-fluid">
-		  <div class="row">
-			  <div class="container"  style="height: 400px" id="staticchart-container"></div>
-			</div>
-		</div>
-		<div class="container-fluid">
-		  <div class="row">
-			  <div class="container">{{ chart_legend.text|safe}}</div>
-			</div>
-		</div>
-	{% endif %}
-	{% if staticchartraw %}
-		<div class="container-fluid">
-		  <div class="row">
-			  <div class="container"  style="height: 800px" id="staticchartraw-container"></div>
-			</div>
-		</div>
-	{% endif %}
+	   {% block content %}
+	   {% endblock %}
 	</div>    
 	<hr>
  

@@ -16,6 +16,7 @@
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now', hours=73) }}">3 jours</a></li>
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('monitor.monitor') }}">Monitor</a></li>
 		{% if current_user.is_authenticated %}
+			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a></li>
 			<li class="nav-item"><span class="nav-link" >{{ current_user.name }}</span></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
 		{% endif %}

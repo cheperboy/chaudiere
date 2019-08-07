@@ -11,4 +11,15 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     
+    @classmethod
+    def last(self, cls):
+        return(db.session.query(cls).order_by(cls.id.desc()).first())
+
+    @classmethod
+    def all(self, cls):
+        return(db.session.query(cls).order_by(cls.id.desc()).all())
+    
+    @classmethod
+    def get_by_name(self, cls, name):
+        return db.session.query(cls).filter_by(name=name).first()
     

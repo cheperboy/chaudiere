@@ -537,7 +537,7 @@ def now(hours):
     dt = dt_now - timedelta(hours=hours)
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
     chart_params = {'json_template': 'static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
-    return render_template('index.html',
+    return render_template('charts.html',
                             context =             json_context(),
                             chart_params =        chart_params,
                             chart_legend =        ChartLegend,

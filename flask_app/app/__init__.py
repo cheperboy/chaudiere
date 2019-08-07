@@ -22,6 +22,7 @@ from flask_datepicker import datepicker
 from flask_login import LoginManager 
 
 # app import
+from app.controllers.admin import admin_blueprint
 from app.auth import auth
 from app.charts import charts_blueprint
 from app.monitor import monitor_blueprint
@@ -103,6 +104,7 @@ def create_app():
     
     # blueprints
     app.register_blueprint(auth)
+    app.register_blueprint(admin_blueprint)
     app.register_blueprint(charts_blueprint)
     app.register_blueprint(webapi)
     app.register_blueprint(monitor_blueprint)

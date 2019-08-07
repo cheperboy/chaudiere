@@ -53,6 +53,7 @@ min value of the given serie
 def min_value(all_entries):
     values = [entry.get(TEMP_CHAUDIERE) for entry in all_entries if (entry is not None and\
                                                                                 entry.get(TEMP_CHAUDIERE) is not None)]
+    values = ['N/A']                                                                            
     return min(values)
 
 @monitor_blueprint.route('/', methods=['GET'])

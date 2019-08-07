@@ -11,9 +11,14 @@ from flask.cli import FlaskGroup
 
 from app import create_app, db
 from app.models import Chaudiere, ChaudiereMinute
+from app.models.users import User
+
 import config
 
 import send_email_sms
+
+import getpass#, bcrypt
+from werkzeug.security import generate_password_hash
 
 def create_my_app(info):
     from app import create_app
@@ -55,7 +60,6 @@ def test_sms():
     """ Send an SMS """
     send_email_sms.Send_SMS_Test('33688649102')
 
-    
 @cli.command()
 def create_data():
     """Creates a data Entry."""
@@ -103,6 +107,46 @@ def insert_test_data_every_minute():
 @cli.command()
 def print_last_entry():
     print(ChaudiereMinute.last(ChaudiereMinute))
+
+###########
+# Manage Users #
+###########
+@cli.command()
+def list_users():
+    """ List admin users """
+    for user in User.all(User):
+        print (user.id, user.name, user.email)
+    print ()
+    
+@click.option('--name')
+@cli.command()
+def delete_user(name):
+    """ delete_user --name toto """
+    user = User.get_by_name(User, name)
+    db.session.delete(user)
+    db.session.commit()
+    
+@cli.command()
+def create_user():
+    """ Create an admin user """
+    if User.all(User):
+        print ('A user already exists! Create another? (y/n):')
+        create = input()
+        if create == 'n':
+            return
+
+        print ('Enter name: ')
+        name = input()
+        print ('Enter email: ')
+        email = input()
+        password = getpass.getpass()
+        assert password == getpass.getpass('Password (again):')
+
+        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+        db.session.add(new_user)
+        db.session.commit()
+        
+        print ('User added.')
 
 if __name__ == '__main__':
     cli()

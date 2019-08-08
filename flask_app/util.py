@@ -1,4 +1,10 @@
-from datetime import datetime
+
+def hostname():
+    import subprocess
+    cmd = """cat /etc/hostname"""
+    stdout = subprocess.check_output(cmd, shell=True)
+    stdout = stdout.decode('utf-8')
+    return (stdout)
 
 def pretty_date_ago(time=False):
     """
@@ -6,6 +12,7 @@ def pretty_date_ago(time=False):
     pretty string like 'an hour ago', 'Yesterday', '3 months ago',
     'just now', etc
     """
+    from datetime import datetime
     now = datetime.now()
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
@@ -43,6 +50,7 @@ def pretty_date_ago(time=False):
     return str(day_diff / 365) + " years ago"
     
 def pretty_date(given_date=False):
+    from datetime import datetime
     if type(given_date) is int:
         dt = datetime.fromtimestamp(given_date)
     elif isinstance(given_date,datetime):

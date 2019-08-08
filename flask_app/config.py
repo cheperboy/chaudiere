@@ -29,7 +29,8 @@ if ENVNAME == 'Dev' :
     DEBUG = True
     WTF_CSRF_ENABLED = False
     TEMPLATES_AUTO_RELOAD = True
-    url = socket.gethostbyname(socket.gethostname())
+    # url = socket.gethostbyname(socket.gethostname())
+    url = "chaudiere.local"
     URL = 'http://'+ str(url) +':'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {

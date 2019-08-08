@@ -9,18 +9,18 @@ from random import random
 import pprint
 import copy
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
 from flask import current_app as app
-from app.auth import auth
+
+from app.controllers.auth import auth
 from app.models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
 from app.constantes import *
 from util import *
 
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
 
 class HistoryForm(FlaskForm):
     date = StringField('Date', validators=[DataRequired()])
@@ -556,7 +556,7 @@ def local_display(hours):
     dt = dt_now - timedelta(hours=hours)
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
     chart_params = {'json_template': 'local_display_static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
-    return render_template('index.html',
+    return render_template('charts.html',
                             local_display =       True,
                             context =             json_context(),
                             chart_params =        chart_params,

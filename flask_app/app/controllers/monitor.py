@@ -10,7 +10,7 @@ import pprint
 import copy
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
-from app.auth import auth
+from app.controllers.auth import auth
 from app.models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
 from app.constantes import *
 from util import *

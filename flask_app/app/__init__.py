@@ -23,10 +23,10 @@ from flask_login import LoginManager
 
 # app import
 from app.controllers.admin import admin_blueprint
-from app.auth import auth
-from app.charts import charts_blueprint
-from app.monitor import monitor_blueprint
-from app.webapi import webapi
+from app.controllers.auth import auth
+from app.controllers.charts import charts_blueprint
+from app.controllers.monitor import monitor_blueprint
+from app.controllers.webapi import webapi
 
 import logging, os, json
 from logging.handlers import RotatingFileHandler

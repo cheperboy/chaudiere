@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+from datetime import datetime
 # ext import
 from flask import Flask
 from flask_assets import Environment, Bundle
@@ -22,7 +23,7 @@ from flask_datepicker import datepicker
 from flask_login import LoginManager 
 
 # app import
-from app.controllers.admin import admin_blueprint
+from app.admin import admin_blueprint
 from app.controllers.auth import auth
 from app.controllers.charts import charts_blueprint
 from app.controllers.monitor import monitor_blueprint
@@ -88,6 +89,26 @@ def set_config(app):
     app.config['APP_BASE_URL'] = app.config['URL'] + str(app.config['PORT']) + '/'
     #app.config['USERS_EMAILS'] = list(map(lambda x: x+'@gmail.com', app.config['USERS']))
 
+def init_db_admin_config():
+    """
+    if database admin_config contains no entry, then :
+    - create one and set temp_chaudiere_failure to the default value (see constantes.py)
+    - push this value to the app_context
+    """
+    from app.constantes import TEMP_CHAUDIERE_FAILURE
+    from app.models.admin_config import AdminConfig
+    
+    if AdminConfig.first(AdminConfig) == None:
+        new_config = AdminConfig(
+            temp_chaudiere_failure=TEMP_CHAUDIERE_FAILURE,
+            comment='',
+            updated_at=datetime.now())
+        
+        db.session.add(new_config)
+        db.session.commit()
+        print("\n * NEW AdminConfig\n\tTEMP_CHAUDIERE_FAILURE = {0}\n".format(TEMP_CHAUDIERE_FAILURE))
+        
+        
 def create_app():
     app = Flask(__name__,\
                 static_folder="static/",\
@@ -138,5 +159,9 @@ def create_app():
 
     assets.debug = False
     app.config['ASSETS_DEBUG'] = False
-    return app
+    
+    with app.app_context():
+        init_db_admin_config()
+    
+    return (app)
 

@@ -32,13 +32,18 @@ def cli():
 
 @cli.command()
 @click.option('--delete_users_db', prompt='delete also users db (y/n) ?')
-def create_db(delete_users_db):
+@click.option('--delete_admin_config_db', prompt='delete also admin_config db (y/n) ?')
+def create_db(delete_users_db, delete_admin_config_db):
     """Recreate the db tables."""
-    db.drop_all(['chaudiere', 'chaudiere_minute'])
-    db.create_all(['chaudiere', 'chaudiere_minute'])
+    all_db_except_users_and_config = ['chaudiere', 'chaudiere_minute', 'admin_config']
+    db.drop_all(all_db_except_users_and_config)
+    db.create_all(all_db_except_users_and_config)
     if delete_users_db == 'y':
         db.drop_all('users')
         db.create_all('users')
+    if delete_admin_config_db == 'y':
+        db.drop_all('admin_config')
+        db.create_all('admin_config')
     # db.session.commit()
 
 @cli.command()

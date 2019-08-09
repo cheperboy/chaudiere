@@ -32,7 +32,7 @@ def timedelta_in_minute(dt_begin, dt_end):
 
     # subtract values is in seconds then divide by 60 to get minutes.
     return int(ts_end - ts_begin) / 60
-
+    
 class ChaudiereBase(db.Model):
     __abstract__ = True
     id      = db.Column(db.Integer, primary_key=True)

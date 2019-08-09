@@ -24,6 +24,7 @@ MAIL_USERNAME = 'chaudiere.montlevic@gmail.com'
 # Detect env from filesystem location (Prod/Dev)
 if ENVNAME == 'Dev' :
     # Development configuration
+    ENV: 'development'
     APP_NAME = 'Chaudiere Dev' 
     PORT = 5008
     DEBUG = True
@@ -34,8 +35,9 @@ if ENVNAME == 'Dev' :
     URL = 'http://'+ str(url) +':'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
-        'users':              'sqlite:///' + os.path.join(ENVPATH + '/db/', 'users.db'),
-        'chaudiere':          'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),
+        'admin_config': 'sqlite:///' + os.path.join(ENVPATH + '/db/', 'admin_config.db'),
+        'users':            'sqlite:///' + os.path.join(ENVPATH + '/db/', 'users.db'),
+        'chaudiere':      'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),
         'chaudiere_minute':   'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_minute.db'),
         'chaudiere_hour':     'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_hour.db')
     } 
@@ -44,6 +46,7 @@ if ENVNAME == 'Dev' :
 
 elif ENVNAME == 'Prod':
     # Production configuration
+    ENV: 'production'
     APP_NAME = 'Chaudiere'
     DEBUG=False
     PORT = 5007
@@ -51,6 +54,8 @@ elif ENVNAME == 'Prod':
     WTF_CSRF_ENABLED = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
+        'admin_config': 'sqlite:///' + os.path.join(ENVPATH + '/db/', 'admin_config.db'),
+        'users':            'sqlite:///' + os.path.join(ENVPATH + '/db/', 'users.db'),
         'chaudiere':         'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),
         'chaudiere_minute':  'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_minute.db'),
         'chaudiere_hour':    'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_hour.db')
@@ -60,6 +65,7 @@ elif ENVNAME == 'Prod':
     
 elif ENVNAME == 'flask-dev' :
     # Windows Development configuration
+    ENV: 'development'
     print ('db path '+os.path.join(ENVPATH + '\db\\', 'chaudiere.db'))
 
     PORT = 5007

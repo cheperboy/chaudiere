@@ -4,7 +4,7 @@ from app import create_app
 import config
 
 app = create_app()
-
+ 
 def run():
     app.run(host="0.0.0.0", port=config.PORT, threaded=True)
 

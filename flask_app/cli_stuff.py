@@ -27,16 +27,6 @@ def cli():
     """This is a management script for the application."""
 
 @cli.command()
-def test_mail():
-    """ Send an Email """
-    send_email_sms.Send_Mail_Test(['chaudiere.montlevic@gmail.com'])
-
-@cli.command()
-def test_sms():
-    """ Send an SMS """
-    send_email_sms.Send_SMS_Test('33688649102')
-
-@cli.command()
 def create_data():
     """Creates a data Entry."""
     now = datetime.now()

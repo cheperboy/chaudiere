@@ -1,5 +1,19 @@
 # -*- coding: utf-8 -*-
 import subprocess
+from flask import current_app as app
+
+########
+# Nexmo
+########
+
+import nexmo
+
+def nexmo_balance():
+    nexmo_client = nexmo.Client(key=app.config['NEXMO_API_KEY'], secret=app.config['NEXMO_API_SECRET'])
+    result = nexmo_client.get_balance()    
+    balance = "{:.2f}".format(result['value'])
+    balance = str(balance) + " €"
+    return (balance)
 
 ########
 # Network

@@ -34,10 +34,10 @@ if ENVNAME == 'Dev' :
     URL = 'http://'+ str(url) +':'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
-        'users':                    'sqlite:///' + os.path.join(ENVPATH + '/db/', 'users.db'),
-        'chaudiere':              'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),
+        'users':              'sqlite:///' + os.path.join(ENVPATH + '/db/', 'users.db'),
+        'chaudiere':          'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere.db'),
         'chaudiere_minute':   'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_minute.db'),
-        'chaudiere_hour':      'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_hour.db')
+        'chaudiere_hour':     'sqlite:///' + os.path.join(ENVPATH + '/db/', 'chaudiere_hour.db')
     } 
     # Users emails
     USERS = ['matthieujouve']

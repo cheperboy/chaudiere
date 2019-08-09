@@ -34,6 +34,9 @@ def set_params():
         'uptime' :          system_uptime(),
         'cpu_temp' :   cpu_temp()
     }
+    params["Nexmo (SMS)"] = {
+        'Balance' :   nexmo_balance()
+    }
     params["disk_space"] = disk_space()
     params["db_size"] = db_size()
     return params

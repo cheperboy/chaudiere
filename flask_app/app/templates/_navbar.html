@@ -9,7 +9,7 @@
 		<li class="nav-item"><a class="nav-link" href="{{ url_for('charts.now') }}">Température</a></li>
 
 		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">History</a>
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Historique</a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 			  <a class="dropdown-item" href="{{ url_for('charts.now', hours=6) }}">6 heures</a>
 			  <a class="dropdown-item" href="{{ url_for('charts.now', hours=12) }}">12 heures</a>
@@ -17,24 +17,21 @@
 			  <a class="dropdown-item" href="{{ url_for('monitor.monitor') }}">Monitor</a>
 			</div>
 		</li>		
-		
-		<li class="nav-item"><a class="nav-link" href="{{ url_for('monitor.monitor') }}">Monitor</a></li>
-		{% if current_user.is_authenticated %}
-			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a></li>
+	</ul>
+	
+	{% if current_user.is_authenticated %}
+	<ul class="nav justify-content-end">
+			<li class="nav-item"><span class="nav-link badge badge-primary">Admin</span></li>
+			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">SysInfo</a></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">Config</a></li>
-			<li class="nav-item"><span class="nav-link" >{{ current_user.name }}</span></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
-		{% endif %}
-		{% if not current_user.is_authenticated %}
-			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
-		{% endif %}
-		</ul>
-		
-    <form class="form-inline my-2 my-lg-0" action="/charts/history_form" method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-	  <input class="form-control mr-sm-2 form-control dp" name="date" type="search" placeholder="Chercher par date" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go</button>
-    </form>
+		<!--<li class="nav-item"><span class="nav-link badge badge-primary">{# current_user.name #}</span></li>-->
+	</ul>
+	{% else %}
+		{% include "_log_admin_form.html" %}
+	{% endif %}
+    
+	
   </div>
 </nav>
 

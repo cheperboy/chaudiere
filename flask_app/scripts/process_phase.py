@@ -4,8 +4,8 @@
 
 ## Summary
 
-python script used to process phase value of ChaudiereMinute entries.
-supposed to be run every 1 or 2 minutes by cron
+This script determines the `phase` value of ChaudiereMinute entries.
+This script is supposed to be run every 1 or 2 minutes by cron
 
 ## CLI Usage :
 
@@ -42,6 +42,14 @@ logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
 import logger_config
 logger = logging.getLogger(__name__)
+
+# import TEMP_CHAUDIERE_FAILURE from AdminConfig database
+from app.models.admin_config import AdminConfig
+admin_config = AdminConfig.first(AdminConfig)
+if admin_config is not None:
+    TEMP_CHAUDIERE_FAILURE = admin_config.temp_chaudiere_failure
+else:
+    logger.error("Could not fetch AdminConfig.temp_chaudiere_failure")
 
 def temperature_variation(entry, periode):
     """

@@ -67,19 +67,3 @@ def config():
             return render_template('admin/admin_config.html', form=form)
     return render_template('admin/admin_config.html', form=form)
     
-# @admin_blueprint.route('/config', methods=['GET', 'POST'])
-# @login_required
-# def config():
-    # """Change Admin Config parameters"""
-    # admin_config = AdminConfig.query.first()
-    # if admin_config is None:
-        # abort(404)
-    # form = AdminConfigForm()
-    # if form.validate_on_submit():
-        # admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
-        # db.session.add(admin_config)
-        # db.session.commit()
-        # flash('temp_chaudiere_failure for admin_config successfully changed to {}.'.format(
-            # admin_config.temp_chaudiere_failure), 'form-success')
-    # return render_template('admin/admin_config.html', admin_config=admin_config, form=form)
-    

@@ -27,7 +27,7 @@ from flask_login import LoginManager
 # app import
 from app.admin import admin_blueprint
 from app.views.auth import auth
-from app.views.charts import charts_blueprint
+from app.views.charts.views import charts_blueprint
 from app.views.monitor import monitor_blueprint
 from app.views.webapi import webapi
 
@@ -93,16 +93,18 @@ def set_config(app):
 
 def init_db_admin_config():
     """
-    if database admin_config contains no entry, then :
-    - create one and set temp_chaudiere_failure to the default value (see constantes.py)
-    - push this value to the app_context
+    This function us supposed to be call when the app is instanciated by create_app()
+    AdminConfig is the database to store constants editable by admin user (eg: temp_chaudiere_failure)
+    This database must be filled with default values at stat-up if it doesn't exists yet.
+    Algo:
+    If database admin_config contains no entry, then create one and set temp_chaudiere_failure to the default value (see constantes.py TEMP_CHAUDIERE_FAILURE_DEFAULT)
     """
-    from app.constantes import TEMP_CHAUDIERE_FAILURE
+    from app.constantes import TEMP_CHAUDIERE_FAILURE_DEFAULT
     from app.models.admin_config import AdminConfig
     
     if AdminConfig.first(AdminConfig) == None:
         new_config = AdminConfig(
-            temp_chaudiere_failure=TEMP_CHAUDIERE_FAILURE,
+            temp_chaudiere_failure=TEMP_CHAUDIERE_FAILURE_DEFAULT,
             # comment='',
             # updated_at=datetime.now()
         )
@@ -165,7 +167,7 @@ def create_app():
     
     with app.app_context():
         init_db_admin_config()
-    
+        
     toolbar = DebugToolbarExtension(app)
     return (app)
 

@@ -1,10 +1,11 @@
 '''
+markdown readme
 # script archive_minute.py
 
 ## Summary
-
-Python script used to store average values (one per Minute) of Chaudiere Database.
-supposed to be run every 1 or 2 minutes by cron
+`Chaudiere` database records the sensors every 3 seconds
+This script is used to store average values (one per Minute) of `Chaudiere` database into  `ChaudiereMinute` database .
+This script is supposed to be run every 1 or 2 minutes by cron
 
 ## CLI Usage
 

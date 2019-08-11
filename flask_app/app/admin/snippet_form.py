@@ -8,27 +8,47 @@ class AdminConfigForm(Form):
 
     
 # form.html
-<form class="form-inline" method="post">	
-      <div class="form-group mb-2 {{ error_class }}">
-        {{ form.temp_chaudiere_failure.label(class_ = "col-form-label is-valid") }}
-      </div>
-      <div class="form-group mx-sm-3 mb-2 {{ error_class }}">
+<form method="post">
+  <div class="form-row align-items-center">
+    <div class="col-sm-3 my-1">
+        {{ form.temp_chaudiere_failure.label(class_ = "col-auto my-1") }}
+    </div>
+    <div class="col-sm-3 my-1">
+        {# Add a list or errors if the form failed #}
         {% if form.temp_chaudiere_failure.errors %}
+            {# Case of a Failed form #}
             {{ form.temp_chaudiere_failure(size=5, class_="form-control is-invalid") }}
             {% for error in form.temp_chaudiere_failure.errors %}
                 <div class="invalid-feedback">{{error}}</div>
             {% endfor %}
         {% else %}
             {% if temp_chaudiere_failure_updated %}
+                {# Case of a Success form #}
                 {{ form.temp_chaudiere_failure(size=5, class_="form-control is-valid") }}
-                  <div class="valid-feedback">Updated!</div>
             {% else %}
+                {# Case of a New form #}
                 {{ form.temp_chaudiere_failure(size=5, class_="form-control") }}
             {% endif %}
+
         {% endif %}
-      </div>
-      {{ form.submit(class_="btn btn-primary mb-2") }}
-    </form>	
+    </div>
+    <div class="col-auto my-1">
+        {{ form.submit(class_="btn btn-primary") }}
+        {# Add a "succes" or "Fail" Tag #}
+        {% if form.temp_chaudiere_failure.errors %}
+            {# Case of a Failed form #}
+            <span class="badge badge-pill badge-danger">Failed</span>
+        {% else %}
+            {% if temp_chaudiere_failure_updated %}
+                {# Case of a Success form #}
+                <span class="badge badge-pill badge-success">Updated</span>
+            {% else %}
+                {# Case of a new form: pass #}
+            {% endif %}
+        {% endif %}
+    </div>
+  </div>
+</form>
 
 # forms.py
 from wtforms import IntegerField, SubmitField, validators

@@ -2,7 +2,7 @@
 """
 Application Values
 """
-TEMP_CHAUDIERE_FAILURE = 58 # Min Water temp before alerting of potential chaudiere failure
+TEMP_CHAUDIERE_FAILURE_DEFAULT = 58 # Min Water temp before alerting of potential chaudiere failure
 
 """
 Phases

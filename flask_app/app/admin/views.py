@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import time, datetime
 import urllib, requests
 import json
@@ -8,16 +7,16 @@ from random import random
 import pprint
 import copy
 
-from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for, flash
 from flask_login import login_required
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
 
-from app.admin.system_info import *
-from app.controllers.auth import auth
-from app.models import AdminConfig
-from app.constantes import *
+from .system_info import *
+from .forms import AdminConfigForm
+from ..views.auth import auth
+from ..models import AdminConfig
+from ..constantes import *
+from .. import db
+
 from util import *
 import config
 
@@ -26,6 +25,7 @@ admin_blueprint = Blueprint("admin", __name__, url_prefix='/admin')
 @admin_blueprint.route('/', methods=['GET'])
 @login_required
 def index():
+    """Display System Info"""
     params = {}
     params["chaudiere"] = {
         'temp failure'            : AdminConfig.get(AdminConfig, 'temp_chaudiere_failure')
@@ -47,28 +47,39 @@ def index():
 
     return render_template('admin/admin.html', params =  params)
     
-@admin_blueprint.route('/config', methods=['GET'])
+@admin_blueprint.route('/config', methods=['GET', 'POST'])
 @login_required
 def config():
-    params = {}
-    params["chaudiere"] = {
-        'ip'            : local_ip(),
-        'hostname' : hostname()
-    }
-    params["network"] = {
-        'ip'            : local_ip(),
-        'hostname' : hostname()
-    }
-    params["system"] = {
-        'date' :          system_date(),
-        'uptime' :          system_uptime(),
-        'cpu_temp' :   cpu_temp()
-    }
-    params["Nexmo (SMS)"] = {
-        'Balance' :   nexmo_balance()
-    }
-    params["disk_space"] = disk_space()
-    params["db_size"] = db_size()
-
-    return render_template('admin/admin.html', params =  params)
+    admin_config = AdminConfig.query.first()
+    if admin_config is None:
+        abort(404)
+    form = AdminConfigForm(obj=admin_config)
+    if request.method == 'POST': 
+        if form.validate():
+            print (form.temp_chaudiere_failure)
+            admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
+            db.session.commit()
+            print(form.errors)
+            # flash(u'updated', 'success')
+            return render_template('admin/admin_config.html', form=form, temp_chaudiere_failure_updated=True)
+        else:
+            # flash(u'Error in form', 'danger')
+            return render_template('admin/admin_config.html', form=form)
+    return render_template('admin/admin_config.html', form=form)
+    
+# @admin_blueprint.route('/config', methods=['GET', 'POST'])
+# @login_required
+# def config():
+    # """Change Admin Config parameters"""
+    # admin_config = AdminConfig.query.first()
+    # if admin_config is None:
+        # abort(404)
+    # form = AdminConfigForm()
+    # if form.validate_on_submit():
+        # admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
+        # db.session.add(admin_config)
+        # db.session.commit()
+        # flash('temp_chaudiere_failure for admin_config successfully changed to {}.'.format(
+            # admin_config.temp_chaudiere_failure), 'form-success')
+    # return render_template('admin/admin_config.html', admin_config=admin_config, form=form)
     

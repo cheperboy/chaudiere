@@ -6,6 +6,8 @@ from datetime import datetime
 from flask import Flask
 from flask_assets import Environment, Bundle
 
+from flask_debugtoolbar import DebugToolbarExtension
+
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
@@ -24,10 +26,10 @@ from flask_login import LoginManager
 
 # app import
 from app.admin import admin_blueprint
-from app.controllers.auth import auth
-from app.controllers.charts import charts_blueprint
-from app.controllers.monitor import monitor_blueprint
-from app.controllers.webapi import webapi
+from app.views.auth import auth
+from app.views.charts import charts_blueprint
+from app.views.monitor import monitor_blueprint
+from app.views.webapi import webapi
 
 import logging, os, json
 from logging.handlers import RotatingFileHandler
@@ -101,8 +103,9 @@ def init_db_admin_config():
     if AdminConfig.first(AdminConfig) == None:
         new_config = AdminConfig(
             temp_chaudiere_failure=TEMP_CHAUDIERE_FAILURE,
-            comment='',
-            updated_at=datetime.now())
+            # comment='',
+            # updated_at=datetime.now()
+        )
         
         db.session.add(new_config)
         db.session.commit()
@@ -163,5 +166,6 @@ def create_app():
     with app.app_context():
         init_db_admin_config()
     
+    toolbar = DebugToolbarExtension(app)
     return (app)
 

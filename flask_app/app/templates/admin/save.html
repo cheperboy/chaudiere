@@ -1,0 +1,55 @@
+{% from "admin/_form_field.html" import render_field %}
+{% extends "index.html" %}
+
+
+{% block content %}
+
+{% for field in form %}
+    <tr>
+        <th>{{ field.label }}</th>
+        <td>{{ field }}</td>
+    </tr>
+{% endfor %}
+
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container" >
+
+				<h3>Admin Config</h3>
+				<form method=post>
+				  {% if form.temp_chaudiere_failure.errors %}
+					<ul class=errors>
+					{% for error in form.temp_chaudiere_failure.errors %}
+					  <li>{{ error }}</li>
+					{% endfor %}
+					</ul>
+				  {% endif %}
+				  <div class="form-row align-items-center">
+					<div class="col-sm-3 my-1">
+						<label class="col-auto my-1">{{ form.temp_chaudiere_failure.label }}</label>
+					</div>
+					<div class="col-sm-3 my-1">
+					  <label class="sr-only" for="inlineFormInputName">{{ form.temp_chaudiere_failure.label }}</label>
+					  {{ form.temp_chaudiere_failure }}
+					  <input type="text" class="form-control" id="inlineFormInputName" value="{{ form.temp_chaudiere_failure.data.value }}">
+					</div>
+					<div class="col-auto my-1">
+					  <button type="submit" class="btn btn-primary">Update</button>
+					</div>
+				  </div>
+				</form>
+
+				
+    <form action="" method="post">
+        <p>
+            {{ form.temp_chaudiere_failure.label }}<br>
+            {{ form.temp_chaudiere_failure(size=5) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+	
+			  </div>
+			</div>
+		</div>	
+{% endblock %}
+ 

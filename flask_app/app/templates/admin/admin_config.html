@@ -1,0 +1,62 @@
+{% from "admin/_form_field.html" import render_field %}
+{% extends "index.html" %}
+
+
+{% block content %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container" >
+				
+	
+				<h3>Temperature</h3>
+				<form method="post">
+				  <div class="form-row align-items-center">
+					<div class="col-sm-3 my-1">
+						{{ form.temp_chaudiere_failure.label(class_ = "col-auto my-1") }}
+					</div>
+					<div class="col-sm-3 my-1">
+						{# Add a list or errors if the form failed #}
+						{% if form.temp_chaudiere_failure.errors %}
+							{# Case of a Failed form #}
+							{{ form.temp_chaudiere_failure(size=5, class_="form-control is-invalid") }}
+							{% for error in form.temp_chaudiere_failure.errors %}
+								<div class="invalid-feedback">{{error}}</div>
+							{% endfor %}
+						{% else %}
+							{% if temp_chaudiere_failure_updated %}
+								{# Case of a Success form #}
+								{{ form.temp_chaudiere_failure(size=5, class_="form-control is-valid") }}
+							{% else %}
+								{# Case of a New form #}
+								{{ form.temp_chaudiere_failure(size=5, class_="form-control") }}
+							{% endif %}
+
+						{% endif %}
+					</div>
+					<div class="col-auto my-1">
+						{{ form.submit(class_="btn btn-primary") }}
+						{# Add a "succes" or "Fail" Tag #}
+						{% if form.temp_chaudiere_failure.errors %}
+							{# Case of a Failed form #}
+							<span class="badge badge-pill badge-danger">Failed</span>
+						{% else %}
+							{% if temp_chaudiere_failure_updated %}
+								{# Case of a Success form #}
+								<span class="badge badge-pill badge-success">Updated</span>
+							{% else %}
+								{# Case of a new form: pass #}
+							{% endif %}
+						{% endif %}
+					
+					
+					
+					</div>
+				  </div>
+				</form>
+	
+	
+				</div>
+			</div>
+		</div>	
+{% endblock %}
+ 

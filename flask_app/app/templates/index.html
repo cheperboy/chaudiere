@@ -10,6 +10,18 @@ La variable local_display est utilisée pour
 {% endif %}
 
 	<div class="container">	
+	
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+		  {% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }}" role="alert">
+				{{ message }}
+				</div>
+			{% endfor %}
+		  {% endif %}
+		{% endwith %}	
+	
 	   {% block content %}
 	   {% endblock %}
 	</div>    

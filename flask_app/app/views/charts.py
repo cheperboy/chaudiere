@@ -15,9 +15,9 @@ from wtforms.validators import DataRequired
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
 from flask import current_app as app
 
-from app.controllers.auth import auth
-from app.models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
-from app.constantes import *
+from ..views.auth import auth
+from ..models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
+from ..constantes import *
 from util import *
 
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')

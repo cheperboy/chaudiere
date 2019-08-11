@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask.cli import FlaskGroup
 
 from app import create_app, db
-from app.models import Chaudiere, ChaudiereMinute
+from app.models import Chaudiere, ChaudiereMinute, AdminConfig
 from app.models.users import User
 
 import config
@@ -73,6 +73,11 @@ def insert_test_data_every_minute():
 @cli.command()
 def print_last_entry():
     print(ChaudiereMinute.last(ChaudiereMinute))
+
+@cli.command()
+def list_admin_config():
+    for item in AdminConfig.all(AdminConfig):
+        print("id {}\ntemp_chaudiere_failure {}".format(item.id, item.temp_chaudiere_failure))
 
 if __name__ == '__main__':
     cli()

@@ -6,9 +6,9 @@ import json, time
 from datetime import datetime, timedelta
 from random import random
 
-from app.controllers.auth import auth
-from app.models import Chaudiere, ChaudiereMinute
-from app import cache
+from ..views.auth import auth
+from ..models import Chaudiere, ChaudiereMinute
+from .. import cache
 
 import config
 

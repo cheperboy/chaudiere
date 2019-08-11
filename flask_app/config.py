@@ -21,6 +21,9 @@ MAIL_USE_SSL = True
 MAIL_USERNAME = 'chaudiere.montlevic@gmail.com'
 # MAIL_PASSWORD is set in secret congig
 
+#Debug toolbar option
+DEBUG_TB_INTERCEPT_REDIRECTS = False
+
 # Detect env from filesystem location (Prod/Dev)
 if ENVNAME == 'Dev' :
     # Development configuration

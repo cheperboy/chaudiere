@@ -1,0 +1,4 @@
+todo
+Check scripts
+new page for charts form history
+purge db with cron (set param via admin config)

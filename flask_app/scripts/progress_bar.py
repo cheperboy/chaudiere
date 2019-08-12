@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ISO-8859-1 -*-
 import time, sys
 
 # Print iterations progress

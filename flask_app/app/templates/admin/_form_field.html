@@ -1,12 +1,47 @@
-{% macro render_field(field) %}
-  <dt>{{ field.label }}
-  <dd>{{ field(**kwargs)|safe }}
-  {% if field.errors %}
-    <ul class=errors>
-    {% for error in field.errors %}
-      <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  </dd>
-{% endmacro %}
+{% macro render_form_with_single_field(form, field, update_is_success, size=20) -%}
+<form method="post">
+  <div class="form-row align-items-center">
+	<div class="col-sm-3 my-1">
+		{{ field.label(class_ = "col-auto my-1") }}
+	</div>
+	<div class="col-sm-3 my-1">
+		{# Add a list or errors if the form failed #}
+		{% if field.errors %}
+			{# Case of a Failed form #}
+			{% set class_validness = "is-invalid" %}
+			{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% for error in field.errors %}
+				<div class="invalid-feedback">{{error}}</div>
+			{% endfor %}
+		{% else %}
+			{% if update_is_success %}
+				{# Case of a Success form #}
+				{% set class_validness = "is-valid" %}
+				{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% else %}
+				{# Case of a New form #}
+				{% set class_validness = "" %}
+				{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% endif %}
+		{% endif %}
+	</div>
+	<div class="col-auto my-1">
+		{{ form.submit(class_="btn btn-primary") }}
+		{# Add a "succes" or "Fail" Tag #}
+		{% if field.errors %}
+			{# Case of a Failed form #}
+			<span class="badge badge-pill badge-danger">Failed</span>
+		{% else %}
+			{% if update_is_success %}
+				{# Case of a Success form #}
+				<span class="badge badge-pill badge-success">Updated</span>
+			{% else %}
+				{# Case of a new form: pass #}
+			{% endif %}
+		{% endif %}
+	</div>
+  </div>
+</form>
+{%- endmacro %}
+
+pyth

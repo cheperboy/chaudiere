@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ISO-8859-1 -*-
 '''
 # script process_phase.py
 
@@ -286,7 +286,7 @@ if __name__ == '__main__':
     parser.add_argument('--hours',                  type=int,             default=None,                             help='number of hour to rework')
     parser.add_argument('--date',                                         default=None,                             help='end date to rework YYYY/MM/DD/HH')
     args = parser.parse_args()
-    print args
+    print (args)
     if args.test_alerts:
         print('sending test alerts')
         test_alerts()
@@ -306,11 +306,11 @@ if __name__ == '__main__':
             exit()
 
         date = args.date.split('/')
-        print date
+        print (date)
         try:
             ts_end = datetime(int(date[0]), int(date[1]), int(date[2]), int(date[3]), 0, 0)
-            print ts_end
-            print str(ts_end)
+            print (ts_end)
+            print (str(ts_end))
         except IndexError:
             print('Argument error : --date must be YYYY/MM/DD/HH')
             exit()

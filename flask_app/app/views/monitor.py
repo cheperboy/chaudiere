@@ -11,9 +11,9 @@ import copy
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for
 from ..views.auth import auth
-from ..models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
+from ..models import Chaudiere, ChaudiereMinute
 from ..constantes import *
-from util import *
+from util import datetime_to_timestamp
 
 import config
 monitor_blueprint = Blueprint("monitor", __name__, url_prefix='/monitor')
@@ -83,7 +83,6 @@ def monitor():
     min_value_of_last_2week = min_value(entries_2week)
     response = make_response('min value of day :'               +str(min_value_of_the_day)+\
                              ' <br>min value of last week :'    +str(min_value_of_last_week)+\
-                             ' <br>min value of last 2 weeks :' +str(min_value_of_last_2week)+\
-                             ' <br>TEMP_CHAUDIERE_FAILURE :'    +str(TEMP_CHAUDIERE_FAILURE))
+                             ' <br>min value of last 2 weeks :' +str(min_value_of_last_2week))
     return response
     

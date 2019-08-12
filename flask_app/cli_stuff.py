@@ -26,8 +26,11 @@ def create_my_app(info):
 def cli():
     """This is a management script for the application."""
 
+#####################
+# Create fake datas #
+#####################
 @cli.command()
-def create_data():
+def create_data_minute():
     """Creates a data Entry."""
     now = datetime.now()
     for x in range(0, 90):
@@ -36,6 +39,17 @@ def create_data():
         db.session.add(rec)
         db.session.commit()
         print (rec)
+
+@cli.command()
+def create_data_second():
+    """Creates a data Entry."""
+    now = datetime.now()
+    for x in range(0, 20*3*40, 20):
+        dt = now - timedelta(seconds=x)
+        rec = Chaudiere(dt, 70, 0, 0, 0, 0, 0, 0, None, None, None)
+        db.session.add(rec)
+        print (rec)
+    db.session.commit()
 
 @cli.command()
 def test(): 

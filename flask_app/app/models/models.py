@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from __future__ import division
 
 import time, calendar
@@ -7,32 +6,9 @@ from datetime import datetime, timedelta
 from flask import current_app
 from app import db
 from app.constantes import *
+from util import *
 
   
-def datetime_to_timestamp(dt):
-    """ 
-    Return a timestamp(Int) from datetime object 
-    Take care of Summer/Spring variation
-    """
-    if dt is None:
-        return None
-#    return int(time.mktime(dt.timetuple())*1000)
-    return int(calendar.timegm(dt.timetuple())*1000)
-
-def timestamp_to_datetime(ts):
-    """ 
-    Return a Datetime object from timestamp (Int) 
-    """
-    return time.mktime(ts.timetuple())
-
-def timedelta_in_minute(dt_begin, dt_end):
-    """Return the number of minutes between 2 dates"""
-    ts_begin = time.mktime(dt_begin.timetuple())
-    ts_end = time.mktime(dt_end.timetuple())
-
-    # subtract values is in seconds then divide by 60 to get minutes.
-    return int(ts_end - ts_begin) / 60
-    
 class ChaudiereBase(db.Model):
     __abstract__ = True
     id      = db.Column(db.Integer, primary_key=True)
@@ -112,22 +88,22 @@ class ChaudiereBase(db.Model):
 
     @classmethod
     def last(self, cls):
-        return(db.session.query(cls).order_by(cls.id.desc()).first())
+        return(db.session.query(cls).order_by(cls.dt.desc()).first())
 
     @classmethod
     def all(self, cls):
-        return(db.session.query(cls).order_by(cls.id.desc()).all())
+        return(db.session.query(cls).order_by(cls.dt.desc()).all())
 
     @classmethod
     def first(self, cls):
-        return(db.session.query(cls).order_by(cls.id.asc()).first())
+        return(db.session.query(cls).order_by(cls.dt.asc()).first())
 
     @classmethod
     def get_between_date(self, cls, dt_begin, dt_end):
         return (db.session.query(cls) \
                 .filter(cls.dt > dt_begin) \
                 .filter(cls.dt < dt_end) \
-                .order_by(cls.id.desc()) \
+                .order_by(cls.dt.desc()) \
                 .all())
 
     @classmethod

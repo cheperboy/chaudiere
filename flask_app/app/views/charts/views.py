@@ -12,10 +12,10 @@ from flask import Blueprint, render_template, request, jsonify, make_response, r
 from flask import current_app as app
 
 from ...views.auth import auth
-from ...models import Chaudiere, ChaudiereMinute, datetime_to_timestamp
+from ...models import Chaudiere, ChaudiereMinute
 from ...constantes import *
 from .charts import *
-from util import *
+from util import datetime_to_timestamp
 
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
 

@@ -5,7 +5,6 @@
 		<div class="container-fluid">
 		  <div class="row">
 			  <div class="container" >
-			  			  
 
 				{% for section_name, section_dict in params.items(): %}
 				<h3>{{ section_name }}</h3>
@@ -18,31 +17,11 @@
 					<div class="col-sm-3 my-1">
 					  <label class="sr-only" for="inlineFormInputName">{{ key }}</label>
 					  <input type="text" readonly class="form-control" id="inlineFormInputName" value="{{ value }}">
-					</div>
+					  </div>
 				  </div>
 				</form>
 				{% endfor %}
 				{% endfor %}
-				
-
-				
-				<h3>exemple</h3>
-				<form>
-				  <div class="form-row align-items-center">
-					<div class="col-sm-3 my-1">
-						<label class="col-auto my-1" for="inlineFormCustomSelect">Label</label>
-					</div>
-					<div class="col-sm-3 my-1">
-					  <label class="sr-only" for="inlineFormInputName">Name</label>
-					  <input type="text" class="form-control" id="inlineFormInputName" value="value">
-					</div>
-					<div class="col-auto my-1">
-					  <button type="submit" class="btn btn-primary">Update</button>
-					</div>
-				  </div>
-				</form>
-
-				
 				
 			  </div>
 			</div>

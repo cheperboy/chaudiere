@@ -93,25 +93,29 @@ def set_config(app):
 
 def init_db_admin_config():
     """
-    This function us supposed to be call when the app is instanciated by create_app()
+    This function is supposed to be call when the app is instanciated by create_app()
     AdminConfig is the database to store constants editable by admin user (eg: temp_chaudiere_failure)
-    This database must be filled with default values at stat-up if it doesn't exists yet.
+    This database must be filled with one row contaning default values at stat-up if it doesn't exists yet.
     Algo:
     If database admin_config contains no entry, then create one and set temp_chaudiere_failure to the default value (see constantes.py TEMP_CHAUDIERE_FAILURE_DEFAULT)
     """
-    from app.constantes import TEMP_CHAUDIERE_FAILURE_DEFAULT
+    from app.constantes import TEMP_CHAUDIERE_FAILURE_DEFAULT, CHAUDIERE_DB_ROTATE_DAYS_DEFAULT, CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT
     from app.models.admin_config import AdminConfig
+    
+    db.create_all('admin_config')
     
     if AdminConfig.first(AdminConfig) == None:
         new_config = AdminConfig(
-            temp_chaudiere_failure=TEMP_CHAUDIERE_FAILURE_DEFAULT,
-            # comment='',
-            # updated_at=datetime.now()
+            temp_chaudiere_failure          = TEMP_CHAUDIERE_FAILURE_DEFAULT,
+            chaudiere_db_rotate_days        = CHAUDIERE_DB_ROTATE_DAYS_DEFAULT,
+            chaudiere_minute_db_rotate_days = CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT,
+            comment = ''
         )
         
         db.session.add(new_config)
         db.session.commit()
-        print("\n * NEW AdminConfig\n\tTEMP_CHAUDIERE_FAILURE = {0}\n".format(TEMP_CHAUDIERE_FAILURE))
+        print("\n * NEW AdminConfig")
+        print(AdminConfig.first(AdminConfig))
         
         
 def create_app():

@@ -2,7 +2,9 @@
 """
 Application Values
 """
-TEMP_CHAUDIERE_FAILURE_DEFAULT = 58 # Min Water temp before alerting of potential chaudiere failure
+TEMP_CHAUDIERE_FAILURE_DEFAULT          = 58 # Min Water temp before alerting of potential chaudiere failure
+CHAUDIERE_DB_ROTATE_DAYS_DEFAULT        = 2
+CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT = 35
 
 """
 Phases

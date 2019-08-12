@@ -5,19 +5,11 @@
 		<div class="container-fluid">
 		  <div class="row">
 			  <div class="container" >
-				<h3>Temperature</h3>
-				{{ macro.render_form_with_single_field(
-								form_temp_chaudiere_failure, 
-								form_temp_chaudiere_failure.temp_chaudiere_failure, 
-								update_is_success=temp_chaudiere_failure_updated, 
-								size=20) }}
+				<h3>Settings</h3>
+				{{ macro.render_form(
+								form, 
+								update_is_success=success) }}
 				
-				<h3>Database rotate (days)</h3>
-				{{ macro.render_form_with_single_field(
-								form_chaudiere_db_rotate_days, 
-								form_chaudiere_db_rotate_days.chaudiere_db_rotate_days,
-								update_is_success=chaudiere_db_rotate_days_updated, 
-								size=20) }}
 				
 				</div>
 			</div>

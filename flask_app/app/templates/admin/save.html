@@ -1,49 +1,45 @@
-{# The macro is used to render the following:
-		<form method="post">
-		  <div class="form-row align-items-center">
-			<div class="col-sm-3 my-1">
-				{{ form.temp_chaudiere_failure.label(class_ = "col-auto my-1") }}
-			</div>
-			<div class="col-sm-3 my-1">
-				{# Add a list or errors if the form failed #}
-				{% if form.temp_chaudiere_failure.errors %}
-					{# Case of a Failed form #}
-					{{ form.temp_chaudiere_failure(size=5, class_="form-control is-invalid") }}
-					{% for error in form.temp_chaudiere_failure.errors %}
-						<div class="invalid-feedback">{{error}}</div>
-					{% endfor %}
-				{% else %}
-					{% if temp_chaudiere_failure_updated %}
-						{# Case of a Success form #}
-						{{ form.temp_chaudiere_failure(size=5, class_="form-control is-valid") }}
-					{% else %}
-						{# Case of a New form #}
-						{{ form.temp_chaudiere_failure(size=5, class_="form-control") }}
-					{% endif %}
-
-				{% endif %}
-			</div>
-			<div class="col-auto my-1">
-				{{ form.submit(class_="btn btn-primary") }}
-				{# Add a "succes" or "Fail" Tag #}
-				{% if form.temp_chaudiere_failure.errors %}
-					{# Case of a Failed form #}
-					<span class="badge badge-pill badge-danger">Failed</span>
-				{% else %}
-					{% if temp_chaudiere_failure_updated %}
-						{# Case of a Success form #}
-						<span class="badge badge-pill badge-success">Updated</span>
-					{% else %}
-						{# Case of a new form: pass #}
-					{% endif %}
-				{% endif %}
-			</div>
-		  </div>
-		</form>
-
-
-		</div>
+{% macro render_form(form, update_is_success) -%}
+<form method="post">
+  <div class="form-row align-items-center">
+	<div class="col-sm-3 my-1">
+		{{ field.label(class_ = "col-auto my-1") }}
 	</div>
-</div>	
-#}
-
+	<div class="col-sm-3 my-1">
+		{# Add a list or errors if the form failed #}
+		{% if field.errors %}
+			{# Case of a Failed form #}
+			{% set class_validness = "is-invalid" %}
+			{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% for error in field.errors %}
+				<div class="invalid-feedback">{{error}}</div>
+			{% endfor %}
+		{% else %}
+			{% if update_is_success %}
+				{# Case of a Success form #}
+				{% set class_validness = "is-valid" %}
+				{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% else %}
+				{# Case of a New form #}
+				{% set class_validness = "" %}
+				{{ field(size=size, class_="form-control "+ class_validness) }}
+			{% endif %}
+		{% endif %}
+	</div>
+	<div class="col-auto my-1">
+		<input type=submit class="btn btn-primary" name="submit" value="Update">
+		{# Add a "succes" or "Fail" Tag #}
+		{% if field.errors %}
+			{# Case of a Failed form #}
+			<span class="badge badge-pill badge-danger">Failed</span>
+		{% else %}
+			{% if update_is_success %}
+				{# Case of a Success form #}
+				<span class="badge badge-pill badge-success">Updated</span>
+			{% else %}
+				{# Case of a new form: pass #}
+			{% endif %}
+		{% endif %}
+	</div>
+  </div>
+</form>
+{%- endmacro %}

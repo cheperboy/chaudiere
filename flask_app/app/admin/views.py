@@ -27,9 +27,6 @@ admin_blueprint = Blueprint("admin", __name__, url_prefix='/admin')
 def index():
     """Display System Info"""
     params = {}
-    params["chaudiere"] = {
-        'temp failure'            : AdminConfig.get(AdminConfig, 'temp_chaudiere_failure')
-    }
     params["network"] = {
         'ip'            : local_ip(),
         'hostname' : hostname()
@@ -53,57 +50,15 @@ def config():
     admin_config = AdminConfig.query.first()
     if admin_config is None:
         abort(404)
-    form_temp_chaudiere_failure     = AdminConfigForm(obj=admin_config)
-    form_chaudiere_db_rotate_days   = AdminConfigForm(obj=admin_config)
-    if request.method == 'POST': 
-        # Manage temp_chaudiere_failure
-        if (admin_config.temp_chaudiere_failure != form_temp_chaudiere_failure.temp_chaudiere_failure.data):
-            if form_temp_chaudiere_failure.validate():
-                print ("form_temp_chaudiere_failure IS VALID")
-                admin_config.temp_chaudiere_failure = form_temp_chaudiere_failure.temp_chaudiere_failure.data
-                db.session.commit()
-                print ("form_temp_chaudiere_failure updated to " + str(form_temp_chaudiere_failure.temp_chaudiere_failure.data))
-                setattr(form_temp_chaudiere_failure, name, StringField(name.title()))
-                form_temp_chaudiere_failure[temp_chaudiere_failure_success = True
-                return render_template('admin/admin_config.html', 
-                                        form_temp_chaudiere_failure=form_temp_chaudiere_failure, 
-                                        form_chaudiere_db_rotate_days=form_chaudiere_db_rotate_days, 
-                                        temp_chaudiere_failure_updated=True)
-            else:
-                return render_template('admin/admin_config.html', 
-                                        form_temp_chaudiere_failure=form_temp_chaudiere_failure,
-                                        form_chaudiere_db_rotate_days=form_chaudiere_db_rotate_days)
-        
-        # Manage chaudiere_db_rotate_days
-        if (admin_config.chaudiere_db_rotate_days != form_chaudiere_db_rotate_days.chaudiere_db_rotate_days.data):
-            if form_chaudiere_db_rotate_days.validate():
-                admin_config.chaudiere_db_rotate_days = form_chaudiere_db_rotate_days.chaudiere_db_rotate_days.data
-                db.session.commit()
-                return render_template('admin/admin_config.html', 
-                                        form_temp_chaudiere_failure=form_temp_chaudiere_failure, 
-                                        form_chaudiere_db_rotate_days=form_chaudiere_db_rotate_days, 
-                                        chaudiere_db_rotate_days_updated=True)
-            else:
-                return render_template('admin/admin_config.html', 
-                                        form_temp_chaudiere_failure=form_temp_chaudiere_failure, 
-                                        form_chaudiere_db_rotate_days=form_chaudiere_db_rotate_days)
-    return render_template('admin/admin_config.html', 
-                            form_temp_chaudiere_failure=form_temp_chaudiere_failure, 
-                            form_chaudiere_db_rotate_days=form_chaudiere_db_rotate_days)
-
-def config_save():
-    admin_config = AdminConfig.query.first()
-    if admin_config is None:
-        abort(404)
     form = AdminConfigForm(obj=admin_config)
     if request.method == 'POST': 
         if form.validate():
-            print (form.temp_chaudiere_failure)
-            admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
+            # admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
+            form.populate_obj(admin_config)
             db.session.commit()
             print(form.errors)
             # flash(u'updated', 'success')
-            return render_template('admin/admin_config.html', form=form, temp_chaudiere_failure_updated=True)
+            return render_template('admin/admin_config.html', form=form, success=True)
         else:
             pass
             # flash(u'Error in form', 'danger')

@@ -11,6 +11,9 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     
+    def __repr__(self):
+        return '<User {0} {1} {2} {3}>'.format(self.id, self.email, self.name, self.password)
+        
     @classmethod
     def last(self, cls):
         return(db.session.query(cls).order_by(cls.id.desc()).first())

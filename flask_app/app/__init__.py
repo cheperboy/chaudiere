@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 
 from datetime import datetime
 # ext import
@@ -44,31 +43,31 @@ def set_config(app):
     first overrinde with common secret conf file
     then override with specific env secret conf file
     example of chaudiere_secret_config.py
-{
-    "Common" : {
-        "MAIL_PASSWORD" : "xxx",
-        "SECRET_KEY" : "xxx",
-        "NEXMO_API_KEY" : "xxx",
-        "NEXMO_API_SECRET" : "xxx"
-    },
-    "Prod" : {
-        "URL" : "http://xxx.hd.free.fr:",
-        "USERS_EMAILS" :  ["xx@gmail.com", 
-                           "xx@gmail.com", 
-                           "xx@gmail.com", 
-                           "xx@gmail.com"
-                          ],
-        "USERS_PHONES" :  ["336xxxxxxxx", 
-                           "336xxxxxxxx", 
-                           "336xxxxxxxx", 
-                           "336xxxxxxxx"
-                          ]
-    },
-    "Dev" : {
-        "USERS_EMAILS" :  ["xx@gmail.com"],
-        "USERS_PHONES" :  ["336xxxxxxxx"]
+    {
+        "Common" : {
+            "MAIL_PASSWORD" : "xxx",
+            "SECRET_KEY" : "xxx",
+            "NEXMO_API_KEY" : "xxx",
+            "NEXMO_API_SECRET" : "xxx"
+        },
+        "Prod" : {
+            "URL" : "http://xxx.hd.free.fr:",
+            "USERS_EMAILS" :  ["xx@gmail.com", 
+                               "xx@gmail.com", 
+                               "xx@gmail.com", 
+                               "xx@gmail.com"
+                              ],
+            "USERS_PHONES" :  ["336xxxxxxxx", 
+                               "336xxxxxxxx", 
+                               "336xxxxxxxx", 
+                               "336xxxxxxxx"
+                              ]
+        },
+        "Dev" : {
+            "USERS_EMAILS" :  ["xx@gmail.com"],
+            "USERS_PHONES" :  ["336xxxxxxxx"]
+        }
     }
-}
     """
     # set config from config.py
     app.config.from_object('config')
@@ -117,7 +116,6 @@ def init_db_admin_config():
         print("\n * NEW AdminConfig")
         print(AdminConfig.first(AdminConfig))
         
-        
 def create_app():
     app = Flask(__name__,\
                 static_folder="static/",\
@@ -141,7 +139,7 @@ def create_app():
     
     # login_manager
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'charts.now'
     login_manager.init_app(app)
     
     from .models import User
@@ -151,7 +149,7 @@ def create_app():
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
     
-    #form csrf
+    # form csrf
     csrf.init_app(app)
 
     # Scss

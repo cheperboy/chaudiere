@@ -26,6 +26,7 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # Detect env from filesystem location (Prod/Dev)
 if ENVNAME == 'Dev' :
+    os.environ['FLASK_ENV'] = 'development'
     # Development configuration
     ENV: 'development'
     APP_NAME = 'Chaudiere Dev' 
@@ -49,6 +50,7 @@ if ENVNAME == 'Dev' :
 
 elif ENVNAME == 'Prod':
     # Production configuration
+    FLASK_ENV='production'
     ENV: 'production'
     APP_NAME = 'Chaudiere'
     DEBUG=False
@@ -69,6 +71,7 @@ elif ENVNAME == 'Prod':
 elif ENVNAME == 'flask-dev' :
     # Windows Development configuration
     ENV: 'development'
+    FLASK_ENV='development'
     print ('db path '+os.path.join(ENVPATH + '\db\\', 'chaudiere.db'))
 
     PORT = 5007

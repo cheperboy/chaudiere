@@ -1,5 +1,4 @@
 # -*- coding: ISO-8859-1 -*-
-from __future__ import absolute_import
 
 import os, click, sys, time
 from random import randint
@@ -15,7 +14,7 @@ import config
 
 import send_email_sms
 
-import getpass#, bcrypt
+import getpass
 from werkzeug.security import generate_password_hash
 
 def create_my_app(info):
@@ -26,26 +25,9 @@ def create_my_app(info):
 def cli():
     """This is a management script for the application."""
 
-#############
-# Manage Database #
-#############
-
-@cli.command()
-@click.option('--delete_users_db', prompt='delete also users db (y/n) ?')
-@click.option('--delete_admin_config_db', prompt='delete also admin_config db (y/n) ?')
-def create_db(delete_users_db, delete_admin_config_db):
-    """Recreate the db tables."""
-    all_db_except_users_and_config = ['chaudiere', 'chaudiere_minute']
-    db.drop_all(all_db_except_users_and_config)
-    db.create_all(all_db_except_users_and_config)
-    if delete_users_db == 'y':
-        db.drop_all('users')
-        db.create_all('users')
-    if delete_admin_config_db == 'y':
-        db.drop_all('admin_config')
-        db.create_all('admin_config')
-    # db.session.commit()
-
+################
+# Manage Datas #
+################
 @cli.command()
 def update_data():
     """ copy_prod_db_to_dev """
@@ -61,6 +43,69 @@ def update_data():
     else:
         print ('Aborted. Env is '+config.ENVNAME)
 
+        
+#################
+# Rotate database
+#################
+@cli.command()
+@click.option('--delete_users_db', prompt='delete also users db (y/n) ?')
+@click.option('--delete_admin_config_db', prompt='delete also admin_config db (y/n) ?')
+def create_db(delete_users_db, delete_admin_config_db):
+    """Recreate the db tables."""
+    all_db_except_users_and_config = ['chaudiere', 'chaudiere_minute']
+    db.drop_all(all_db_except_users_and_config)
+    db.create_all(all_db_except_users_and_config)
+    if delete_users_db == 'y':
+        db.drop_all('users')
+        db.create_all('users')
+    if delete_admin_config_db == 'y':
+        db.drop_all('admin_config')
+        db.create_all('admin_config')
+
+@click.argument('database')
+@cli.command()
+def rotate_db(database):
+    """ Rotate database 'Chaudiere' or 'ChaudiereMinute' """
+    if database not in ['Chaudiere', 'ChaudiereMinute']:
+        print("database not in ['Chaudiere', 'ChaudiereMinute']. Return.")
+        return()
+        
+    # import chaudiere_(minute)_db_rotate_days from AdminConfig database
+    from app.models.admin_config import AdminConfig
+    admin_config = AdminConfig.first(AdminConfig)
+    if admin_config is not None:
+        if database == 'Chaudiere':
+            timedelta_config = admin_config.chaudiere_db_rotate_days
+        elif database == 'ChaudiereMinute':
+            timedelta_config = admin_config.chaudiere_minute_db_rotate_days
+    else:
+        logger.error("Could not fetch AdminConfig.chaudiere_(minute)_db_rotate_days")
+    
+    # Retrieve entries betwenn now and passed date (number of days defined by AdminConfig parameter)
+    # delete the selected entries
+    Model = eval(database)
+    dt_end = datetime.now() - timedelta(days=timedelta_config)
+    # dt_end = datetime.now() - timedelta(minutes=30)
+    entries = Model.get_older_than(Model, dt_end)
+    for e in entries:
+        db.session.delete(e)
+    print("deleting "+ str(len(entries)) +" entries")
+    db.session.commit()
+        
+@click.argument('database')
+@click.option('--count', is_flag=True)
+@cli.command()
+def db_list_all(database, count):
+    """ List all entries in a db (or just count them) """
+    Model = eval(database)
+    entries = Model.all(Model)
+    if count:
+        print (len(entries))
+    else:
+        for e in entries:
+            print (e)
+        
+        
 #############
 # Test Mail #
 #############

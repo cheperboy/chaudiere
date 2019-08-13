@@ -107,6 +107,13 @@ class ChaudiereBase(db.Model):
                 .all())
 
     @classmethod
+    def get_older_than(self, cls, dt_end):
+        return (db.session.query(cls) \
+                .filter(cls.dt < dt_end) \
+                .order_by(cls.dt.desc()) \
+                .all())
+
+    @classmethod
     def get_by_timestamp(self, cls, ts):
         dt = datetime.fromtimestamp(ts)
         return db.session.query(cls).filter_by(dt=dt).first()

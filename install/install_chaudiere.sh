@@ -54,7 +54,7 @@ say () {
 }
 
 # Le scipt doit être exécuté dans un dossier particulier. Veérifier qu'on se trouve dans le bon dossier
-if [ $DIR_DEV_CHAUDIERE != `pwd` ]
+if [ $DIR_DEV_CHAUDIERE/install != `pwd` ]
 then
 	echo "Ce script doit être exécuté dans $DIR_DEV_CHAUDIERE"
 	return
@@ -89,9 +89,9 @@ say "Stop nginx and supervisor"
 run "sudo supervisorctl stop gunicorn sensor"
 run "sudo service nginx stop"
 
-##############
+######################
 # Create Directories #
-##############
+######################
 say "Create Directories"
 run "rm -rf  $DIR_PROD_CHAUDIERE"
 run "mkdir $DIR_PROD"
@@ -103,16 +103,15 @@ if [ "$OPTION_INSTALL_DEV" = true ] ; then
 	run "mkdir $DIR_DEV/log"
 	run "mkdir $DIR_PROD/db"	
 fi
-##############
+######################
 # Clone repo in Prod #
-##############
+######################
 say "Clone repo in Prod"
 run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 
-############################
+###############################################
 # Create virtualenv and install requirements  #
-############################
-
+###############################################
 if [ "$OPTION_INSTALL_VENV" = true ] ; then
 	run "deactivate" # deactivate any virtualenv to run next command with system python
 	say "Create virtualenv prod"
@@ -125,18 +124,18 @@ if [ "$OPTION_INSTALL_VENV" = true ] ; then
 	fi
 fi
 
-####################
+###############################
 # Create chaudiere databases  #
-####################
+###############################
 say "Create chaudiere databases" 
-run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
+run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manager.py database init"
 if [ "$OPTION_INSTALL_DEV" = true ] ; then
-	run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
+	run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py database init"
 fi
 
-#############
+###################
 # Configure nginx #
-#############
+###################
 say "Configure nginx"
 # Copy template conf file
 run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/nginx_chaudiere_conf /etc/nginx/sites-available/"
@@ -150,26 +149,26 @@ run "sudo rm /etc/nginx/sites-enabled/default"
 # Test nginx conf
 run "sudo nginx -t"
 
-################
+########################
 # Configure supervisor #
-################
+########################
 say "Configure supervisor"
 run "sudo supervisorctl stop all"
-run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere.conf /etc/supervisor/conf.d/"
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere_prod.conf /etc/supervisor/conf.d/"
 
 
-##############
+#####################
 # Configure Crontab #
-##############
+#####################
 say "Configure Crontab"
 # Copy template conf file in /etc/cron.d
-run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/chaudiere_cron.txt /etc/cron.d"
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/chaudiere_cron_prod /etc/cron.d"
 # file in /etc/cron.d must be owned by root
-run "sudo chown root /etc/cron.d/chaudiere_cron.txt"
+run "sudo chown root /etc/cron.d/chaudiere_cron_prod"
 
-###################
+##############################
 # Start nginx and supervisor #
-###################
+##############################
 say "Start nginx and supervisor"
 run "sudo supervisorctl reread"
 run "sudo supervisorctl reload"

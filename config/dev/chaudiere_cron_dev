@@ -19,4 +19,4 @@
 
 # Rotate database every day
 @hourly pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/manager.py database rotate Chaudiere
-@daily pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/manager.py database rotate ChaudiereMinute
+@hourly pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/manager.py database rotate ChaudiereMinute

@@ -1,8 +1,10 @@
 #!/bin/bash
 
-###################################
-# This script install the required packages with apt-get #
-###################################
+########################################################################################
+# This script install the required packages with apt-get 
+# inspired by this tuto for installation of python3 and virtualenvwrapper 
+# https://medium.com/@gitudaniel/installing-virtualenvwrapper-for-python3-ad3dfea7c717
+########################################################################################
 
 ########## HOWTO RUN THE SCRIPT ##########
 # This will output in terminal and in a log file
@@ -29,10 +31,10 @@ say () {
 run "sudo apt-get update"
 run "sudo apt-get dist-upgrade -y"
 run "sudo apt-get upgrade -y"
-run "sudo apt-get -y install supervisor git python-pip nginx"
+run "sudo apt-get -y install supervisor git python3-pip nginx"
 # installing virtualenv with sudo apt-get makes it working ok for python2 and python3
 run "sudo apt-get -y install virtualenv"
-run "pip install virtualenvwrapper"
+run "pip3 install virtualenvwrapper"
 
 # Specific packages for chaudiere app
 run "sudo apt-get install curl"

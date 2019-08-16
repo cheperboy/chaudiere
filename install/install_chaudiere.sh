@@ -116,11 +116,11 @@ if [ "$OPTION_INSTALL_VENV" = true ] ; then
 	run "deactivate" # deactivate any virtualenv to run next command with system python
 	say "Create virtualenv prod"
 	run "mkvirtualenv -p python3 prod"
-	run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
+	run "/home/pi/Envs/prod/bin/pip3 install -r $DIR_PROD_CHAUDIERE/requirements.txt"
 	if [ "$OPTION_INSTALL_DEV" = true ] ; then
 		say "Create virtualenv dev"
 		run "mkvirtualenv -p python3 dev"
-		run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
+		run "/home/pi/Envs/dev/bin/pip3 install -r $DIR_DEV_CHAUDIERE/requirements.txt"
 	fi
 fi
 
@@ -128,18 +128,26 @@ fi
 # Create chaudiere databases  #
 ###############################
 say "Create chaudiere databases" 
-run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manager.py database init"
+run "/home/pi/Envs/prod/bin/python3 $DIR_PROD_CHAUDIERE/flask_app/manager.py database init"
 if [ "$OPTION_INSTALL_DEV" = true ] ; then
-	run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py database init"
+	run "/home/pi/Envs/dev/bin/python3 $DIR_DEV_CHAUDIERE/flask_app/manager.py database init"
 fi
 
 ###################
 # Configure nginx #
 ###################
 say "Configure nginx"
+# Check if some config already exists in /etc/nginx/sites-available/"
+if [ "$(ls -A /etc/nginx/sites-available/)" ]; then
+     echo "WARNING : Other config already exists in /etc/nginx/sites-available/. Should be removed."
+fi	 
 # Copy template conf file
 run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/nginx_chaudiere_conf /etc/nginx/sites-available/"
 
+# Check if some config already exists in /etc/nginx/sites-available/"
+if [ "$(ls -A /etc/nginx/sites-enabled)" ]; then
+     echo "WARNING : Other symlinks already exists in /etc/nginx/sites-available/. Should be removed."
+fi
 # Create sym link
 run "sudo ln -s /etc/nginx/sites-available/nginx_chaudiere_conf /etc/nginx/sites-enabled"
 

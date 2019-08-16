@@ -1,0 +1,22 @@
+#############################################################
+# Template cron config for chaudiere app                    #
+#                                                           #
+# This file shall be copied in /etc/cron.d directory        #
+# This file must be owned by root (sudo chown root file)    #
+#                                                           #
+# debug cron                                                #
+# sudo service cron status                                  #
+#                                                           #
+#############################################################
+
+* * * * * pi touch /home/pi/Dev/test_cron.txt >> /home/pi/Dev/chaudiere/config/dev/cronlog.log 2>&1
+
+# Every even minute : archive_minute.py
+*/2 * * * * pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/scripts/archive_minute.py
+
+# Every odd minute : process_phase.py
+1-59/2 * * * * pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/scripts/process_phase.py
+
+# Rotate database every day
+@hourly pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/manager.py database rotate Chaudiere
+@daily pi /home/pi/Envs/python3/bin/python /home/pi/Dev/chaudiere/flask_app/manager.py database rotate ChaudiereMinute

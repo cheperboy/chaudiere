@@ -1,0 +1,582 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>app.models package &#8212; chaudiere 2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="app-models-package">
+<h1>app.models package<a class="headerlink" href="#app-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-app.models.admin_config">
+<span id="app-models-admin-config-module"></span><h2>app.models.admin_config module<a class="headerlink" href="#module-app.models.admin_config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="app.models.admin_config.AdminConfig">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.admin_config.</code><code class="sig-name descname">AdminConfig</code><span class="sig-paren">(</span><em class="sig-param">temp_chaudiere_failure</em>, <em class="sig-param">chaudiere_db_rotate_hours</em>, <em class="sig-param">chaudiere_minute_db_rotate_days</em>, <em class="sig-param">comment</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/admin_config.html#AdminConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.admin_config.AdminConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<dl class="method">
+<dt id="app.models.admin_config.AdminConfig.all">
+<em class="property">classmethod </em><code class="sig-name descname">all</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/admin_config.html#AdminConfig.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.admin_config.AdminConfig.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.chaudiere_db_rotate_hours">
+<code class="sig-name descname">chaudiere_db_rotate_hours</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.chaudiere_db_rotate_hours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.chaudiere_minute_db_rotate_days">
+<code class="sig-name descname">chaudiere_minute_db_rotate_days</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.chaudiere_minute_db_rotate_days" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.comment">
+<code class="sig-name descname">comment</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.comment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.admin_config.AdminConfig.first">
+<em class="property">classmethod </em><code class="sig-name descname">first</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/admin_config.html#AdminConfig.first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.admin_config.AdminConfig.first" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.admin_config.AdminConfig.get">
+<em class="property">classmethod </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">field_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/admin_config.html#AdminConfig.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.admin_config.AdminConfig.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.admin_config.AdminConfig.last">
+<em class="property">classmethod </em><code class="sig-name descname">last</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/admin_config.html#AdminConfig.last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.admin_config.AdminConfig.last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.temp_chaudiere_failure">
+<code class="sig-name descname">temp_chaudiere_failure</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.temp_chaudiere_failure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.admin_config.AdminConfig.updated_at">
+<code class="sig-name descname">updated_at</code><a class="headerlink" href="#app.models.admin_config.AdminConfig.updated_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.models.models">
+<span id="app-models-models-module"></span><h2>app.models.models module<a class="headerlink" href="#module-app.models.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="app.models.models.Chaudiere">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.models.</code><code class="sig-name descname">Chaudiere</code><span class="sig-paren">(</span><em class="sig-param">dt</em>, <em class="sig-param">temp0</em>, <em class="sig-param">temp1</em>, <em class="sig-param">temp2</em>, <em class="sig-param">watt0</em>, <em class="sig-param">watt1</em>, <em class="sig-param">watt2</em>, <em class="sig-param">watt3</em>, <em class="sig-param">phase</em>, <em class="sig-param">change</em>, <em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#Chaudiere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.Chaudiere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.models.models.ChaudiereBase" title="app.models.models.ChaudiereBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.models.ChaudiereBase</span></code></a></p>
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.change">
+<code class="sig-name descname">change</code><a class="headerlink" href="#app.models.models.Chaudiere.change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.dt">
+<code class="sig-name descname">dt</code><a class="headerlink" href="#app.models.models.Chaudiere.dt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.event">
+<code class="sig-name descname">event</code><a class="headerlink" href="#app.models.models.Chaudiere.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.models.models.Chaudiere.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.phase">
+<code class="sig-name descname">phase</code><a class="headerlink" href="#app.models.models.Chaudiere.phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.temp0">
+<code class="sig-name descname">temp0</code><a class="headerlink" href="#app.models.models.Chaudiere.temp0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.temp1">
+<code class="sig-name descname">temp1</code><a class="headerlink" href="#app.models.models.Chaudiere.temp1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.temp2">
+<code class="sig-name descname">temp2</code><a class="headerlink" href="#app.models.models.Chaudiere.temp2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.watt0">
+<code class="sig-name descname">watt0</code><a class="headerlink" href="#app.models.models.Chaudiere.watt0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.watt1">
+<code class="sig-name descname">watt1</code><a class="headerlink" href="#app.models.models.Chaudiere.watt1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.watt2">
+<code class="sig-name descname">watt2</code><a class="headerlink" href="#app.models.models.Chaudiere.watt2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.Chaudiere.watt3">
+<code class="sig-name descname">watt3</code><a class="headerlink" href="#app.models.models.Chaudiere.watt3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.models.models.ChaudiereBase">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.models.</code><code class="sig-name descname">ChaudiereBase</code><span class="sig-paren">(</span><em class="sig-param">dt</em>, <em class="sig-param">temp0</em>, <em class="sig-param">temp1</em>, <em class="sig-param">temp2</em>, <em class="sig-param">watt0</em>, <em class="sig-param">watt1</em>, <em class="sig-param">watt2</em>, <em class="sig-param">watt3</em>, <em class="sig-param">phase</em>, <em class="sig-param">change</em>, <em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Abstract class defining the fields and basic methods for Chaudiere and ChaudiereMinute models.</p>
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.all">
+<em class="property">classmethod </em><code class="sig-name descname">all</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.change">
+<code class="sig-name descname">change</code><em class="property"> = Column(None, Boolean(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">dt</em>, <em class="sig-param">temp0</em>, <em class="sig-param">temp1</em>, <em class="sig-param">temp2</em>, <em class="sig-param">watt0</em>, <em class="sig-param">watt1</em>, <em class="sig-param">watt2</em>, <em class="sig-param">watt3</em>, <em class="sig-param">phase</em>, <em class="sig-param">change</em>, <em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper method for creating new entries from external scripts</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>Name of the class (Chaudiere or ChaudiereMinute)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.datatolist">
+<code class="sig-name descname">datatolist</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.datatolist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.datatolist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.dt">
+<code class="sig-name descname">dt</code><em class="property"> = Column(None, DateTime(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.dt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.event">
+<code class="sig-name descname">event</code><em class="property"> = Column(None, String(length=100), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.first">
+<em class="property">classmethod </em><code class="sig-name descname">first</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.first" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">ATTR_ID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get_between_date">
+<em class="property">classmethod </em><code class="sig-name descname">get_between_date</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">dt_begin</em>, <em class="sig-param">dt_end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get_between_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get_between_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get_by_approx_date">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_approx_date</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get_by_approx_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get_by_approx_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get_by_datetime">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_datetime</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get_by_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get_by_datetime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get_by_timestamp">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">ts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get_by_timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.get_older_than">
+<em class="property">classmethod </em><code class="sig-name descname">get_older_than</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">dt_end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.get_older_than"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.get_older_than" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.id">
+<code class="sig-name descname">id</code><em class="property"> = Column(None, Integer(), table=None, primary_key=True, nullable=False)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.last">
+<em class="property">classmethod </em><code class="sig-name descname">last</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.phase">
+<code class="sig-name descname">phase</code><em class="property"> = Column(None, Integer(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.temp0">
+<code class="sig-name descname">temp0</code><em class="property"> = Column(None, Float(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.temp0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.temp1">
+<code class="sig-name descname">temp1</code><em class="property"> = Column(None, Float(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.temp1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.temp2">
+<code class="sig-name descname">temp2</code><em class="property"> = Column(None, Float(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.temp2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereBase.tolist">
+<code class="sig-name descname">tolist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereBase.tolist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereBase.tolist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Object data in list format</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.watt0">
+<code class="sig-name descname">watt0</code><em class="property"> = Column(None, Integer(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.watt0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.watt1">
+<code class="sig-name descname">watt1</code><em class="property"> = Column(None, Integer(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.watt1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.watt2">
+<code class="sig-name descname">watt2</code><em class="property"> = Column(None, Integer(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.watt2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereBase.watt3">
+<code class="sig-name descname">watt3</code><em class="property"> = Column(None, Integer(), table=None)</em><a class="headerlink" href="#app.models.models.ChaudiereBase.watt3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.models.models.ChaudiereHour">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.models.</code><code class="sig-name descname">ChaudiereHour</code><span class="sig-paren">(</span><em class="sig-param">dt</em>, <em class="sig-param">temp0</em>, <em class="sig-param">temp1</em>, <em class="sig-param">temp2</em>, <em class="sig-param">watt0</em>, <em class="sig-param">watt1</em>, <em class="sig-param">watt2</em>, <em class="sig-param">watt3</em>, <em class="sig-param">phase</em>, <em class="sig-param">change</em>, <em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereHour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereHour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.models.models.ChaudiereBase" title="app.models.models.ChaudiereBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.models.ChaudiereBase</span></code></a></p>
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.change">
+<code class="sig-name descname">change</code><a class="headerlink" href="#app.models.models.ChaudiereHour.change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.dt">
+<code class="sig-name descname">dt</code><a class="headerlink" href="#app.models.models.ChaudiereHour.dt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.event">
+<code class="sig-name descname">event</code><a class="headerlink" href="#app.models.models.ChaudiereHour.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.models.models.ChaudiereHour.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.phase">
+<code class="sig-name descname">phase</code><a class="headerlink" href="#app.models.models.ChaudiereHour.phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.temp0">
+<code class="sig-name descname">temp0</code><a class="headerlink" href="#app.models.models.ChaudiereHour.temp0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.temp1">
+<code class="sig-name descname">temp1</code><a class="headerlink" href="#app.models.models.ChaudiereHour.temp1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.temp2">
+<code class="sig-name descname">temp2</code><a class="headerlink" href="#app.models.models.ChaudiereHour.temp2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.watt0">
+<code class="sig-name descname">watt0</code><a class="headerlink" href="#app.models.models.ChaudiereHour.watt0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.watt1">
+<code class="sig-name descname">watt1</code><a class="headerlink" href="#app.models.models.ChaudiereHour.watt1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.watt2">
+<code class="sig-name descname">watt2</code><a class="headerlink" href="#app.models.models.ChaudiereHour.watt2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereHour.watt3">
+<code class="sig-name descname">watt3</code><a class="headerlink" href="#app.models.models.ChaudiereHour.watt3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.models.models.ChaudiereMinute">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.models.</code><code class="sig-name descname">ChaudiereMinute</code><span class="sig-paren">(</span><em class="sig-param">dt</em>, <em class="sig-param">temp0</em>, <em class="sig-param">temp1</em>, <em class="sig-param">temp2</em>, <em class="sig-param">watt0</em>, <em class="sig-param">watt1</em>, <em class="sig-param">watt2</em>, <em class="sig-param">watt3</em>, <em class="sig-param">phase</em>, <em class="sig-param">change</em>, <em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.models.models.ChaudiereBase" title="app.models.models.ChaudiereBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.models.ChaudiereBase</span></code></a></p>
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.all_next_verify_condition">
+<code class="sig-name descname">all_next_verify_condition</code><span class="sig-paren">(</span><em class="sig-param">minutes</em>, <em class="sig-param">condition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.all_next_verify_condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.all_next_verify_condition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.all_prec_verify_condition">
+<code class="sig-name descname">all_prec_verify_condition</code><span class="sig-paren">(</span><em class="sig-param">minutes</em>, <em class="sig-param">condition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.all_prec_verify_condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.all_prec_verify_condition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.at_least_one_prec_verify_condition">
+<code class="sig-name descname">at_least_one_prec_verify_condition</code><span class="sig-paren">(</span><em class="sig-param">minutes</em>, <em class="sig-param">condition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.at_least_one_prec_verify_condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.at_least_one_prec_verify_condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>At least one prec respect condition 
+eg : 
+condition = ‘((prec is not None) and (prec.phase is PHASE_ALLUMAGE))’
+entry.at_least_one_prec_verify_condition(5, condition)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.change">
+<code class="sig-name descname">change</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.dt">
+<code class="sig-name descname">dt</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.dt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.event">
+<code class="sig-name descname">event</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.next">
+<code class="sig-name descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.nexts">
+<code class="sig-name descname">nexts</code><span class="sig-paren">(</span><em class="sig-param">minutes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.nexts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.nexts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.phase">
+<code class="sig-name descname">phase</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.prec">
+<code class="sig-name descname">prec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.prec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.prec" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.models.ChaudiereMinute.precs">
+<code class="sig-name descname">precs</code><span class="sig-paren">(</span><em class="sig-param">minutes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/models.html#ChaudiereMinute.precs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.models.ChaudiereMinute.precs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.temp0">
+<code class="sig-name descname">temp0</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.temp0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.temp1">
+<code class="sig-name descname">temp1</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.temp1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.temp2">
+<code class="sig-name descname">temp2</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.temp2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.watt0">
+<code class="sig-name descname">watt0</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.watt0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.watt1">
+<code class="sig-name descname">watt1</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.watt1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.watt2">
+<code class="sig-name descname">watt2</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.watt2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.models.ChaudiereMinute.watt3">
+<code class="sig-name descname">watt3</code><a class="headerlink" href="#app.models.models.ChaudiereMinute.watt3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.models.users">
+<span id="app-models-users-module"></span><h2>app.models.users module<a class="headerlink" href="#module-app.models.users" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="app.models.users.User">
+<em class="property">class </em><code class="sig-prename descclassname">app.models.users.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/users.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.users.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_login.mixins.UserMixin</span></code></p>
+<dl class="method">
+<dt id="app.models.users.User.all">
+<em class="property">classmethod </em><code class="sig-name descname">all</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/users.html#User.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.users.User.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.users.User.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#app.models.users.User.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.users.User.get_by_name">
+<em class="property">classmethod </em><code class="sig-name descname">get_by_name</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/users.html#User.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.users.User.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.users.User.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#app.models.users.User.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.models.users.User.last">
+<em class="property">classmethod </em><code class="sig-name descname">last</code><span class="sig-paren">(</span><em class="sig-param">cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/users.html#User.last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.models.users.User.last" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.users.User.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#app.models.users.User.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.models.users.User.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#app.models.users.User.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-app.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">chaudiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, cheperboy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/app.models.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

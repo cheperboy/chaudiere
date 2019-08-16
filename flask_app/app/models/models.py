@@ -10,6 +10,8 @@ from util import *
 
   
 class ChaudiereBase(db.Model):
+    """Abstract class defining the fields and basic methods for Chaudiere and ChaudiereMinute models.
+    """
     __abstract__ = True
     id      = db.Column(db.Integer, primary_key=True)
     dt      = db.Column(db.DateTime)
@@ -42,6 +44,11 @@ class ChaudiereBase(db.Model):
 
     @classmethod
     def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
+        """Wrapper method for creating new entries from external scripts
+ 
+        Args:
+            Name of the class (Chaudiere or ChaudiereMinute)
+        """
         try:
             entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event)
             db.session.add(entry)

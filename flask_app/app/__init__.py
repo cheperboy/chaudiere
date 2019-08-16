@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+.. module:: app
+   :synopsis: Main module of the flask application
+
+.. moduleauthor:: cheperboy
+
+
+"""
 
 from datetime import datetime
 # ext import
@@ -98,7 +106,7 @@ def init_db_admin_config():
     Algo:
     If database admin_config contains no entry, then create one and set temp_chaudiere_failure to the default value (see constantes.py TEMP_CHAUDIERE_FAILURE_DEFAULT)
     """
-    from app.constantes import TEMP_CHAUDIERE_FAILURE_DEFAULT, CHAUDIERE_DB_ROTATE_DAYS_DEFAULT, CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT
+    from app.constantes import TEMP_CHAUDIERE_FAILURE_DEFAULT, CHAUDIERE_DB_ROTATE_HOURS_DEFAULT, CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT
     from app.models.admin_config import AdminConfig
     
     db.create_all('admin_config')
@@ -106,7 +114,7 @@ def init_db_admin_config():
     if AdminConfig.first(AdminConfig) == None:
         new_config = AdminConfig(
             temp_chaudiere_failure          = TEMP_CHAUDIERE_FAILURE_DEFAULT,
-            chaudiere_db_rotate_days        = CHAUDIERE_DB_ROTATE_DAYS_DEFAULT,
+            chaudiere_db_rotate_hours       = CHAUDIERE_DB_ROTATE_HOURS_DEFAULT,
             chaudiere_minute_db_rotate_days = CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT,
             comment = ''
         )

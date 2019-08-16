@@ -28,7 +28,7 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 if ENVNAME == 'Dev' :
     os.environ['FLASK_ENV'] = 'development'
     # Development configuration
-    ENV: 'development'
+    ENV = 'development'
     APP_NAME = 'Chaudiere Dev' 
     PORT = 5008
     DEBUG = True
@@ -51,9 +51,9 @@ if ENVNAME == 'Dev' :
 elif ENVNAME == 'Prod':
     # Production configuration
     FLASK_ENV='production'
-    ENV: 'production'
+    ENV = 'production'
     APP_NAME = 'Chaudiere'
-    DEBUG=False
+    DEBUG = False
     PORT = 5007
     BCRYPT_LOG_ROUNDS = 13
     WTF_CSRF_ENABLED = True

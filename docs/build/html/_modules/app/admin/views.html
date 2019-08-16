@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>app.admin.views &#8212; chaudiere 2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.admin.views</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">urllib</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">random</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="k">import</span> <span class="n">login_required</span>
+
+<span class="kn">from</span> <span class="nn">.system_info</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="k">import</span> <span class="n">AdminConfigForm</span>
+<span class="kn">from</span> <span class="nn">..views.auth</span> <span class="k">import</span> <span class="n">auth</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="k">import</span> <span class="n">AdminConfig</span>
+<span class="kn">from</span> <span class="nn">..constantes</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">.charts</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">util</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">config</span>
+
+<span class="n">admin_blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="chart"><a class="viewcode-back" href="../../../app.admin.html#app.admin.views.chart">[docs]</a><span class="nd">@admin_blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/chart&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">chart</span><span class="p">():</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/chart.html&#39;</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span>  <span class="n">params</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../../../app.admin.html#app.admin.views.index">[docs]</a><span class="nd">@admin_blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Display System Info&quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;network&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ip&#39;</span>            <span class="p">:</span> <span class="n">local_ip</span><span class="p">(),</span>
+        <span class="s1">&#39;hostname&#39;</span> <span class="p">:</span> <span class="n">hostname</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;date&#39;</span> <span class="p">:</span>          <span class="n">system_date</span><span class="p">(),</span>
+        <span class="s1">&#39;uptime&#39;</span> <span class="p">:</span>          <span class="n">system_uptime</span><span class="p">(),</span>
+        <span class="s1">&#39;cpu_temp&#39;</span> <span class="p">:</span>   <span class="n">cpu_temp</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Nexmo (SMS)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Balance&#39;</span> <span class="p">:</span>   <span class="n">nexmo_balance</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;disk_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">disk_space</span><span class="p">()</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;db_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_size</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/admin.html&#39;</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span>  <span class="n">params</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="config"><a class="viewcode-back" href="../../../app.admin.html#app.admin.views.config">[docs]</a><span class="nd">@admin_blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/config&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">config</span><span class="p">():</span>
+    <span class="n">admin_config</span> <span class="o">=</span> <span class="n">AdminConfig</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">admin_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AdminConfigForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">admin_config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate</span><span class="p">():</span>
+            <span class="c1"># admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">admin_config</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+            <span class="c1"># flash(u&#39;updated&#39;, &#39;success&#39;)</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/admin_config.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="c1"># flash(u&#39;Error in form&#39;, &#39;danger&#39;)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/admin_config.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">chaudiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, cheperboy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

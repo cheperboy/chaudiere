@@ -16,7 +16,7 @@ def createSensorRecord(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt
         entry = Chaudiere(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, None, None, None)
         db.session.add(entry)
         db.session.commit()
-    except RuntimeError,e:
+    except RuntimeError as e:
         print (e.message)
         return False
     else:

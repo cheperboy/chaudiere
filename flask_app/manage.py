@@ -75,7 +75,7 @@ def rotate_db(database):
     admin_config = AdminConfig.first(AdminConfig)
     if admin_config is not None:
         if database == 'Chaudiere':
-            timedelta_config = admin_config.chaudiere_db_rotate_days
+            timedelta_config = admin_config.chaudiere_db_rotate_hours
         elif database == 'ChaudiereMinute':
             timedelta_config = admin_config.chaudiere_minute_db_rotate_days
     else:

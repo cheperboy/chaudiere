@@ -18,20 +18,19 @@ def manager():
     pass
 
 @click.group()
-def database():
-    """ Create, list, rotate"""
-    pass
-@click.group()
-def users():
-    """ create & list admin users"""
-    pass
-@click.group()
-def test():
-    """Test mail & sms"""
-    pass
+def database(): pass
 manager.add_command(database)
+
+@click.group()
+def users(): pass
 manager.add_command(users)
+
+@click.group()
+def test(): pass
 manager.add_command(test)
+
+@click.group() 
+def fakedata(): pass
 manager.add_command(fakedata)
 
 ############
@@ -72,7 +71,7 @@ def rotate(database):
     admin_config = AdminConfig.first(AdminConfig)
     if admin_config is not None:
         if database == 'Chaudiere':
-            timedelta_config = admin_config.chaudiere_db_rotate_days
+            timedelta_config = admin_config.chaudiere_db_rotate_hours
         elif database == 'ChaudiereMinute':
             timedelta_config = admin_config.chaudiere_minute_db_rotate_days
     else:
@@ -82,7 +81,7 @@ def rotate(database):
     # delete the selected entries
     Model = eval(database)
     dt_end = datetime.now() - timedelta(days=timedelta_config)
-    # dt_end = datetime.now() - timedelta(minutes=30)
+    # dt_end = datetime.now() - timedelta(minutes=timedelta_config)
     entries = Model.get_older_than(Model, dt_end)
     for e in entries:
         db.session.delete(e)
@@ -93,16 +92,35 @@ def rotate(database):
 @click.option('--count', is_flag=True, help='just count the number of entries')
 @database.command()
 def list_all(database, count):
-    """ List all entries in a db (or just count them) 
+    """ List all entries of a db (or just count them) 
     list_all ChaudiereMinute [--count]
     """
     Model = eval(database)
-    entries = Model.all(Model)
+    # entries = Model.all(Model).order_by(id, desc)
+    entries = db.session.query(Model).order_by(Model.id.asc()).all()
     if count:
         print (len(entries))
     else:
         for e in entries:
             print (e)
+        
+@click.argument('database')
+@database.command()
+def first(database):
+    """ List first entry of a db
+    """
+    Model = eval(database)
+    e = db.session.query(Model).order_by(Model.id.asc()).first()
+    print (e)
+        
+@click.argument('database')
+@database.command()
+def last(database):
+    """ List first entry of a db
+    """
+    Model = eval(database)
+    e = db.session.query(Model).order_by(Model.id.desc()).first()
+    print (e)
         
 @database.command()
 def copy_prod_to_dev():

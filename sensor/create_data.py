@@ -1,7 +1,9 @@
+import click
 import os, sys, argparse, string, datetime, time
 import logging, logging.config
 import serial
 from serial.serialutil import SerialException
+from random import randint
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -24,20 +26,29 @@ import logger_config
 logger = logging.getLogger(__name__)
 
 # Global variables
-count_serial_port_fail = 0
+SLEEP_DELAY = 5
 
-"""
-if serial port fail
-the following command in console reopen the port and resolves the problem
-ls /dev/tty
-"""
+@click.group()
+def main():
+    pass
+
+@click.option('--fake', is_flag=True, help='fake datas')
+@main.command()
+def main(fake):
+    if fake:
+        
+        get_sensors_fake()
+    else:
+        get_sensors()
+    
+
 def get_watt():
     return api_get_watt_values()
 
 def get_temp():
     return api_get_temp_values()
 
-def main():
+def get_sensors():
     while True:
         try:
             watts = get_watt()
@@ -45,10 +56,21 @@ def main():
             logger.info('createSensorRecord: watts '+str(watts)+' temps '+ str(temps))
             dt = datetime.datetime.now()
             createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
-            time.sleep(2)
+            time.sleep(SLEEP_DELAY)
+        except IndexError:
+            logger.error('IndexError ', exc_info=True)
+
+def get_sensors_fake():
+    while True:
+        try:
+            random_int = randint(-10, 10)
+            dt = datetime.datetime.now()
+            datas = [dt, 60+random_int, 70+random_int, None, 2000, 2000, 0, 0]
+            logger.info('createSensorRecord: datas '+str(datas))
+            createSensorRecord(*datas)
+            time.sleep(SLEEP_DELAY)
         except IndexError:
             logger.error('IndexError ', exc_info=True)
 
 if __name__ == '__main__':
-    # CALL MAIN
     main()

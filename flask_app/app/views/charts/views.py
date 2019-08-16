@@ -89,10 +89,14 @@ def history(year, month, day, hour, minute, hours):
 @charts_blueprint.route('/now/<int:hours>', methods=['GET'])
 def now(hours):
     """ 
-    print a chart with datas 
-    from : N `hours` ago 
-    to : now
-    """
+    This route print a chart with datas 
+    from : N `hours` ago to : now
+
+    :param hours: Number of hours back history from now. 
+    :type hours: int. 
+    :returns: render_template('charts/charts.html', ...). 
+
+    """ 
     dt_now = datetime.now().replace(second=0, microsecond=0)
     dt = dt_now - timedelta(hours=hours)
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)

@@ -16,12 +16,19 @@ from ..views.auth import auth
 from ..models import AdminConfig
 from ..constantes import *
 from .. import db
+from .charts import *
 
 from util import *
 import config
 
 admin_blueprint = Blueprint("admin", __name__, url_prefix='/admin')
 
+@admin_blueprint.route('/chart', methods=['GET'])
+@login_required
+def chart():
+
+    return render_template('admin/chart.html', params =  params)
+    
 @admin_blueprint.route('/', methods=['GET'])
 @login_required
 def index():

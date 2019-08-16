@@ -3,6 +3,9 @@
 ########## HOWTO RUN THE SCRIPT ##########
 # This will output in terminal and in a log file
 #. install_chaudiere.sh |& tee install_chaudiere.sh.log
+# option -d : Also install /Dev environnement
+# option -e : Also install virtual environnement for both Dev and Prod (mkvirtualenv, pip install -r requirements.txt)
+
 
 ############################################ 
 # Prerequis
@@ -16,6 +19,21 @@ DIR_PROD=/home/pi/Prod
 DIR_DEV_CHAUDIERE=$DIR_DEV/chaudiere
 DIR_PROD_CHAUDIERE=$DIR_PROD/chaudiere
 GIT_REPO="https://github.com/cheperboy/chaudiere.git"
+OPTION_INSTALL_DEV=false
+OPTION_INSTALL_ENV=false
+
+##################################
+# Get options -d -e with getopts #
+##################################
+OPTIND=1 # Reset getopts (in case the script was called previously)
+while getopts :de opt; do
+    case $opt in 
+        d) OPTION_INSTALL_DEV=true;;
+        e) OPTION_INSTALL_VENV=true ;;
+        :) echo "Missing argument for option -$OPTARG"; return;;
+       \?) echo "Unknown option -$OPTARG"; return;;
+    esac
+done
 
 # This function prints a command and run it
 run () {
@@ -81,9 +99,10 @@ run "mkdir $DIR_PROD/log"
 run "mkdir $DIR_PROD/db"
 run "mkdir $DIR_PROD_CHAUDIERE"
 
-run "mkdir $DIR_DEV/log"
-run "mkdir $DIR_PROD/db"
-
+if [ "$OPTION_INSTALL_DEV" = true ] ; then
+	run "mkdir $DIR_DEV/log"
+	run "mkdir $DIR_PROD/db"	
+fi
 ##############
 # Clone repo in Prod #
 ##############
@@ -93,22 +112,27 @@ run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 ############################
 # Create virtualenv and install requirements  #
 ############################
-say "Create virtualenv dev"
 
-run "deactivate" # deactivate any virtualenv to run next command with system python
-run "mkvirtualenv dev"
-run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
-
-say "Create virtualenv prod"
-run "mkvirtualenv prod"
-run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
+if [ "$OPTION_INSTALL_VENV" = true ] ; then
+	run "deactivate" # deactivate any virtualenv to run next command with system python
+	say "Create virtualenv prod"
+	run "mkvirtualenv -p python3 prod"
+	run "/home/pi/Envs/prod/bin/pip install -r $DIR_PROD_CHAUDIERE/requirements.txt"
+	if [ "$OPTION_INSTALL_DEV" = true ] ; then
+		say "Create virtualenv dev"
+		run "mkvirtualenv -p python3 dev"
+		run "/home/pi/Envs/dev/bin/pip install -r $DIR_DEV_CHAUDIERE/requirements.txt"
+	fi
+fi
 
 ####################
 # Create chaudiere databases  #
 ####################
 say "Create chaudiere databases" 
-run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
 run "/home/pi/Envs/prod/bin/python $DIR_PROD_CHAUDIERE/flask_app/manage.py create_db"
+if [ "$OPTION_INSTALL_DEV" = true ] ; then
+	run "/home/pi/Envs/dev/bin/python $DIR_DEV_CHAUDIERE/flask_app/manage.py create_db"
+fi
 
 #############
 # Configure nginx #

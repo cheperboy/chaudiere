@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>app.admin.system_info &#8212; chaudiere 2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.admin.system_info</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">db</span>
+
+<span class="c1">########</span>
+<span class="c1"># Nexmo</span>
+<span class="c1">########</span>
+
+<span class="kn">import</span> <span class="nn">nexmo</span>
+
+<div class="viewcode-block" id="nexmo_balance"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.nexmo_balance">[docs]</a><span class="k">def</span> <span class="nf">nexmo_balance</span><span class="p">():</span>
+    <span class="n">nexmo_client</span> <span class="o">=</span> <span class="n">nexmo</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;NEXMO_API_KEY&#39;</span><span class="p">],</span> <span class="n">secret</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;NEXMO_API_SECRET&#39;</span><span class="p">])</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">nexmo_client</span><span class="o">.</span><span class="n">get_balance</span><span class="p">()</span>    
+    <span class="n">balance</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; €&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">balance</span><span class="p">)</span></div>
+
+<span class="c1">########</span>
+<span class="c1"># Network</span>
+<span class="c1">########</span>
+<div class="viewcode-block" id="hostname"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.hostname">[docs]</a><span class="k">def</span> <span class="nf">hostname</span><span class="p">():</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;cat /etc/hostname&quot;&quot;&quot;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="local_ip"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.local_ip">[docs]</a><span class="k">def</span> <span class="nf">local_ip</span><span class="p">():</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ifconfig eth0 | grep &#39;inet &#39; | awk &#39;{print $2}&#39; &quot;&quot;&quot;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
+
+<span class="c1">########</span>
+<span class="c1"># System</span>
+<span class="c1">########</span>
+<div class="viewcode-block" id="system_uptime"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.system_uptime">[docs]</a><span class="k">def</span> <span class="nf">system_uptime</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;uptime -p&#39;&#39;&#39;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="system_date"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.system_date">[docs]</a><span class="k">def</span> <span class="nf">system_date</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;date&#39;&#39;&#39;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="cpu_temp"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.cpu_temp">[docs]</a><span class="k">def</span> <span class="nf">cpu_temp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The shell command (vcgencmd measure_temp) returns</span>
+<span class="sd">    temp=64.5&#39;C</span>
+<span class="sd">    This function returns</span>
+<span class="sd">    64.5&#39;C</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;vcgencmd measure_temp&#39;&#39;&#39;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">stdout</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="disk_space"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.disk_space">[docs]</a><span class="k">def</span> <span class="nf">disk_space</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The shell command (df with options...) returns</span>
+<span class="sd">    /dev/root          7,0G    3,5G  52%</span>
+<span class="sd">    This function returns</span>
+<span class="sd">    {&#39;cpu_temp&#39;: &#39;7,0G&#39;, &#39;used&#39;: &#39;3,5G&#39;, &#39;used_percent&#39;: &#39;52%&#39;}    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;df -h --output=source,size,used,pcent | grep /dev/root&#39;&#39;&#39;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span> <span class="p">:</span> <span class="n">stdout</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;used&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;used_percent&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="p">[</span><span class="mi">3</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+    
+<span class="c1">########</span>
+<span class="c1"># Database</span>
+<span class="c1">########</span>
+<div class="viewcode-block" id="db_size"><a class="viewcode-back" href="../../../app.admin.html#app.admin.system_info.db_size">[docs]</a><span class="k">def</span> <span class="nf">db_size</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The command returns:</span>
+<span class="sd">        EMPTY LINE</span>
+<span class="sd">        app.db 0</span>
+<span class="sd">        chaudiere.db 536576</span>
+<span class="sd">        chaudiere_hour.db 8192</span>
+<span class="sd">        chaudiere_minute.db 241664        </span>
+<span class="sd">    This function returns:</span>
+<span class="sd">        {&#39;app.db&#39;: &#39;0 Mo&#39;, &#39;chaudiere.db&#39;: &#39;537 Mo&#39;, &#39;chaudiere_hour.db&#39;: &#39;8 Mo&#39;, &#39;chaudiere_minute.db&#39;: &#39;242 Mo&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ls -l /home/pi/&quot;&quot;&quot;</span><span class="o">+</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ENVNAME&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;&quot;&quot;/db | awk &#39;{ print $9 &quot; &quot; $5 }&#39; &quot;&quot;&quot;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.0f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">1000</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; Mo&quot;</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">chaudiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, cheperboy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

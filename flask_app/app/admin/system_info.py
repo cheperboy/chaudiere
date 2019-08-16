@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import subprocess
 from flask import current_app as app
+from app import db
 
 ########
 # Nexmo
@@ -90,14 +91,14 @@ def db_size():
     This function returns:
         {'app.db': '0 Mo', 'chaudiere.db': '537 Mo', 'chaudiere_hour.db': '8 Mo', 'chaudiere_minute.db': '242 Mo'}
     """
-    cmd = """ls -l /home/pi/Prod/db | awk '{ print $9 " " $5 }' """
+    cmd = """ls -l /home/pi/"""+app.config['ENVNAME']+"""/db | awk '{ print $9 " " $5 }' """
     stdout = subprocess.check_output(cmd, shell=True)
     stdout = stdout.decode('utf-8')
     ret = {}
     for line in stdout.splitlines():
         line = line.split( )
         if len(line) > 0:
-            size = "{:.0f}".format(int(line[1])/1000)
+            size = "{:.0f}".format(int(line[1])/(1000*1000))
             size = str(size) + " Mo"
             ret[line[0]] = size
     return (ret)

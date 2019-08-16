@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>util module &#8212; chaudiere 2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-util">
+<span id="util-module"></span><h1>util module<a class="headerlink" href="#module-util" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="util.datetime_to_timestamp">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">datetime_to_timestamp</code><span class="sig-paren">(</span><em class="sig-param">dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#datetime_to_timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.datetime_to_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a timestamp(Int) from datetime object 
+Take care of Summer/Spring variation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="util.hostname">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">hostname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#hostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.hostname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="util.pretty_date">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">pretty_date</code><span class="sig-paren">(</span><em class="sig-param">given_date=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#pretty_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.pretty_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="util.pretty_date_ago">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">pretty_date_ago</code><span class="sig-paren">(</span><em class="sig-param">time=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#pretty_date_ago"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.pretty_date_ago" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a datetime object or a int() Epoch timestamp and return a
+pretty string like ‘an hour ago’, ‘Yesterday’, ‘3 months ago’,
+‘just now’, etc</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="util.timedelta_in_minute">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">timedelta_in_minute</code><span class="sig-paren">(</span><em class="sig-param">dt_begin</em>, <em class="sig-param">dt_end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#timedelta_in_minute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.timedelta_in_minute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of minutes between 2 dates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="util.timestamp_to_datetime">
+<code class="sig-prename descclassname">util.</code><code class="sig-name descname">timestamp_to_datetime</code><span class="sig-paren">(</span><em class="sig-param">ts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/util.html#timestamp_to_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#util.timestamp_to_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Datetime object from timestamp (Int)</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">chaudiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, cheperboy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/util.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

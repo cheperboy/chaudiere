@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>app.models.models &#8212; chaudiere 2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.models.models</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">calendar</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">current_app</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">app.constantes</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="k">import</span> <span class="o">*</span>
+
+  
+<div class="viewcode-block" id="ChaudiereBase"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase">[docs]</a><span class="k">class</span> <span class="nc">ChaudiereBase</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class defining the fields and basic methods for Chaudiere and ChaudiereMinute models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__abstract__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="nb">id</span>      <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">dt</span>      <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+    <span class="n">temp0</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">)</span>
+    <span class="n">temp1</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">)</span>
+    <span class="n">temp2</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">)</span>
+    <span class="n">watt0</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+    <span class="n">watt1</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+    <span class="n">watt2</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+    <span class="n">watt3</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+    <span class="n">phase</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>     <span class="c1"># filled with constant</span>
+    <span class="n">change</span>  <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>     <span class="c1"># filled with constant in phase change</span>
+    <span class="n">event</span>   <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span> <span class="c1"># filled with constant in case of ALERT</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">temp0</span><span class="p">,</span> <span class="n">temp1</span><span class="p">,</span> <span class="n">temp2</span><span class="p">,</span> <span class="n">watt0</span><span class="p">,</span> <span class="n">watt1</span><span class="p">,</span> <span class="n">watt2</span><span class="p">,</span> <span class="n">watt3</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>     <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp0</span>  <span class="o">=</span> <span class="n">temp0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp1</span>  <span class="o">=</span> <span class="n">temp1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp2</span>  <span class="o">=</span> <span class="n">temp2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watt0</span>  <span class="o">=</span> <span class="n">watt0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watt1</span>  <span class="o">=</span> <span class="n">watt1</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">watt2</span>  <span class="o">=</span> <span class="n">watt2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watt3</span>  <span class="o">=</span> <span class="n">watt3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span>  <span class="o">=</span> <span class="n">phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">change</span> <span class="o">=</span> <span class="n">change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span>  <span class="o">=</span> <span class="n">event</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Chaudiere </span><span class="si">{0}</span><span class="s1"> </span><span class="si">{1}</span><span class="s1"> </span><span class="si">{2}</span><span class="s1"> </span><span class="si">{3}</span><span class="s1"> </span><span class="si">{4}</span><span class="s1"> </span><span class="si">{5}</span><span class="s1"> </span><span class="si">{6}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">watt0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">change</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ChaudiereBase.create"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.create">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">temp0</span><span class="p">,</span> <span class="n">temp1</span><span class="p">,</span> <span class="n">temp2</span><span class="p">,</span> <span class="n">watt0</span><span class="p">,</span> <span class="n">watt1</span><span class="p">,</span> <span class="n">watt2</span><span class="p">,</span> <span class="n">watt3</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wrapper method for creating new entries from external scripts</span>
+<span class="sd"> </span>
+<span class="sd">        Args:</span>
+<span class="sd">            Name of the class (Chaudiere or ChaudiereMinute)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">temp0</span><span class="p">,</span> <span class="n">temp1</span><span class="p">,</span> <span class="n">temp2</span><span class="p">,</span> <span class="n">watt0</span><span class="p">,</span> <span class="n">watt1</span><span class="p">,</span> <span class="n">watt2</span><span class="p">,</span> <span class="n">watt3</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;Not Ok&#39;</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    return one field corresponding to given InputDb constante (ATTR_ID)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereBase.get"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ATTR_ID</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">InputDb</span><span class="p">[</span><span class="n">ATTR_ID</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.tolist"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.tolist">[docs]</a>    <span class="k">def</span> <span class="nf">tolist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Object data in list format&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">datetime_to_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">temp0</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">temp1</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">temp2</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">watt0</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">watt1</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">watt2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">watt3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">change</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">]</span></div>
+       
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    return one field called data in a list with timestamp</span>
+<span class="sd">    [datetime, data]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereBase.datatolist"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.datatolist">[docs]</a>    <span class="k">def</span> <span class="nf">datatolist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">datetime_to_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">),</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="c1"># same as e.g. self.temp0</span>
+       <span class="p">]</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.last"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.last">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.all"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.all">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.first"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.first">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.get_between_date"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get_between_date">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_between_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">dt_begin</span><span class="p">,</span> <span class="n">dt_end</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="n">dt_begin</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span> <span class="o">&lt;</span> <span class="n">dt_end</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span> \
+                <span class="o">.</span><span class="n">all</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.get_older_than"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get_older_than">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_older_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">dt_end</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span> <span class="o">&lt;</span> <span class="n">dt_end</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span> \
+                <span class="o">.</span><span class="n">all</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.get_by_timestamp"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get_by_timestamp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_by_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">ts</span><span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.get_by_approx_date"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get_by_approx_date">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_by_approx_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">minute</span><span class="p">))</span> \
+            <span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">entry</span></div>
+
+<div class="viewcode-block" id="ChaudiereBase.get_by_datetime"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereBase.get_by_datetime">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_by_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div></div>
+
+                        
+<div class="viewcode-block" id="ChaudiereMinute"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute">[docs]</a><span class="k">class</span> <span class="nc">ChaudiereMinute</span><span class="p">(</span><span class="n">ChaudiereBase</span><span class="p">):</span>
+    <span class="n">__bind_key__</span> <span class="o">=</span> <span class="s1">&#39;chaudiere_minute&#39;</span>
+    
+    <span class="sd">&quot;&quot;&quot; return precedent entry: one minute before self&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereMinute.prec"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.prec">[docs]</a>    <span class="k">def</span> <span class="nf">prec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+        
+    <span class="sd">&quot;&quot;&quot; return next entry: one minute after self&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereMinute.next"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+        
+    <span class="sd">&quot;&quot;&quot; return a list of precedents entries: x minute before self&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereMinute.precs"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.precs">[docs]</a>    <span class="k">def</span> <span class="nf">precs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">):</span> 
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">minute</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">minutes</span><span class="p">):</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minute</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entries</span></div>
+        
+    <span class="sd">&quot;&quot;&quot; return a list of precedents entries: x minute before self&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChaudiereMinute.nexts"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.nexts">[docs]</a>    <span class="k">def</span> <span class="nf">nexts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">):</span> 
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">minute</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">minutes</span><span class="p">):</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minute</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entries</span></div>
+        
+<div class="viewcode-block" id="ChaudiereMinute.at_least_one_prec_verify_condition"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.at_least_one_prec_verify_condition">[docs]</a>    <span class="k">def</span> <span class="nf">at_least_one_prec_verify_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        At least one prec respect condition </span>
+<span class="sd">        eg : </span>
+<span class="sd">        condition = &#39;((prec is not None) and (prec.phase is PHASE_ALLUMAGE))&#39;</span>
+<span class="sd">        entry.at_least_one_prec_verify_condition(5, condition)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">prec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">precs</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+        
+<div class="viewcode-block" id="ChaudiereMinute.all_prec_verify_condition"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.all_prec_verify_condition">[docs]</a>    <span class="k">def</span> <span class="nf">all_prec_verify_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">prec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">precs</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">eval</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+        
+<div class="viewcode-block" id="ChaudiereMinute.all_next_verify_condition"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereMinute.all_next_verify_condition">[docs]</a>    <span class="k">def</span> <span class="nf">all_next_verify_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+        <span class="k">for</span> <span class="nb">next</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nexts</span><span class="p">(</span><span class="n">minutes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">eval</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+        
+        
+<div class="viewcode-block" id="ChaudiereHour"><a class="viewcode-back" href="../../../app.models.html#app.models.models.ChaudiereHour">[docs]</a><span class="k">class</span> <span class="nc">ChaudiereHour</span><span class="p">(</span><span class="n">ChaudiereBase</span><span class="p">):</span>
+    <span class="n">__bind_key__</span> <span class="o">=</span> <span class="s1">&#39;chaudiere_hour&#39;</span></div>
+    
+<div class="viewcode-block" id="Chaudiere"><a class="viewcode-back" href="../../../app.models.html#app.models.models.Chaudiere">[docs]</a><span class="k">class</span> <span class="nc">Chaudiere</span><span class="p">(</span><span class="n">ChaudiereBase</span><span class="p">):</span>
+    <span class="n">__bind_key__</span> <span class="o">=</span> <span class="s1">&#39;chaudiere&#39;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">chaudiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, cheperboy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

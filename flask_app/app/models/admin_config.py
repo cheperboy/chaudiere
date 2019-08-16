@@ -11,11 +11,11 @@ class AdminConfig(db.Model):
     __bind_key__ = 'admin_config'
     
     id                              = db.Column(db.Integer, primary_key=True)
-    temp_chaudiere_failure          = db.Column(db.Integer) # used for process_phase.py
-    chaudiere_db_rotate_days        = db.Column(db.Integer) 
-    chaudiere_minute_db_rotate_days = db.Column(db.Integer) 
+    temp_chaudiere_failure          = db.Column(db.Integer, nullable=False) # used for process_phase.py
+    chaudiere_db_rotate_hours       = db.Column(db.Integer, nullable=False) 
+    chaudiere_minute_db_rotate_days = db.Column(db.Integer, nullable=False) 
     comment                         = db.Column(db.String(300), nullable=True) # free comment
-    updated_at                      = db.Column(db.DateTime,     # last modif date
+    updated_at                      = db.Column(db.DateTime, 
                                                 default=datetime.now(),
                                                 nullable=False,
                                                 onupdate=datetime.now())
@@ -23,12 +23,12 @@ class AdminConfig(db.Model):
     def __init__(
                 self, 
                 temp_chaudiere_failure, 
-                chaudiere_db_rotate_days,
+                chaudiere_db_rotate_hours,
                 chaudiere_minute_db_rotate_days,
                 comment):
         
         self.temp_chaudiere_failure          = temp_chaudiere_failure
-        self.chaudiere_db_rotate_days        = chaudiere_db_rotate_days
+        self.chaudiere_db_rotate_hours       = chaudiere_db_rotate_hours
         self.chaudiere_minute_db_rotate_days = chaudiere_minute_db_rotate_days
         self.comment                         = comment
 
@@ -36,7 +36,7 @@ class AdminConfig(db.Model):
         ret = 'AdminConfig\n'
         ret += 'id : {0}\n'.format(self.id)
         ret += 'temp_chaudiere_failure : {0}\n'.format(self.temp_chaudiere_failure)
-        ret += 'chaudiere_db_rotate_days : {0}\n'.format(self.chaudiere_db_rotate_days)
+        ret += 'chaudiere_db_rotate_hours : {0}\n'.format(self.chaudiere_db_rotate_hours)
         ret += 'chaudiere_minute_db_rotate_days : {0}\n'.format(self.chaudiere_minute_db_rotate_days)
         ret += 'comment : {0}\n'.format(self.comment)
         ret += 'updated_at : {0}\n'.format(self.updated_at)

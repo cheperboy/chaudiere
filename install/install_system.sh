@@ -31,7 +31,9 @@ say () {
 run "sudo apt-get update"
 run "sudo apt-get dist-upgrade -y"
 run "sudo apt-get upgrade -y"
-run "sudo apt-get -y install supervisor git python3-pip nginx"
+# In case of nginx issue, run the following command:
+# run "sudo apt-get remove nginx* --purge"
+run "sudo apt-get -y install supervisor git python3-pip nginx-common nginx"
 # installing virtualenv with sudo apt-get makes it working ok for python2 and python3
 run "sudo apt-get -y install virtualenv"
 run "pip3 install virtualenvwrapper"

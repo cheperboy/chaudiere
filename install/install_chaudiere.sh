@@ -115,10 +115,12 @@ run "git clone $GIT_REPO $DIR_PROD_CHAUDIERE"
 if [ "$OPTION_INSTALL_VENV" = true ] ; then
 	run "deactivate" # deactivate any virtualenv to run next command with system python
 	say "Create virtualenv prod"
+	run "rmvirtualenv prod"
 	run "mkvirtualenv -p python3 prod"
 	run "/home/pi/Envs/prod/bin/pip3 install -r $DIR_PROD_CHAUDIERE/requirements.txt"
 	if [ "$OPTION_INSTALL_DEV" = true ] ; then
 		say "Create virtualenv dev"
+		run "rmvirtualenv dev"
 		run "mkvirtualenv -p python3 dev"
 		run "/home/pi/Envs/dev/bin/pip3 install -r $DIR_DEV_CHAUDIERE/requirements.txt"
 	fi

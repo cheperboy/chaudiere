@@ -70,7 +70,7 @@ elif ENVNAME == 'Prod':
     
 elif ENVNAME == 'flask-dev' :
     # Windows Development configuration
-    ENV: 'development'
+    ENV='development'
     FLASK_ENV='development'
     print ('db path '+os.path.join(ENVPATH + '\db\\', 'chaudiere.db'))
 

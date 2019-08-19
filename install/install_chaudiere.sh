@@ -56,7 +56,7 @@ say () {
 # Le scipt doit être exécuté dans un dossier particulier. Veérifier qu'on se trouve dans le bon dossier
 if [ $DIR_DEV_CHAUDIERE/install != `pwd` ]
 then
-	echo "Ce script doit être exécuté dans $DIR_DEV_CHAUDIERE"
+	echo "Ce script doit être exécuté dans $DIR_DEV_CHAUDIERE/install"
 	return
 fi
 
@@ -117,12 +117,12 @@ if [ "$OPTION_INSTALL_VENV" = true ] ; then
 	say "Create virtualenv prod"
 	run "rmvirtualenv prod"
 	run "mkvirtualenv -p python3 prod"
-	run "/home/pi/Envs/prod/bin/pip3 install -r $DIR_PROD_CHAUDIERE/requirements.txt"
+	run "/home/pi/Envs/prod/bin/pip3 install -r $DIR_PROD_CHAUDIERE/flask_app/requirements.txt"
 	if [ "$OPTION_INSTALL_DEV" = true ] ; then
 		say "Create virtualenv dev"
 		run "rmvirtualenv dev"
 		run "mkvirtualenv -p python3 dev"
-		run "/home/pi/Envs/dev/bin/pip3 install -r $DIR_DEV_CHAUDIERE/requirements.txt"
+		run "/home/pi/Envs/dev/bin/pip3 install -r $DIR_DEV_CHAUDIERE/flask_app/requirements.txt"
 	fi
 fi
 
@@ -186,6 +186,6 @@ run "sudo supervisorctl start sensor gunicorn"
 
 run "sudo supervisorctl status"
 run "sudo service nginx start"
-sleep 2
+sleep 4
 run "sudo service nginx status"
 

@@ -130,9 +130,9 @@ fi
 # Create chaudiere databases  #
 ###############################
 say "Create chaudiere databases" 
-run "/home/pi/Envs/prod/bin/python3 $DIR_PROD_CHAUDIERE/flask_app/manager.py database init"
+run "/home/pi/Envs/prod/bin/python3 $DIR_PROD_CHAUDIERE/flask_app/manager.py database init_all"
 if [ "$OPTION_INSTALL_DEV" = true ] ; then
-	run "/home/pi/Envs/dev/bin/python3 $DIR_DEV_CHAUDIERE/flask_app/manager.py database init"
+	run "/home/pi/Envs/dev/bin/python3 $DIR_DEV_CHAUDIERE/flask_app/manager.py database init_all"
 fi
 
 ###################

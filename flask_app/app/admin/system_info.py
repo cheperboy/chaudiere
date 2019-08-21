@@ -25,8 +25,14 @@ def hostname():
     stdout = stdout.decode('utf-8')
     return (stdout)
 
-def local_ip():
+def ip_lan_eth():
     cmd = """ifconfig eth0 | grep 'inet ' | awk '{print $2}' """
+    stdout = subprocess.check_output(cmd, shell=True)
+    stdout = stdout.decode('utf-8')
+    return (stdout)
+
+def ip_lan_wifi():
+    cmd = """ifconfig wlan0 | grep 'inet ' | awk '{print $2}' """
     stdout = subprocess.check_output(cmd, shell=True)
     stdout = stdout.decode('utf-8')
     return (stdout)

@@ -35,8 +35,9 @@ def index():
     """Display System Info"""
     params = {}
     params["network"] = {
-        'ip'            : local_ip(),
-        'hostname' : hostname()
+        'ip lan eth'    : ip_lan_eth(),
+        'ip lan wifi'   : ip_lan_wifi(),
+        'hostname'      : hostname()
     }
     params["system"] = {
         'date' :          system_date(),

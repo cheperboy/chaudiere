@@ -21,21 +21,22 @@ say () {
 	for i in $( seq 0 $length ); do echo -n =; done; echo;
 }
 
-DIR_PROD=/home/pi/Prod
-DIR_PROD_CHAUDIERE=$DIR_PROD/chaudiere
+DIR_DEV=/home/pi/Dev
+DIR_DEV_CHAUDIERE=$DIR_DEV/chaudiere
 
 ##################
 # Configure  /etc/modules #
 ##################
 say "This is append to /etc/modules"
-cat $DIR_PROD_CHAUDIERE/config/prod/etc_modules
-sudo cat $DIR_PROD_CHAUDIERE/config/prod/etc_modules >> /etc/modules
+cat $DIR_DEV_CHAUDIERE/config/prod/etc_modules
+sudo cat $DIR_DEV_CHAUDIERE/config/prod/etc_modules >> /etc/modules
 
 ##################
 # Configure  /etc/modules #
 ##################
 say "This is append to /boot/config.txt"
-cat $DIR_PROD_CHAUDIERE/config/prod/boot_config.txt
-sudo cat $DIR_PROD_CHAUDIERE/config/prod/boot_config.txt >> /boot/config.txt
+cat $DIR_DEV_CHAUDIERE/config/prod/boot_config.txt
+sudo cat $DIR_DEV_CHAUDIERE/config/prod/boot_config.txt >> /boot/config.txt
 
 say "REBOOT to apply new configuration"
+

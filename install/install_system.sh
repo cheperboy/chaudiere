@@ -39,13 +39,13 @@ run "sudo apt-get -y install virtualenv"
 run "pip3 install virtualenvwrapper"
 
 # Specific packages for chaudiere app
-run "sudo apt-get install curl"
+run "sudo apt-get -y install curl"
 
 # Specific packages for i2c
-run "sudo apt-get install python-smbus python3-smbus python-dev python3-dev"
+run "sudo apt-get -y install python-smbus python3-smbus python-dev python3-dev"
 
 # NEXMO need cryptographie and cffi
-run "sudo apt-get install build-essential libssl-dev libffi-dev python-dev"
+run "sudo apt-get -y install build-essential libssl-dev libffi-dev python-dev"
 
 # clean downloaded packages
 run "sudo apt-get clean"

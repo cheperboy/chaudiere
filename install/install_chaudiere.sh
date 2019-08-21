@@ -101,7 +101,7 @@ run "mkdir $DIR_PROD_CHAUDIERE"
 
 if [ "$OPTION_INSTALL_DEV" = true ] ; then
 	run "mkdir $DIR_DEV/log"
-	run "mkdir $DIR_PROD/db"	
+	run "mkdir $DIR_DEV/db"	
 fi
 ######################
 # Clone repo in Prod #

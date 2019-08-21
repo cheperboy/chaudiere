@@ -10,13 +10,13 @@ La variable local_display est utilisée pour
 {% endif %}
 
 	<div class="container">	
-	
 	{% with messages = get_flashed_messages(with_categories=true) %}
 	  <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
 	  {% if messages %}
 		{% for category, message in messages %}
 			<div class="alert alert-{{ category }}" role="alert">
 			{{ message }}
+			
 			</div>
 		{% endfor %}
 	  {% endif %}
@@ -31,8 +31,8 @@ La variable local_display est utilisée pour
 	// Those parameters are :
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
-	{% if chart_params and context %}
-		var JS_base_URL = "{{ context.app_base_url}}";
+	{% if chart_params %}
+		var JS_base_URL = "{{ request.host_url }}";
 		var JS_chart_json_template = "{{ chart_params.json_template }}";
 		var JS_begin_date = "{{ chart_params.begin_date }}";
 		var JS_hours_lenth = "{{ chart_params.hours_length }}";

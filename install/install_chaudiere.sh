@@ -186,6 +186,6 @@ run "sudo supervisorctl start sensor gunicorn"
 
 run "sudo supervisorctl status"
 run "sudo service nginx start"
-sleep 4
+sleep 5
 run "sudo service nginx status"
 

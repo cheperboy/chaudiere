@@ -19,13 +19,6 @@ from util import datetime_to_timestamp
 
 charts_blueprint = Blueprint("charts", __name__, url_prefix='/charts')
 
-def json_context():
-    context = {
-        'app_base_url' : app.config['APP_BASE_URL'],
-        'app_name' : app.config['APP_NAME']
-    }
-    return context
-
 def json_date_picker():
     if ChaudiereMinute.first(ChaudiereMinute):
         min = ChaudiereMinute.first(ChaudiereMinute).dt
@@ -79,7 +72,6 @@ def history(year, month, day, hour, minute, hours):
     json_template = static_conf_minute
     chart_params = {'json_template': json_template, 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('index.html',
-                            context =             json_context(),
                             chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True,
@@ -102,7 +94,6 @@ def now(hours):
     begin_date = str(dt.year)+'/'+str(dt.month)+'/'+str(dt.day)+'/'+str(dt.hour)+'/'+str(dt.minute)
     chart_params = {'json_template': 'static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('charts/charts.html',
-                            context =             json_context(),
                             chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True,
@@ -122,7 +113,6 @@ def local_display(hours):
     chart_params = {'json_template': 'local_display_static_conf_minute', 'begin_date': begin_date, 'hours_length' : hours}
     return render_template('charts/charts.html',
                             local_display =       True,
-                            context =             json_context(),
                             chart_params =        chart_params,
                             chart_legend =        ChartLegend,
                             render_static_chart = True)

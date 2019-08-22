@@ -1,0 +1,9 @@
+site_name: Chaudiere
+theme: Material
+repo_url: https://github.com/example/repository/
+nav:
+    - Home: index.md
+    - Raspbian Install: raspbian_install.md
+    - Chaudiere Install: chaudiere_install.md
+    - Software: software.md
+

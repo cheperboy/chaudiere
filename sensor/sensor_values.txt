@@ -1,0 +1,24 @@
+watt0	CIRCULATEUR
+	1653 OFF
+	1671 ON
+
+watt1	ALLUMAGE
+	1650 OFF
+	1827 ON
+
+watt2	VENT_PRIMAIRE
+	1650 0%
+	1656 10%
+	1658 20%
+	1659 30%
+	1660 40%
+	1660 50%
+	1660 60%
+	...
+	1663 80%
+	appel de courant démarrage: jusqu'a 1670
+
+watt1	ALIMENTATION
+	1647 OFF
+	1671 ON
+

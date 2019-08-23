@@ -22,7 +22,7 @@ import glob
 # Script Constants
 WATT_SENSOR_SIZE = 4
 DEFAULT_SENSOR_VALUE = None #if no sensor value is read then recorded value is DEFAULT_SENSOR_VALUE
-MIN_VALUE = 1650               #if sensor value < MIN_VALUE then recorded value is 0
+MIN_VALUE = 1640               #if sensor value < MIN_VALUE then recorded value is 0
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -73,16 +73,32 @@ def read_adc():
             max_voltage[ch] = max(voltage, max_voltage[ch])
     return max_voltage
 
+def debug_read_channels():
+    ads = ADS1115.ADS1115()
+    num_samples = 30
+    channels    = [0, 1, 2, 3]
+    for ch in channels:
+        max_voltage = 0
+        for x in range(0, num_samples):
+            voltage = ads.readADCSingleEnded(channel=ch)
+            max_voltage = max(voltage, max_voltage)
+        value = '{:4.0f}'.format(max_voltage)
+        logger.info('channel '+ str(ch) + '\t'+str(value))
+
 # For debug purpose, calling main() read values from ADC and print to console every 1 second
 def main():
     while True:
-        values = read_adc()
-        values = ['{:4.0f}'.format(value) for value in values]
-        logger.info(values)
+        # values = read_adc()
+        # values = ['{:4.0f}'.format(value) for value in values]
+        # logger.info(values)
+        
         values = get_watt_values()
         values = ['{:4.0f}'.format(value) for value in values]
         logger.info(values)
-        time.sleep(3) 
+        
+        #debug_read_channels()
+        
+        time.sleep(0.5) 
         
 if __name__ == '__main__':
     main()

@@ -23,7 +23,8 @@ base_dir = '/sys/bus/w1/devices/'
 
 # SENSOR CONFIG
 SENSOR_TEMP_0 = '28-00000a69bebf'
-SENSOR_TEMP_1 = '28-800000282141'
+SENSOR_TEMP_1 = '28-80000028212d'
+SENSOR_TEMP_2 = '28-800000282141'
 
 # Constant
 DEFAULT_SENSOR_VALUE = -1
@@ -122,7 +123,7 @@ def main():
         """
         temp0 = get_temp_value(SENSOR_TEMP_0, BY_NAME)
         temp1 = get_temp_value(SENSOR_TEMP_1, BY_NAME)
-        temp2 = DEFAULT_SENSOR_VALUE
+        temp2 = get_temp_value(SENSOR_TEMP_2, BY_NAME)
         if not temp0:
             logger.critical("temp0 Fail")
         if not temp1:

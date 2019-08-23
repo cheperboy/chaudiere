@@ -1,0 +1,18 @@
+get_watt.py | INFO | ['   0', '1650', '1651', '1647']
+get_watt.py | INFO | ['   0', '1650', '1651', '1647']
+get_watt.py | INFO | ['   0', '1650', '1651', '1647']
+Traceback (most recent call last):
+  File "/home/pi/Envs/prod/lib/python3.7/site-packages/ADS1115/__init__.py", line 104, in __init__
+  File "/home/pi/Envs/prod/lib/python3.7/site-packages/smbus2/smbus2.py", line 253, in __init__
+  File "/home/pi/Envs/prod/lib/python3.7/site-packages/smbus2/smbus2.py", line 265, in open
+OSError: [Errno 24] Too many open files: '/dev/i2c-1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "get_watt.py", line 104, in <module>
+  File "get_watt.py", line 95, in main
+  File "get_watt.py", line 53, in get_watt_values
+  File "get_watt.py", line 66, in read_adc
+  File "/home/pi/Envs/prod/lib/python3.7/site-packages/ADS1115/__init__.py", line 106, in __init__
+OSError: Could not find i2c device

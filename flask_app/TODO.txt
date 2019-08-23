@@ -1,4 +1,3 @@
-todo
-Check scripts
-new page for charts form history
-purge db with cron (set param via admin config)
+New route and view for charts history form
+Rename flask_app/scripts/ to flask_app/tasks/
+Move send_email_sms.py into flask_app/scripts/

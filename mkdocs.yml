@@ -1,10 +1,11 @@
 site_name: Chaudiere
 theme: readthedocs
-repo_url: https://github.com/example/repository/
+repo_url: https://github.com/cheperboy/chaudiere/
 docs_dir: docs/ 
 nav:
     - Home: index.md
-    - Raspbian Install: raspbian_install.md
-    - Chaudiere Install: chaudiere_install.md
+    - Install Raspbian: install_raspbian.md
+    - Install Chaudiere: install_chaudiere.md
     - Software: software.md
+    - Dev workflow: dev_workflow.md
 

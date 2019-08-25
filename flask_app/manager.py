@@ -126,13 +126,13 @@ def last(database):
 def copy_prod_to_dev():
     """ copy chaudiere.db & chaudiere_minute.db from prod to dev """
     if config.ENVNAME == 'Dev' :
-        db.drop_all()
-        db.create_all()
-        db.session.commit()
+        # db.drop_all()
+        # db.create_all()
+        # db.session.commit()
         os.system("sudo rm -f /home/pi/Dev/db/chaudiere_minute.db")
+        os.system("cp /home/pi/Prod/db/chaudiere_minute.db /home/pi/Dev/db/")
         os.system("sudo rm -f /home/pi/Dev/db/chaudiere.db")
         os.system("cp /home/pi/Prod/db/chaudiere.db /home/pi/Dev/db/")
-        os.system("cp /home/pi/Prod/db/chaudiere_minute.db /home/pi/Dev/db/")
         print ('Done')
     else:
         print ('Aborted. Env is '+config.ENVNAME)

@@ -5,9 +5,8 @@ La variable local_display est utilisée pour
 -->
 
 {% include "_header.html" %}
-{% if not local_display %}
-	{% include "_navbar.html" %}
-{% endif %}
+
+{% include "_navbar.html" %}
 
 	<div class="container">	
 	{% with messages = get_flashed_messages(with_categories=true) %}

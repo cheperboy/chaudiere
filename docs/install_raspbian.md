@@ -9,17 +9,18 @@
 [help](https://howchoo.com/g/ndy1zte2yjn/how-to-set-up-wifi-on-your-raspberry-pi-without-ethernet)
 
 From Windows PC with Notepad++ in SD card in partition “boot”
-Create file `boot/wpa_supplicant.conf` 
+Create file `boot/wpa_supplicant.conf`  
 (Raspbian will move it in `/etc/wpa_supplicant/` when the system is booted)
-In Notepad++“Edit” > “EOL Conversion” > “UNIX/OSX Format”. “UNIX” is then shown in the status bar.
+In Notepad++“Edit” > “EOL Conversion” > **“UNIX File Format”**.
 Add content:
 ```shell
-country=FR # Your 2-digit country code
+country=FR
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
 network={
     ssid="YOUR_NETWORK_NAME"
     psk="YOUR_PASSWORD"
-    key_mgmt=WPA-PSK
 }
 ```
 

@@ -13,20 +13,20 @@
 
 ## Project layout
 
-	arduino_due/    			# Not used (replaced by ADS1115).
+	arduino_due/                # Not used (replaced by ADS1115).
 	
-	config/						# Supervisor, nginx, cron, raspbian configuration files
+	config/                     # Supervisor, nginx, cron, raspbian configuration files
 		dev/
 		prod/  			
 	
-	hardware/					# Fritzing and schematic design files
+	hardware/                   # Fritzing and schematic design files
 	
-	install/					# installation scripts (Shell)
-		hardware.sh				# Configure raspbian modules
-		install-system.sh		# apt-get update upgrade install python virtualenv...
-		install-chaudiere.sh	# Create venv, configure nginx supervisor and cron, start server
+	install/                    # installation scripts (Shell)
+		hardware.sh	            # Configure raspbian modules
+		install-system.sh       # apt-get update upgrade install python virtualenv...
+		install-chaudiere.sh    # Create venv, configure nginx supervisor and cron, start server
 	
-	logger/						# Logger config for python scripts
+	logger/                     # Logger config for python scripts
 	
 	sensor/						# Interface with temperature and current sensors
 		get_watt.py				# Retrieve current sensor values (i2c via ADS1115)
@@ -79,3 +79,4 @@
 				js/
 					custom_highstock.js
 			templates/
+	

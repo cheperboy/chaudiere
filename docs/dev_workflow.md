@@ -28,6 +28,10 @@ nav:
     - Software: software.md
     - Doc workflow: doc.md
 ```
+The packages required for building the documentation are declared in  
+
+- flask_app/requirements.txt for dev build
+- docs/requirements.txt for readthedocs.io build
 
 ### Usefule extensions
 

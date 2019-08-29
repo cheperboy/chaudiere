@@ -1,18 +1,7 @@
 # Chaudiere wiki
 
+* [https://chaudiere-wiki.readthedocs.io/en/latest/](https://chaudiere-wiki.readthedocs.io/en/latest/)
 
-# Examples
-
-<div class="mermaid">
-graph TB
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-</div>
-
-
-    
 ## Commands
 
 * `python main.py` - run flask app in console (debug mode)

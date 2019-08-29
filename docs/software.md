@@ -53,7 +53,7 @@ This file must be owned by root (`sudo chown root /etc/cron.d/chaudiere_cron_pro
 
 `sudo service cron status` - Check if cron is running
 
-```mermaid
+<div class="mermaid">
 graph LR
     A[chaudiere_cron_prod] --> B(archive_minute.py)
     A[chaudiere_cron_prod] --> C(process_phase.py)
@@ -72,16 +72,16 @@ graph LR
         C 
 
     end
-```
+</div>
 
 ## Alerts
 
-```mermaid
+<div class="mermaid">
     graph LR
         A[process_phase.py] --> B(send_email_sms.py)
-```
+</div>
 
-``` Python
+``` python
     sms_gateway = nexmo.Client(key=app.config['NEXMO_API_KEY'], 
                                secret=app.config['NEXMO_API_SECRET'])
 
@@ -97,7 +97,8 @@ graph LR
 ```
 
 ## Retrieve sensor data
-```mermaid
+
+<div class="mermaid">
 graph TD
     A[supervisor] -->|every second| B(create_data.py)
     B --> C[get_watt.py]
@@ -105,4 +106,4 @@ graph TD
     E --> |audio jack| F[Current sensor <br>SCT-013-030 30A-1V]
     B --> G[get_temp.py]
     G --> |1 wire| H[Temperature sensor <br>DS18B20]
-```
+</div>

@@ -21,7 +21,6 @@ nav:
     - Install Chaudiere: install_chaudiere.md
     - Dev workflow: dev_workflow.md
     - Software: software.md
-    - Sous-programmes: software_scripts.md
 
 
 # plugins:
@@ -39,13 +38,6 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences
-
-# Give mermaid support.
-  # - pymdownx.superfences:
-      # custom_fences:
-        # - name: mermaid
-          # class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_div_format
 
 extra_css:
   - https://unpkg.com/mermaid@7.1.2/dist/mermaid.css

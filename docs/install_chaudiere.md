@@ -1,4 +1,9 @@
-# Install with scripts
+# Install Chaudiere app
+
+[about python3 and virtualenvwrapper](https://medium.com/@gitudaniel/installing-virtualenvwrapper-for-python3-ad3dfea7c717)
+
+## Setup with shell scripts
+
 1. Install raspbian
 2. configure wifi (edit  `/etc/wpa_supplicant/wpa_supplicant.conf`)
 3. set hostname to chaudiere (edit  `/etc/hostname`. raspberry will be accessible via *chaudiere.local*)
@@ -7,25 +12,25 @@
 6. Secret config 
 	- `mkdir /home/pi/CONFIG_CHAUDIERE && touch /home/pi/CONFIG_CHAUDIERE/chaudiere_secret_config.py`
 	- or copy template config from repo, edit, and rename (delete 'template')
-8. `cd /home/pi/Dev/chaudiere/install` 
-9. `. install_system.sh |& tee install_system.sh.log`
-10. Add the folowing to ~/.bashrc (virtualenvwrapper config)
-	```
-	export WORKON_HOME=~/Envs
-	export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-	source /home/pi/.local/bin/virtualenvwrapper.sh
-	```
-	
-	`source ~/.bashrc`
-11. `sudo /bin/bash hardware.sh |& tee hardware.sh.log`
-12. `. install_chaudiere.sh -e |& tee install_chaudiere.sh.log`
-13. Create an admin user
-	`workon prod && python3 ~/Prod/chaudiere/flask_app/manager.py users create`
+7. `cd /home/pi/Dev/chaudiere/install` 
+8. `. install_system.sh |& tee install_system.sh.log`
+9. Add the folowing to ~/.bashrc (virtualenvwrapper config)      
+``` bash
+export WORKON_HOME=~/Envs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /home/pi/.local/bin/virtualenvwrapper.sh
+```
+`:::bash source ~/.bashrc`
 
-## Links
-about python3 and virtualenvwrapper see https://medium.com/@gitudaniel/installing-virtualenvwrapper-for-python3-ad3dfea7c717
+10. `sudo /bin/bash hardware.sh |& tee hardware.sh.log`  
+11. `. install_chaudiere.sh -e |& tee install_chaudiere.sh.log`  
+12. Create an admin user
+``` bash
+workon prod
+python3 ~/Prod/chaudiere/flask_app/manager.py users create
+```
 
-# Edit config variable
+## Edit config variable
 
 | File | Content | Value |
 | ---- | ----- |------|
@@ -33,7 +38,7 @@ about python3 and virtualenvwrapper see https://medium.com/@gitudaniel/installin
 | `flask_app/app/constantes.py` |`InputDb = {TEMP_CHAUDIERE : 'temp0', ...}` | Edit to map Physical inputs to database fields 
 
 
-# Scripts
+## Scripts
  |  | `system.sh` | `hardware.sh` | `install.sh` | `deploy.sh` | 
  | ---- | :-----: | :-----: | :-----: | :-----: | 
  | apt-get update | x |  |  |  | 
@@ -67,7 +72,7 @@ about python3 and virtualenvwrapper see https://medium.com/@gitudaniel/installin
  
 
 
-# Directories
+## Directories
 ``` bash
 mkdir ~/Dev
 mkdir ~/Dev/log
@@ -87,12 +92,11 @@ sudo cp ~/Prod/chaudiere/config/prod/nginx_chaudiere_conf /etc/nginx/sites-avail
 sudo ln -s /etc/nginx/sites-available/nginx_chaudiere_conf /etc/nginx/sites-enabled
 ```
 
-Remove the sym link to default conf file (otherwise it causes errors)
+Remove the sym link to default conf file (otherwise it causes errors)  
 `sudo rm /etc/nginx/sites-enabled/default`
 
-To test configuration `sudo nginx -t`
-
-To Restart nginx `sudo service nginx restart`
+`sudo nginx -t` - Check configuration  
+`sudo service nginx restart` - Restart nginx 
 
 ## Supervisor
 ``` bash

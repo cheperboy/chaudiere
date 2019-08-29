@@ -1,13 +1,13 @@
-# Welcome to MkDocs
-
-For full documentation visit [mkdocs.org](https://mkdocs.org).
-
+# Chaudiere wiki
+    
 ## Commands
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+* `python main.py` - run flask app in console (debug mode)
+* `sudo supervisorctl status`
+* `sudo supervisorctl start all` - gunicorn & sensor deamon
+* `sudo service nginx start / stop` - serve web app
+* `python manager.py database init_all` - Create all databases
+* `python manager.py users create` - Create admin user
 
 ## Project layout
 
@@ -80,6 +80,5 @@ For full documentation visit [mkdocs.org](https://mkdocs.org).
 	
 	
 	
-	
-	
+
 	

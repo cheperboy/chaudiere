@@ -23,9 +23,6 @@ nav:
     - Software: software.md
     - Sous-programmes: software_scripts.md
 
-plugins:
-    - pymdown-extensions
-    - mkdocs-material
 
 # plugins:
   # - markdownmermaid

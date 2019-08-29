@@ -40,10 +40,10 @@ markdown_extensions:
 
 # Give mermaid support.
   - pymdownx.superfences:
-      # custom_fences:
-        # - name: mermaid
-          # class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_div_format
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
 
 extra_css:
   - https://unpkg.com/mermaid@7.1.2/dist/mermaid.css

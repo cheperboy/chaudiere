@@ -31,19 +31,76 @@ En mode production, deux minutes sont traitées à chaque appel
 
 Si la température de l’eau de la chaudiere (temp0) passe sous la consigne, alors une alerte mail/sms est générée. Aucun mail/sms n’est envoyé si une alerte à déja été générée dans les 10 minutes précédentes.
 
-## getting sensor data
+## Supervisor
 ```mermaid
-graph TD
-A[supervisor] -->|every second| B(create_data.py)
-B --> C[get_watt.py]
-C --> |i2C| E[ADS1115]
-E --> |audio jack| F[Current sensor SCT-013-030 30A-1V]
-B --> G[get_temp.py]
-G --> |1 wire| H[Temperature sensor DS18B20]
+graph LR
+    A[supervisor] --> B(create_data.py)
+    A[supervisor] --> E(wsgi_gunicorn.py)
+    subgraph sensor
+        B --> C[get_watt.py]
+        B --> G[get_temp.py]
+    end
+    subgraph gunicorn
+        E
+    end
 ```
 
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMzMzgwMjYzNSwtMzI2OTg0ODAzLDEyNz
-Q2NTIwMDksLTE3NDQ3MDIxNDAsNDk4MjI0NiwtMTQ3NTI3NzU2
-OV19
--->
+## Cron
+To configure, copy file `config/prod/chaudiere_cron_prod` in directory `/etc/cron.d/`  
+This file must be owned by root (`sudo chown root /etc/cron.d/chaudiere_cron_prod`)
+
+`sudo service cron status` - Check if cron is running
+
+```mermaid
+graph LR
+    A[chaudiere_cron_prod] --> B(archive_minute.py)
+    A[chaudiere_cron_prod] --> C(process_phase.py)
+    A[chaudiere_cron_prod] --> D(manager.py database rotate Chaudiere)
+    A[chaudiere_cron_prod] --> E(manager.py database rotate ChaudiereMinute)
+    A[chaudiere_cron_prod] --> F(local_gui.sh)
+    subgraph when reboot
+        F
+    end
+    subgraph every day
+        D
+        E
+    end
+    subgraph every minute
+        B
+        C 
+
+    end
+```
+
+## Alerts
+
+```mermaid
+    graph LR
+        A[process_phase.py] --> B(send_email_sms.py)
+```
+
+``` Python
+    sms_gateway = nexmo.Client(key=app.config['NEXMO_API_KEY'], 
+                               secret=app.config['NEXMO_API_SECRET'])
+
+    def send_async_sms(app, sender, recipient, body):
+        """ Call nexmo library to send sms """
+        with app.app_context():
+            sms = {
+                'from': sender,
+                'to': recipient,
+                'text': body
+            }
+            sms_gateway.send_message(sms)
+```
+
+## Retrieve sensor data
+```mermaid
+graph TD
+    A[supervisor] -->|every second| B(create_data.py)
+    B --> C[get_watt.py]
+    C --> |i2C| E[ADS1115]
+    E --> |audio jack| F[Current sensor <br>SCT-013-030 30A-1V]
+    B --> G[get_temp.py]
+    G --> |1 wire| H[Temperature sensor <br>DS18B20]
+```

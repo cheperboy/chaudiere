@@ -39,31 +39,31 @@ python3 ~/Prod/chaudiere/flask_app/manager.py users create
 
 
 ## Scripts
- |  | `system.sh` | `hardware.sh` | `install.sh` | `deploy.sh` | 
+ |  | system.sh | hardware.sh | install.sh | deploy.sh | 
  | ---- | :-----: | :-----: | :-----: | :-----: | 
  | apt-get update | x |  |  |  | 
  | apt-get dist-upgrade | x |  |  |  | 
  | apt-get upgrade | x |  |  |  | 
- | install supervisor git python-pip nginx | x |  |  |  | 
- | NEXMO install build-essential libssl-dev libffi-dev python-dev | x |  |  |  | 
- | pip install virtualenv virtualenvwrapper | x |  |  |  | 
- | install curl | x |  |  |  | 
- | edit /etc/modules |  | x |  |  | 
- | edit /boot.config.txt |  | x |  |  | 
+ | install supervisor git python-pip nginx                          | x |  |  |  | 
+ | (NEXMO) install build-essential libssl-dev libffi-dev python-dev | x |  |  |  | 
+ | pip install virtualenv virtualenvwrapper                         | x |  |  |  | 
+ | install curl                                                     | x |  |  |  | 
+ | edit /etc/modules                                                |  | x |  |  | 
+ | edit /boot.config.txt                                            |  | x |  |  | 
  | **erase** /home/pi/Prod/chaudiere if exists |  |  | x | x | 
  | create /home/pi/Prod |  |  | x |  | 
  | create /home/pi/Prod/chaudiere |  |  | x |  | 
  | create /home/pi/Prod/db |  |  | x |  | 
  | create /home/pi/Prod/log |  |  | x |  | 
- | create /home/pi/Dev/db |  |  | -d |  | 
- | create /home/pi/Dev/log |  |  | -d |  | 
+ | create /home/pi/Dev/db |  |  | `-d` |  | 
+ | create /home/pi/Dev/log |  |  | `-d` |  | 
  | clone repo in Prod/chaudiere |  |  | x | x | 
- | **mkvirtualenv** dev (overwrite) |  |  | -de |  | 
- | install requirements.txt in dev env |  |  | -de |  | 
- | **mkvirtualenv** prod (overwrite) |  |  | -e |  | 
- | install requirements.txt in prod env |  |  | -e |  | 
+ | **mkvirtualenv** dev (overwrite) |  |  | `-de` |  | 
+ | install requirements.txt in dev env |  |  | `-de` |  | 
+ | **mkvirtualenv** prod (overwrite) |  |  | `-e` |  | 
+ | install requirements.txt in prod env |  |  | `-e` |  | 
  | flask_app/manage.py **create_db in prod env** |  |  | x |  | 
- | flask_app/manage.py **create_db in dev env** |  |  | -d |  | 
+ | flask_app/manage.py **create_db in dev env** |  |  | `-d` |  | 
  | configure nginx |  |  | x |  | 
  | configure supervisor |  |  | x |  | 
  | configure cron (in /etc/cron.d) |  |  | x |  | 

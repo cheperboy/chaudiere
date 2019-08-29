@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/chaudiere-wiki/badge/?version=latest)](https://chaudiere-wiki.readthedocs.io/?badge=latest)
+
 # Chaudiere wiki
 
 * [https://chaudiere-wiki.readthedocs.io/en/latest/](https://chaudiere-wiki.readthedocs.io/en/latest/)

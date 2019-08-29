@@ -1,11 +1,53 @@
 site_name: Chaudiere
-theme: readthedocs
+
+# theme: readthedocs
+theme:
+  name: 'material'
+  language: 'en'
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
+  
 repo_url: https://github.com/cheperboy/chaudiere/
+
 docs_dir: docs/ 
+
 nav:
     - Home: index.md
     - Install Raspbian: install_raspbian.md
     - Install Chaudiere: install_chaudiere.md
-    - Software: software.md
     - Dev workflow: dev_workflow.md
+    - Software: software.md
+    - Sous-programmes: software_scripts.md
 
+# plugins:
+  # - markdownmermaid
+# extra_javascript:
+  # - https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js
+    
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+
+# Give mermaid support.
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+extra_css:
+  - https://unpkg.com/mermaid@7.1.2/dist/mermaid.css
+extra_javascript:
+  - https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js
+
+  

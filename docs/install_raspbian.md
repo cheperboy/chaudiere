@@ -1,19 +1,21 @@
+# Raspbian Install & Configure
 
-# Installation
+## Flash SD Card
 1. Format SD card FAT32
 2. Download [Raspbian](https://www.raspberrypi.org/downloads/raspbian/)
 3. Flash image with [Etcher](https://www.balena.io/etcher/)
 4. Create a file `boot/ssh` before booting raspbian to enable ssh
 
-# Wifi setup before first boot
+## Wifi setup before first boot
 [help](https://howchoo.com/g/ndy1zte2yjn/how-to-set-up-wifi-on-your-raspberry-pi-without-ethernet)
 
-From Windows PC with Notepad++ in SD card in partition “boot”
-Create file `boot/wpa_supplicant.conf`  
-(Raspbian will move it in `/etc/wpa_supplicant/` when the system is booted)
-In Notepad++“Edit” > “EOL Conversion” > **“UNIX File Format”**.
+Create file `boot/wpa_supplicant.conf`. (Raspbian will move it in `/etc/wpa_supplicant/` when the system is booted)
+
+!!! warning
+    EOL Conversion shall be **UNIX File Format**.
+
 Add content:
-```shell
+``` bash
 country=FR
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
@@ -24,8 +26,8 @@ network={
 }
 ```
 
-# Wifi setup after first boot
-If conf is done after first boot, edit wpa_supplicant.conf
+## Wifi setup after first boot
+If conf is done after first boot, edit wpa_supplicant.conf  
 `sudo nano /etc/wpa_supplicant/wpa_supplicant.conf`
 ```shell
 network={
@@ -35,12 +37,12 @@ network={
 }
 ```
 
-# Configuration
-## Hostname and password
+## Configuration
+### Hostname and password
 1.  Modify hostname, Edit `/etc/hostname`. Set to chaudiere (recognized on network as *chaudiere.local*)
 2.  Modify pi password `sudo passwd pi`
  
-## Package install
+### Package install
 **Update/upgrade system and existing packages**
 
 `sudo apt-get update` met à jour la liste des dépôts
@@ -70,9 +72,10 @@ NEXMO need cryptographie and cffi
 `sudo apt-get clean` supprime les paquets téléchargés et stockés sur carte SD
 
 
-## bashrc
+### bashrc
 `nano ~/.bashrc`
-```shell
+
+``` bash
 # ls alias
 alias ll='ls -l'
 alias la='ls -A'
@@ -99,7 +102,7 @@ source /home/pi/.local/bin/virtualenvwrapper.sh
 workon dev
 ```
 
-## Configure firewall
+### Configure firewall
 see [tuto](https://www.tecmint.com/setup-ufw-firewall-on-ubuntu-and-debian/)
 
 **Chaudiere config**
@@ -108,21 +111,17 @@ allow ssh, samba, 5007tcp
 
 **Usefull commands**
 
-Install `sudo apt-get install ufw`
-
-List rules `sudo ufw status numbered`
-
-Enable Firewall `sudo ufw enable` (may break ssh connection, allow ssh rule first)
-
-Disable Firewall `sudo ufw disable`
+* `sudo apt-get install ufw` - Install
+* `sudo ufw status numbered` - List rules 
+* `sudo ufw enable` - Enable Firewall (may break ssh connection, allow ssh rule first)
+* `sudo ufw disable` - Disable Firewall
 
 **Enable by application name**
 
-`sudo ufw app list` list applications
-
-`sudo ufw allow ssh` Enable app ssh (on default port 22)
+* `sudo ufw app list` - List applications
+* `sudo ufw allow ssh` - Enable app ssh (on default port 22)
 
 **Enable a specific port**
 
-Enable tcp ssh port 2222 `sudo ufw allow 2222/tcp`
+* `sudo ufw allow 2222/tcp` - Enable tcp ssh port 2222 
 

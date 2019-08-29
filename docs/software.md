@@ -32,7 +32,9 @@ En mode production, deux minutes sont traitées à chaque appel
 Si la température de l’eau de la chaudiere (temp0) passe sous la consigne, alors une alerte mail/sms est générée. Aucun mail/sms n’est envoyé si une alerte à déja été générée dans les 10 minutes précédentes.
 
 ## Supervisor
-```mermaid
+
+
+<div class="mermaid">
 graph LR
     A[supervisor] --> B(create_data.py)
     A[supervisor] --> E(wsgi_gunicorn.py)
@@ -43,7 +45,7 @@ graph LR
     subgraph gunicorn
         E
     end
-```
+</div>
 
 ## Cron
 To configure, copy file `config/prod/chaudiere_cron_prod` in directory `/etc/cron.d/`  

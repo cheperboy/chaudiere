@@ -2,7 +2,7 @@
 
 # Chaudiere wiki
 
-* [https://chaudiere-wiki.readthedocs.io/en/latest/](https://chaudiere-wiki.readthedocs.io/en/latest/)
+* [https://chaudiere-wiki.readthedocs.io/](https://chaudiere-wiki.readthedocs.io/)
 
 ## Commands
 

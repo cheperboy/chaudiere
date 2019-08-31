@@ -1,4 +1,7 @@
-'''
+#!python
+# -*- coding: utf-8 -*-
+
+"""
 markdown readme
 # script archive_minute.py
 
@@ -32,12 +35,10 @@ Run every odd minutes
 
     */2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/archive_minute.py
 
-
 ## ToDo
 
 Rework modes shall delete existing entries before creating new ones
-'''
-
+"""
 
 import os, sys, argparse
 from datetime import datetime, timedelta
@@ -62,10 +63,10 @@ sys.path.append(logger_directory)
 import logger_config
 logger = logging.getLogger(__name__)
 
-"""
-return the datetime of an existing Chaudiere entry close to the given *date* parameter
-"""
 def find_datetime_end(date):
+    """
+    return the datetime of an existing Chaudiere entry close to the given *date* parameter
+    """
     last_chaudiere_date = Chaudiere.last(Chaudiere).dt
     entry = Chaudiere.get_by_approx_date(Chaudiere, date)
     while ((entry is None) and (date < last_chaudiere_date)):
@@ -75,10 +76,12 @@ def find_datetime_end(date):
     return entry.dt
 
 
-# defini date de debut et de fin 
-# begin = (date du dernier record de la base Archive) + 1 minute
-# end = (maintenant) - 1 minute
 def process_archive_minute(mode='normal', hours=None, date=None): 
+    """ Defini date de debut et de fin 
+    begin = (date du dernier record de la base Archive) + 1 minute
+    end = (maintenant) - 1 minute
+    Appelle la fonction record_minute() autant de fois que nécessaire
+    """
     if mode is 'normal':
         # if ChaudiereMinute is empty then we start with the first Chaudiere record (oldest)
         if ChaudiereMinute.last(ChaudiereMinute) == None:
@@ -116,19 +119,19 @@ def process_archive_minute(mode='normal', hours=None, date=None):
     else:
         logger.info('Archiving From '+ str(begin) +' To ' + str(end))
 
-    # while some old Logs to Archive
+    # while some old Logs to Archive, call function record_minute()
     while ((begin + timedelta(minutes=1)) <= end):
         record_minute(begin)
         begin = begin + timedelta(minutes=1)
 
 #ASC : plus ancient 
 #DESC : plus recent
-'''
-recupere dans la base Logs l'ensemble des objets dont la date est comprise entre 
-les dates begin et (begin + 1 minute)
-Calcule des moyennes et enregistre dans une entry ChaudiereMinute
-'''
 def record_minute(begin):
+    """
+    Recupere dans la base Logs l'ensemble des objets dont la date est comprise entre 
+    les dates begin et (begin + 1 minute)
+    Calcule des moyennes et enregistre dans une entry ChaudiereMinute
+    """
     logger.debug('Minute '+ str(begin))    
     end = begin + timedelta(minutes=1)
     temp0 = 0.0
@@ -195,3 +198,4 @@ if __name__ == '__main__':
     else:
         print('mode=normal')
         process_archive_minute(mode='normal')
+            

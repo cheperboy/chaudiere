@@ -50,7 +50,7 @@ def api_get_watt_values():
 
 # Replace value lower than MIN_VALUE to zero (int)
 def get_watt_values():
-    checkedValues = read_adc()
+    checkedValues = read_adc()    
     #convert values to int and to 0 if sensor value < MIN_VALUE
     if checkedValues:
         values = [0 if int(x)<MIN_VALUE else int(x) for x in checkedValues]
@@ -63,15 +63,28 @@ def get_watt_values():
 # Return a list of four values [ A0, A1, A2, A3]
 # condidering that 220v AC signal is sine, multiples samples are read and the max is returned (approx equal to the max value of the sine signal)
 def read_adc():
-    ads = ADS1115.ADS1115()
-    num_samples = 30
-    channels    = [0, 1, 2, 3]
-    max_voltage = [0, 0, 0, 0]
-    for ch in channels:
-        for x in range(0, num_samples):
-            voltage = ads.readADCSingleEnded(channel=ch)
-            max_voltage[ch] = max(voltage, max_voltage[ch])
-    return max_voltage
+    try:
+        # Initialize ADC converter
+        ads = ADS1115.ADS1115()
+    
+    except IOError as e:
+        logger.error(f'ADS1115 not available: {e}')
+        return False
+    
+    except Exception as e:
+        logger.error(f'Exception {e}', exc_info=True)
+        # raise # print traceback / raise to higher level
+        return False
+    
+    else:
+        num_samples = 30
+        channels    = [0, 1, 2, 3]
+        max_voltage = [0, 0, 0, 0]
+        for ch in channels:
+            for x in range(0, num_samples):
+                voltage = ads.readADCSingleEnded(channel=ch)
+                max_voltage[ch] = max(voltage, max_voltage[ch])
+        return max_voltage
 
 def debug_read_channels():
     ads = ADS1115.ADS1115()

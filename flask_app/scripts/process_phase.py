@@ -1,5 +1,5 @@
 # -*- coding: ISO-8859-1 -*-
-'''
+"""
 # script process_phase.py
 
 ## Summary
@@ -15,7 +15,7 @@ Idem archive_minute.py
 
     1-59/2 * * * * /home/pi/Envs/dev/bin/python /home/pi/Dev/chaudiere/chaudiereapp/scripts/process_phase.py
 
-'''
+"""
 
 import os, sys, argparse
 from datetime import datetime, timedelta
@@ -158,7 +158,7 @@ def process_phase(mode='normal', hours=None, date=None):
         
         # Progress bar Print (for console mode)
         bar_item += 1
-        print_bar(bar_item, bar_items, prefix=str(entry.dt))
+        # print_bar(bar_item, bar_items, prefix=str(entry.dt))
         
         update_phase(entry)
         update_change(entry)

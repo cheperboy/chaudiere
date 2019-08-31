@@ -36,7 +36,6 @@ def main():
 @main.command()
 def main(fake):
     if fake:
-        
         get_sensors_fake()
     else:
         get_sensors()
@@ -53,7 +52,7 @@ def get_sensors():
         try:
             watts = get_watt()
             temps = get_temp()
-            logger.info('createSensorRecord: watts '+str(watts)+' temps '+ str(temps))
+            logger.info('watts '+str(watts)+' temps '+ str(temps))
             dt = datetime.datetime.now()
             createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
             time.sleep(SLEEP_DELAY)
@@ -66,7 +65,7 @@ def get_sensors_fake():
             random_int = randint(-10, 10)
             dt = datetime.datetime.now()
             datas = [dt, 60+random_int, 70+random_int, None, 2000, 2000, 0, 0]
-            logger.info('createSensorRecord: datas '+str(datas))
+            logger.info('datas '+str(datas))
             createSensorRecord(*datas)
             time.sleep(SLEEP_DELAY)
         except IndexError:

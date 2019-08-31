@@ -11,8 +11,8 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(envpath, 'log')
-error_logfile_name = os.path.join(logfile_base, 'simple_log.log')
-debug_logfile_name = os.path.join(logfile_base, 'full_log.log')
+error_logfile_name = os.path.join(logfile_base, 'errors.log')
+debug_logfile_name = os.path.join(logfile_base, 'info.log')
 
 CONFIG_PY = {
     "version": 1,
@@ -21,8 +21,8 @@ CONFIG_PY = {
         "default": {
             "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         },
-        "simple": {
-            "format": "%(filename)s | %(levelname)s | %(message)s"
+        "console_formatter": {
+            "format": "%(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         }
     },
 
@@ -31,36 +31,39 @@ CONFIG_PY = {
         "console": {
             "class": "logging.StreamHandler",
             "level": "DEBUG",
-            "formatter": "simple",
+            "formatter": "console_formatter",
             "stream": "ext://sys.stdout"
         },
 
-        "error_log": {
+        "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "INFO",
+            "level": "WARNING",
             "formatter": "default",
             "filename": error_logfile_name,
-            "maxBytes": 1000000,
-            "backupCount": 10,
+            "maxBytes": 100000,
+            "backupCount": 5,
             "encoding": "utf8"
         },
-        "debug_log": {
+        "debug_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "default",
             "filename": debug_logfile_name,
-            "maxBytes": 1000000,
-            "backupCount": 10,
+            "maxBytes": 100000,
+            "backupCount": 5,
             "encoding": "utf8"
         },
     },
 
-# logger level is always set to the lower level => the logger sends all stream. 
+# root logger level is always set to the lower level => the root logger sends all stream. 
 # then the stream will be filtered be the handler level
 
     "root": {
         "level": "DEBUG",
-        "handlers": ["console", "error_log", "debug_log"]
+        "handlers": ["console", 
+                     "error_file_handler", 
+                     "debug_file_handler",
+                    ]
     },
 }
 

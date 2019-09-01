@@ -55,12 +55,17 @@ def main_function(debug):
 #########################################
     """ Call archive_minute and process_phase then sleep two minute
     """
-    while (True):
-        if debug: logger.debug('starting process')
-        process_archive_minute(mode='normal')
-        process_phase(mode='normal')
-        if debug: logger.debug('process done. sleeping.')
-        sleep(DEAMON_SLEEP)
+    try:
+        while (True):
+            logger.debug('starting task')
+            process_archive_minute(mode='normal')
+            process_phase(mode='normal')
+            logger.debug('task done. sleeping {0}s.'.format(DEAMON_SLEEP))
+            sleep(DEAMON_SLEEP)
+    except KeyboardInterrupt as e:
+        logger.warning(f'KeyboardInterrupt, Stopping process')
+    finally:
+        logger.warning(f'Stop process')
         
 if __name__ == '__main__':
     main_function()

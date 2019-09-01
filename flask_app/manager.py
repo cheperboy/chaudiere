@@ -89,7 +89,7 @@ def rotate(database):
     db.session.commit()
         
 @click.argument('database')
-@click.option('--count', is_flag=True, help='just count the number of entries')
+@click.option('-c', '--count', is_flag=True, help='just count the number of entries')
 @database.command()
 def list_all(database, count):
     """ List all entries of a db (or just count them) 

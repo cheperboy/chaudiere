@@ -40,7 +40,7 @@ class ChaudiereBase(db.Model):
         self.event  = event
 
     def __repr__(self):
-        return '<Chaudiere {0} {1} {2} {3} {4} {5} {6}>'.format(self.id, self.dt, self.watt0, self.temp0, self.phase, self.change, self.event)
+        return '<{0} {1} {2} {3} {4} {5} {6} {7}>'.format(type(self).__name__, self.id, self.dt, self.watt0, self.temp0, self.phase, self.change, self.event)
 
     @classmethod
     def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):

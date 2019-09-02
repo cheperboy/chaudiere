@@ -36,11 +36,16 @@ Si la température de l’eau de la chaudiere (temp0) passe sous la consigne, al
 
 <div class="mermaid">
 graph LR
-    A[supervisor] --> B(create_data.py)
+    A[supervisor] --> B(create_data.py<br>sleep 5 sec)
+    A[supervisor] --> H(deamon_minute_phase.py<br>sleep 120 sec)
     A[supervisor] --> E(wsgi_gunicorn.py)
     subgraph sensor
         B --> C[get_watt.py]
         B --> G[get_temp.py]
+    end
+    subgraph minute_phase
+        H --> I[archive_minute.py]
+        H --> J[process_phase.py]
     end
     subgraph gunicorn
         E

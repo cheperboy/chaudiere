@@ -44,21 +44,13 @@ class ChaudiereBase(db.Model):
 
     @classmethod
     def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
-        """Wrapper method for creating new entries from external scripts
- 
+        """Wrapper method for creating new entries from external scripts 
         Args:
             Name of the class (Chaudiere or ChaudiereMinute)
         """
-        try:
-            entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event)
-            db.session.add(entry)
-            db.session.commit()
-            ret = str(entry)
-            print (ret)
-        except Exception as e:
-            ret = 'Not Ok'
-            print (e)
-        return (ret)
+        entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event)
+        db.session.add(entry)
+        db.session.commit()
     
     """
     return one field corresponding to given InputDb constante (ATTR_ID)

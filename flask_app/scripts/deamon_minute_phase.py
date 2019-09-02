@@ -57,10 +57,10 @@ def main_function(debug):
     """
     try:
         while (True):
-            logger.debug('starting task')
+            logger.info('starting task')
             process_archive_minute(mode='normal')
             process_phase(mode='normal')
-            logger.debug('task done. sleeping {0}s.'.format(DEAMON_SLEEP))
+            logger.info('task done. sleeping {0}s.'.format(DEAMON_SLEEP))
             sleep(DEAMON_SLEEP)
     except KeyboardInterrupt as e:
         logger.warning(f'KeyboardInterrupt, Stopping process')

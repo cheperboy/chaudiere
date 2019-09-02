@@ -22,7 +22,7 @@ CONFIG_PY = {
             "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         },
         "console_formatter": {
-            "format": "%(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+            "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         }
     },
 
@@ -40,17 +40,17 @@ CONFIG_PY = {
             "level": "WARNING",
             "formatter": "default",
             "filename": error_logfile_name,
-            "maxBytes": 100000,
-            "backupCount": 5,
+            "maxBytes": 10000,
+            "backupCount": 3,
             "encoding": "utf8"
         },
-        "debug_file_handler": {
+        "info_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "default",
             "filename": debug_logfile_name,
-            "maxBytes": 100000,
-            "backupCount": 5,
+            "maxBytes": 10000,
+            "backupCount": 1,
             "encoding": "utf8"
         },
     },
@@ -62,7 +62,7 @@ CONFIG_PY = {
         "level": "DEBUG",
         "handlers": ["console", 
                      "error_file_handler", 
-                     "debug_file_handler",
+                     "info_file_handler",
                     ]
     },
 }

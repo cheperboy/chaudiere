@@ -21,6 +21,7 @@ nav:
     - Install Chaudiere: install_chaudiere.md
     - Dev workflow: dev_workflow.md
     - Software: software.md
+    - Supervisor: supervisor.md
 
 
 # plugins:

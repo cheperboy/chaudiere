@@ -15,7 +15,9 @@ class AdminConfigForm(FlaskForm):
     chaudiere_minute_db_rotate_days = IntegerField(
                                 'Rotate ChaudiereMinute db every (days)', 
                                 [validators.NumberRange(min=1, max=60, message="min=1, max=60")])
-    
+
+    alerts_enable = BooleanField('Enable alerts (SMS / Email)')
+
     comment = TextAreaField('Comment', [validators.Length(min=0, max=300)])
     
     # submit = SubmitField('Update')

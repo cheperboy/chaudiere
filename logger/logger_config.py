@@ -11,8 +11,8 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(envpath, 'log')
-error_logfile_name = os.path.join(logfile_base, 'chaudiere.log')
-debug_logfile_name = os.path.join(logfile_base, 'chaudiere.err')
+error_logfile_name = os.path.join(logfile_base, 'chaudiere.err')
+info_logfile_name = os.path.join(logfile_base, 'chaudiere.log')
 
 CONFIG_PY = {
     "version": 1,
@@ -40,7 +40,7 @@ CONFIG_PY = {
             "level": "WARNING",
             "formatter": "default",
             "filename": error_logfile_name,
-            "maxBytes": 10000,
+            "maxBytes": 100000,
             "backupCount": 3,
             "encoding": "utf8"
         },
@@ -48,8 +48,8 @@ CONFIG_PY = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "default",
-            "filename": debug_logfile_name,
-            "maxBytes": 10000,
+            "filename": info_logfile_name,
+            "maxBytes": 100000,
             "backupCount": 1,
             "encoding": "utf8"
         },

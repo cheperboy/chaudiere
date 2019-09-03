@@ -48,8 +48,9 @@ from app.models.admin_config import AdminConfig
 admin_config = AdminConfig.first(AdminConfig)
 if admin_config is not None:
     TEMP_CHAUDIERE_FAILURE = admin_config.temp_chaudiere_failure
+    ALERTS_ENABLE = admin_config.alerts_enable
 else:
-    logger.error("Could not fetch AdminConfig.temp_chaudiere_failure")
+    logger.error("Could not fetch AdminConfig (temp_chaudiere_failure, alerts_enable)")
 
 def temperature_variation(entry, periode):
     """
@@ -119,16 +120,16 @@ def process_phase(mode='normal', hours=None, date=None):
     """ 
     Détermine la date de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
     """
-    disable_alert = False
+    rework_mode_disable_alert = False
     if mode is 'normal':
         begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
         end = ChaudiereMinute.last(ChaudiereMinute).dt # end = last existing ChaudiereMinute entry.dt
     elif mode is 'rework_from_now':
-        disable_alert = True
+        rework_mode_disable_alert = True
         end = ChaudiereMinute.last(ChaudiereMinute).dt
         begin = end - timedelta(hours=hours)
     elif mode is 'rework_from_date':
-        disable_alert = True
+        rework_mode_disable_alert = True
         end = find_date_end(date)
         begin = end - timedelta(hours=hours)
     else:
@@ -162,7 +163,7 @@ def process_phase(mode='normal', hours=None, date=None):
         
         update_phase(entry)
         update_change(entry)
-        process_alerts(entry, disable_alert)
+        process_alerts(entry, rework_mode_disable_alert)
         begin = begin + timedelta(minutes=1)
         
 
@@ -243,7 +244,7 @@ def update_change(entry):
         entry.change = False
     db.session.commit()
 
-def process_alerts(entry, disable_alert):
+def process_alerts(entry, rework_mode_disable_alert):
     """
     Envoi une alerte (mail, sms) si phase courante est ALERT et si change est True
     et si aucun des precs n'etaient deja en ALERT (cette condition permet de la gestion de la séquence
@@ -254,11 +255,14 @@ def process_alerts(entry, disable_alert):
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\
       entry.all_prec_verify_condition(10, condition_precs_was_not_alert):
-        if disable_alert is False:
+        if rework_mode_disable_alert is False:
             if envname == 'Prod':
-                logger.info('Sending email/sms alert for entry :'+str(entry.dt))
-                send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
-                send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+                if ALERTS_ENABLE == True:
+                    logger.info('Sending email/sms alert for entry :'+str(entry.dt))
+                    send_email_sms.Send_Mail_Chaudiere_Alert(entry.dt)
+                    send_email_sms.Send_SMS_Chaudiere_Alert(entry.dt)
+                else:
+                    logger.info('Not Sending email/sms alert (disable by Admin Config) for entry :'+str(entry.dt))
             else:
                 logger.info('Not Sending email/sms alert (not Prod env) for entry :'+str(entry.dt))
         else:

@@ -23,14 +23,14 @@ from time import sleep
 from archive_minute import process_archive_minute
 from process_phase import process_phase
 
-currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/chaudiereapp/script
-chaudiereapp = os.path.dirname(currentpath)              # /home/pi/Dev/chaudiere/chaudiereapp
-projectpath = os.path.dirname(chaudiereapp)              # /home/pi/Dev/chaudiere
-envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
-envname = os.path.basename(envpath)                      # Dev
+currentpath = os.path.abspath(os.path.dirname(__file__))    # /home/pi/Dev/chaudiere/flaskapp/scripts
+flaskapp = os.path.dirname(currentpath)                     # /home/pi/Dev/chaudiere/flaskapp
+projectpath = os.path.dirname(flaskapp)                     # /home/pi/Dev/chaudiere
+envpath = os.path.dirname(projectpath)                      # /home/pi/Dev
+envname = os.path.basename(envpath)                         # Dev
 
-app_path = os.path.join(chaudiereapp, 'app')
-sys.path.append(chaudiereapp)
+app_path = os.path.join(flaskapp, 'app')
+sys.path.append(flaskapp)
 from app import db
 from app.models import Chaudiere, ChaudiereMinute
 from app import create_app
@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 # Script Constants
-DEAMON_SLEEP = 120 # do nothing during 2 minutes
+DEAMON_SLEEP = 60 # do nothing during 2 minutes
 
 @click.command()
 @click.option('-d', '--debug',          type=click.BOOL,        help='print debug info')

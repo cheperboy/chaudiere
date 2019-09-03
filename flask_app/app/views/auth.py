@@ -18,9 +18,11 @@ def log_admin():
     admin_user = User.query.first()
     if not admin_user : 
         flash('No admin user in database', 'warning')
+        # app.logger.error('logging failed : No admin user in database')        
         return redirect(url_for('charts.now'))
     if not check_password_hash(admin_user.password, password): 
         flash('Wrong password', 'warning')
+        app.logger.info('logging failed : Wrong password')        
         return redirect(url_for('charts.now'))
         
     # if the above check passes, then we know the user has the right credentials

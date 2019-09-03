@@ -164,7 +164,7 @@ run "sudo nginx -t"
 ########################
 say "Configure supervisor"
 run "sudo supervisorctl stop all"
-run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_chaudiere_prod.conf /etc/supervisor/conf.d/"
+run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_prod.conf /etc/supervisor/conf.d/"
 
 
 #####################
@@ -182,7 +182,7 @@ run "sudo chown root /etc/cron.d/chaudiere_cron_prod"
 say "Start nginx and supervisor"
 run "sudo supervisorctl reread"
 run "sudo supervisorctl reload"
-run "sudo supervisorctl start sensor gunicorn"
+run "sudo supervisorctl start prod:"
 
 run "sudo supervisorctl status"
 run "sudo service nginx start"

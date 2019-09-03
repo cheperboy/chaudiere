@@ -11,8 +11,8 @@ envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
 envname = os.path.basename(envpath)                      # Dev
 
 logfile_base = os.path.join(envpath, 'log')
-error_logfile_name = os.path.join(logfile_base, 'errors.log')
-debug_logfile_name = os.path.join(logfile_base, 'info.log')
+error_logfile_name = os.path.join(logfile_base, 'chaudiere.log')
+debug_logfile_name = os.path.join(logfile_base, 'chaudiere.err')
 
 CONFIG_PY = {
     "version": 1,

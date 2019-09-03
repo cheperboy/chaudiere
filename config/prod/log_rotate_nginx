@@ -1,0 +1,18 @@
+/home/pi/Prod/log/nginx.* {
+        daily
+        missingok
+        rotate 3
+        compress
+        delaycompress
+        notifempty
+        create 0640 pi adm
+        sharedscripts
+        prerotate
+                if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+                        run-parts /etc/logrotate.d/httpd-prerotate; \
+                fi \
+        endscript
+        postrotate
+                invoke-rc.d nginx rotate >/dev/null 2>&1
+        endscript
+}

@@ -10,10 +10,10 @@
 #############################################################
 
 # Every even minute : archive_minute.py
-*/2 * * * * pi /home/pi/Envs/prod/bin/python3 /home/pi/Prod/chaudiere/flask_app/scripts/archive_minute.py
+# */2 * * * * pi /home/pi/Envs/prod/bin/python3 /home/pi/Prod/chaudiere/flask_app/scripts/archive_minute.py
 
 # Every odd minute : process_phase.py
-1-59/2 * * * * pi /home/pi/Envs/prod/bin/python3 /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py
+# 1-59/2 * * * * pi /home/pi/Envs/prod/bin/python3 /home/pi/Prod/chaudiere/flask_app/scripts/process_phase.py
 
 # Rotate database every day
 @daily pi /home/pi/Envs/prod/bin/python3 /home/pi/Prod/chaudiere/flask_app/manager.py database rotate Chaudiere

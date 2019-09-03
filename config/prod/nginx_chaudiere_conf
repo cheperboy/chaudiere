@@ -23,8 +23,8 @@ server {
 
     root /home/pi/Prod/chaudiere/flask_app;
 
-    access_log /home/pi/Prod/log/nginx_access.log;
-    error_log /home/pi/Prod/log/nginx_error.log;
+    access_log /home/pi/Prod/log/nginx.log;
+    error_log /home/pi/Prod/log/nginx.err;
 
     location / {
         proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;

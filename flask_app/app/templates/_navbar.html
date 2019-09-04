@@ -23,6 +23,7 @@
 	{% if current_user.is_authenticated %}
 	<ul class="nav justify-content-end">
 			<li class="nav-item"><span class="nav-link badge badge-primary">Admin</span></li>
+			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.log') }}">Log</a></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">SysInfo</a></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">Config</a></li>
 			<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>

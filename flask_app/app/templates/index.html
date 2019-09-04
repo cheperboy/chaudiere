@@ -8,7 +8,7 @@ La variable local_display est utilisée pour
 
 {% include "_navbar.html" %}
 
-	<div class="container">	
+<div class="container-fluid">	
 	{% with messages = get_flashed_messages(with_categories=true) %}
 	  <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
 	  {% if messages %}
@@ -21,10 +21,10 @@ La variable local_display est utilisée pour
 	  {% endif %}
 	{% endwith %}	
 
-   {% block content %}
-   {% endblock %}
-	</div>    
-	<hr>
+	{% block content %}
+	{% endblock %}
+</div>    
+<hr>
  
 <script type="text/javascript">
 	// Those parameters are :

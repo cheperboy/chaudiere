@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+
+{% block content %}
+	<br>
+	<ul class="nav nav-tabs">
+	{% set tab_class = 'disabled' %}
+	{% for file in files %}
+		{% if file == active_file %}
+			{% set tab_class = 'active' %}
+		{% endif %}
+		<li class="nav-item">
+			<a class="nav-link {{ tab_class }}" href="{{ url_for('admin.log', file=file) }}">{{ file }}</a>
+		</li>	  
+	{% endfor %}
+	</ul>
+	
+	{% if active_file %}
+		<div class="container-fluid">
+			<br>
+			<a class="badge badge-secondary" role="button" 
+			href="{{ url_for('admin.download_log', file=active_file) }}">download</a>
+			
+			<br><br>
+
+				
+<pre>
+{{ content }}
+</pre>
+			</div>
+	{% endif %}
+
+{% endblock %}
+ 

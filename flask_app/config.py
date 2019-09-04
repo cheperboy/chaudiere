@@ -13,6 +13,9 @@ ENVNAME         = os.path.basename(ENVPATH)                # Dev
 #Common conf
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# log_path used for admin view (download and view log files)
+LOG_PATH = os.path.join(ENVPATH, 'log')
+
 # email server
 MAIL_SERVER = 'smtp.googlemail.com'
 MAIL_PORT = 465

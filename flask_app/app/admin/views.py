@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+import os
+import pathlib
+from subprocess import check_output
 import time, datetime
 import urllib, requests
 import json
@@ -9,6 +13,7 @@ import copy
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for, flash
 from flask_login import login_required
+from flask import send_file
 
 from .system_info import *
 from .forms import AdminConfigForm
@@ -71,4 +76,42 @@ def config():
             pass
             # flash(u'Error in form', 'danger')
     return render_template('admin/admin_config.html', form=form)
+
+    
+@admin_blueprint.route('/log', defaults={'file': None}, methods=['GET'])
+@admin_blueprint.route('/log/<string:file>', methods=['GET'])
+@login_required
+def log(file):
+    """ list all log files in ~/Prod/log/ ending with *.err or *.log
+    """
+    # LOG_PATH = '/home/pi/Dev/log'
+    # log_path = pathlib.Path('LOG_PATH')
+    log_path = pathlib.Path(app.config['LOG_PATH'])
+    all_files = os.listdir(log_path)
+    files = [ file for file in all_files if (file.endswith('.log') or file.endswith('.err')) ]
+    content = ''
+    if file and (file in files):
+        try:
+            stream = open(log_path / file, 'r+')
+        except PermissionError:
+            # if file owned by root, must be chown by pi to be readable
+            check_output("sudo chown pi "+ str(log_path / file), shell=True)
+            stream = open(log_path / file, 'r+')
+        finally:
+            content = stream.read()
+            stream.close()
+    
+    return render_template('admin/admin_log.html',  content=content,
+                                                    active_file=file,
+                                                    files=files)
+
+@admin_blueprint.route('/log/download/<string:file>', methods=['GET'])
+@login_required
+def download_log(file):
+    """ Download a log file
+    """
+    if (file.endswith('.log') or file.endswith('.err')):
+        log_path = pathlib.Path(app.config['LOG_PATH'])
+        return send_file(str(log_path / file), as_attachment=True)
+    
     

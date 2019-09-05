@@ -3,8 +3,11 @@
 ########## HOWTO RUN THE SCRIPT ##########
 # This will output in terminal and in a log file
 #. install_chaudiere.sh |& tee install_chaudiere.sh.log
+# option -h : Print help message
 # option -d : Also install /Dev environnement
 # option -e : Also install virtual environnement for both Dev and Prod (mkvirtualenv, pip install -r requirements.txt)
+# option -l : Remove existing log files
+# option -b : Remove existing database files
 
 
 ############################################ 
@@ -26,10 +29,13 @@ OPTION_INSTALL_ENV=false
 # Get options -d -e with getopts #
 ##################################
 OPTIND=1 # Reset getopts (in case the script was called previously)
-while getopts :de opt; do
+while getopts :hdelb opt; do
     case $opt in 
+        h) OPTION_HELP=true ;;
         d) OPTION_INSTALL_DEV=true;;
         e) OPTION_INSTALL_VENV=true ;;
+        l) OPTION_REMOVE_LOG=true ;;
+        b) OPTION_REMOVE_DB=true ;;
         :) echo "Missing argument for option -$OPTARG"; return;;
        \?) echo "Unknown option -$OPTARG"; return;;
     esac
@@ -52,6 +58,20 @@ say () {
 	echo $1
 	for i in $( seq 0 $length ); do echo -n =; done; echo;
 }
+
+# Help message
+if [ "$OPTION_HELP" = true ] ; then
+	say "Help Message"
+	echo "
+. install_chaudiere.sh [OPTION] |& tee install_chaudiere.sh.log
+	option -h : Print help message
+	option -d : Also install /Dev environnement
+	option -e : Also install virtual environnement for both Dev and Prod (mkvirtualenv, pip install -r requirements.txt)
+	option -l : Remove existing log files
+	option -b : Remove existing database files
+	"
+	return 0;
+fi
 
 # Le scipt doit être exécuté dans un dossier particulier. Veérifier qu'on se trouve dans le bon dossier
 if [ $DIR_DEV_CHAUDIERE/install != `pwd` ]
@@ -86,7 +106,7 @@ sleep 4
 # Stop nginx and supervisor #
 ###################
 say "Stop nginx and supervisor"
-run "sudo supervisorctl stop gunicorn sensor"
+run "sudo supervisorctl stop all"
 run "sudo service nginx stop"
 
 ######################
@@ -139,6 +159,10 @@ fi
 # Configure nginx #
 ###################
 say "Configure nginx"
+
+# Remove existing nginx chaudiere conf file
+run "sudo rm -f $DIR_PROD_CHAUDIERE/config/prod/nginx_chaudiere_conf"
+
 # Check if some config already exists in /etc/nginx/sites-available/"
 if [ "$(ls -A /etc/nginx/sites-available/)" ]; then
      echo "WARNING : Other config already exists in /etc/nginx/sites-available/. Should be removed."
@@ -166,6 +190,8 @@ say "Configure supervisor"
 run "sudo supervisorctl stop all"
 run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/supervisor_prod.conf /etc/supervisor/conf.d/"
 
+say "Existing supervisor conf files"
+run "ls -la /etc/supervisor/conf.d/"
 
 #####################
 # Configure Crontab #
@@ -186,6 +212,6 @@ run "sudo supervisorctl start prod:"
 
 run "sudo supervisorctl status"
 run "sudo service nginx start"
-sleep 5
+sleep 6
 run "sudo service nginx status"
 

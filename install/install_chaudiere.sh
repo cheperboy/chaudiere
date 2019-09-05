@@ -22,8 +22,11 @@ DIR_PROD=/home/pi/Prod
 DIR_DEV_CHAUDIERE=$DIR_DEV/chaudiere
 DIR_PROD_CHAUDIERE=$DIR_PROD/chaudiere
 GIT_REPO="https://github.com/cheperboy/chaudiere.git"
+OPTION_HELP=false
 OPTION_INSTALL_DEV=false
-OPTION_INSTALL_ENV=false
+OPTION_INSTALL_VENV=false
+OPTION_REMOVE_LOG=false
+OPTION_REMOVE_DB=false
 
 ##################################
 # Get options -d -e with getopts #

@@ -115,7 +115,15 @@ run "sudo service nginx stop"
 say "Create Directories"
 run "rm -rf  $DIR_PROD_CHAUDIERE"
 run "mkdir $DIR_PROD"
+
+if [ "$OPTION_REMOVE_LOG" = true ] ; then
+	run "sudo rm -rf $DIR_PROD/log"
+fi
 run "mkdir $DIR_PROD/log"
+
+if [ "$OPTION_REMOVE_DB" = true ] ; then
+	run "sudo rm -rf $DIR_PROD/db"
+fi
 run "mkdir $DIR_PROD/db"
 run "mkdir $DIR_PROD_CHAUDIERE"
 

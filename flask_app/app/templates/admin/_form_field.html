@@ -1,32 +1,68 @@
+{% import 'admin/_field.html' as macro_field %}
+
+{% macro render_field(field, size, class_validness) -%}	
+	{% if field.type == 'IntegerField'
+	   or field.type == 'TextAreaField' 
+	   or field.type == 'StringField' %}
+		{{ render_textfield(field, size, class_validness) }}
+	{% elif field.type == 'BooleanField' %}
+		{{ render_boolean(field, size, class_validness) }}
+	{% endif %}
+{%- endmacro %}
+
+{% macro render_boolean(field, size, class_validness) -%}	
+	{% if field.data == True %}
+		{% set checked = 'checked' %}
+	{% endif %}
+	<div class="custom-control custom-switch">
+		<input 	name="{{ field.name }}" 
+				type="checkbox" 
+				class="custom-control-input {{ class_validness }}" 
+				id="{{ field.id }}" 
+				{{ checked }}  
+				value="y">
+		<label  class="custom-control-label" 
+				for="{{ field.id }}" 
+				value="{{ field.data }}">
+		</label>
+	</div>				
+{%- endmacro %}
+
+{% macro render_textfield(field, size, class_validness) -%}	
+	{{ field(size=size, class_="form-control "+ class_validness) }}
+{%- endmacro %}
+
+
 {% macro render_form(form, update_is_success) -%}
-<form method="post">
-  <div class="form-row align-items-center">
+	<form method="post">
 	{% for field in form %}
-		<div class="col-sm-3 my-1">{{ field.label(class_ = "col-auto my-1") }}</div>
-		<div class="col-sm-3 my-1">
+		<div class="form-row align-items-center">
+			<div class="col-sm-4 my-1">{{ field.label(class_ = "col-auto my-1") }}</div>
+			<div class="col-sm-2 my-1">
 		{% set print_field = "" %}
 		{% set print_errors = "" %}
 		{# Add a list or errors if the form failed #}
 		{% if field.errors %}
 			{# Case of a Failed form #}
 			{% set class_validness = "is-invalid" %}
-			{{ field(size=size, class_="form-control "+ class_validness) }}
+			{{ render_field(field, size, class_validness) }}
 			{% for error in field.errors %}
 				<div class='invalid-feedback'>
-				{{ error }}
+					{{ error }}
 				</div>
 			{% endfor %}
 		{% else %}
 			{% if update_is_success %}
 				{# Case of a Success form #}
 				{% set class_validness = "is-valid" %}
-				{{ field(size=size, class_="form-control "+ class_validness) }}
+				{{ render_field(field, size, class_validness) }}
 			{% else %}
 				{# Case of a New form #}
 				{% set class_validness = "" %}
-				{{ field(size=size, class_="form-control "+ class_validness) }}
+				{{ render_field(field, size, class_validness) }}
 			{% endif %}
 		{% endif %}
+			</div>
 		</div>
 	{% endfor %}
 	<div class="col-auto my-1">

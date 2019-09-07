@@ -63,7 +63,7 @@ def config():
     admin_config = AdminConfig.query.first()
     if admin_config is None:
         abort(404)
-    form = AdminConfigForm(obj=admin_config)
+    form = AdminConfigForm(obj=admin_config, csrf_enabled=False)
     if request.method == 'POST': 
         if form.validate():
             # admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data

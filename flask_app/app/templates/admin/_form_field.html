@@ -33,6 +33,7 @@
 
 {% macro render_form(form, update_is_success) -%}
 	<form method="post">
+	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 	{% for field in form %}
 		<div class="form-row align-items-center">
 			<div class="col-sm-4 my-1">{{ field.label(class_ = "col-auto my-1") }}</div>
@@ -63,7 +64,6 @@
 			</div>
 		</div>
 	{% endfor %}
-	{{ form.hidden_tag() }}
 	<div class="col-auto my-1">
 		<input type=submit class="btn btn-primary" name="submit" value="Update">
 		{# Add a "succes" or "Fail" Tag #}

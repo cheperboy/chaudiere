@@ -35,7 +35,8 @@ if ENVNAME == 'Dev' :
     APP_NAME = 'Chaudiere Dev' 
     PORT = 5008
     DEBUG = True
-    WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = True
+    # SERVER_NAME = 'raspberrypi.local:5008'
     TEMPLATES_AUTO_RELOAD = True
     # url = socket.gethostbyname(socket.gethostname())
     url = "chaudiere.local"

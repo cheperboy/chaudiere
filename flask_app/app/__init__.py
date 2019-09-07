@@ -151,6 +151,9 @@ def create_app():
     app.register_blueprint(webapi)
     app.register_blueprint(monitor_blueprint)
     
+    # form csrf
+    csrf.init_app(app)
+
     # login_manager
     login_manager = LoginManager()
     login_manager.login_view = 'charts.now'
@@ -163,9 +166,6 @@ def create_app():
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
     
-    # form csrf
-    csrf.init_app(app)
-
     # Scss
     assets = Environment(app)
     assets.versions = 'timestamp'

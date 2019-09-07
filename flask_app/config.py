@@ -29,18 +29,14 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # Detect env from filesystem location (Prod/Dev)
 if ENVNAME == 'Dev' :
-    os.environ['FLASK_ENV'] = 'development'
     # Development configuration
+    os.environ['FLASK_ENV'] = 'development'
     ENV = 'development'
     APP_NAME = 'Chaudiere Dev' 
     PORT = 5008
     DEBUG = True
     WTF_CSRF_ENABLED = True
-    # SERVER_NAME = 'raspberrypi.local:5008'
     TEMPLATES_AUTO_RELOAD = True
-    # url = socket.gethostbyname(socket.gethostname())
-    url = "chaudiere.local"
-    URL = 'http://'+ str(url) +':'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(ENVPATH + '/db/', 'app.db'))
     SQLALCHEMY_BINDS = {
         'admin_config': 'sqlite:///' + os.path.join(ENVPATH + '/db/', 'admin_config.db'),
@@ -80,7 +76,6 @@ elif ENVNAME == 'flask-dev' :
 
     PORT = 5007
     APP_NAME += ' Win Dev'
-    APP_BASE_URL = 'http://localhost:' + str(PORT) + '/'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(
         os.path.join(ENVPATH + '\db\\', 'chaudiere.db'))
 

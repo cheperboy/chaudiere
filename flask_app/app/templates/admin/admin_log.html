@@ -3,7 +3,7 @@
 {% block content %}
 	<br>
 	<ul class="nav nav-tabs">
-	{% set tab_class = 'disabled' %}
+	{# set tab_class = 'disabled' #}
 	{% for file in files %}
 		{% if file == active_file %}
 			{% set tab_class = 'active' %}

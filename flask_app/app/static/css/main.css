@@ -1,8 +1,10 @@
-body {
-  padding-top: 50px;
-  color: #db3939;
+table.table-fit {
+    width: auto !important;
+    table-layout: auto !important;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
+table.table-fit thead th, table.table-fit tfoot th {
+    width: auto !important;
+}
+table.table-fit tbody td, table.table-fit tfoot td {
+    width: auto !important;
 }

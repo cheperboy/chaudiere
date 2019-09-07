@@ -4,10 +4,7 @@
    :synopsis: Main module of the flask application
 
 .. moduleauthor:: cheperboy
-
-
 """
-
 from datetime import datetime
 # ext import
 from flask import Flask
@@ -95,9 +92,7 @@ def set_config(app):
     except ValueError as e:
         print('ValueError loading JSON : ' + secret_conf_com + ' ' + str(e))
 
-    app.config['APP_BASE_URL'] = app.config['URL'] + str(app.config['PORT']) + '/'
-    #app.config['USERS_EMAILS'] = list(map(lambda x: x+'@gmail.com', app.config['USERS']))
-    
+    #app.config['USERS_EMAILS'] = list(map(lambda x: x+'@gmail.com', app.config['USERS']))    
     # app.logger.error('test error')   # <-- This works !!!     
 
 def init_db_admin_config():

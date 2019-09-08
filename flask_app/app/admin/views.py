@@ -91,15 +91,18 @@ def log(file):
     files = [ file for file in all_files if (file.endswith('.log') or file.endswith('.err')) ]
     content = ''
     if file and (file in files):
-        try:
-            stream = open(log_path / file, 'r+')
-        except PermissionError:
+        stream = open(log_path / file, 'r')
+        content = stream.read()
+        stream.close()
+        # try:
+            # stream = open(log_path / file, 'r+')
+        # except PermissionError:
             # if file owned by root, must be chown by pi to be readable
-            check_output("sudo chown pi "+ str(log_path / file), shell=True)
-            stream = open(log_path / file, 'r+')
-        finally:
-            content = stream.read()
-            stream.close()
+            # check_output("sudo chown pi "+ str(log_path / file), shell=True)
+            # stream = open(log_path / file, 'r+')
+        # finally:
+            # content = stream.read()
+            # stream.close()
     
     return render_template('admin/admin_log.html',  content=content,
                                                     active_file=file,

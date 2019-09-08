@@ -45,15 +45,16 @@ def index():
         'hostname'      : hostname()
     }
     params["system"] = {
-        'date' :          system_date(),
-        'uptime' :          system_uptime(),
-        'cpu_temp' :   cpu_temp()
+        'date'          : system_date(),
+        'uptime'        : system_uptime(),
+        'cpu_temp'      : cpu_temp()
     }
     params["Nexmo (SMS)"] = {
-        'Balance' :   nexmo_balance()
+        'Balance'       : nexmo_balance()
     }
     params["disk_space"] = disk_space()
-    params["db_size"] = db_size()
+    params["supervisor"] = supervisor_status()
+    params["db_size"]    = db_size()
 
     return render_template('admin/admin.html', params =  params)
     

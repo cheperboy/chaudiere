@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import subprocess
+import re
 from flask import current_app as app
 from app import db
 
@@ -36,6 +37,26 @@ def ip_lan_wifi():
     stdout = subprocess.check_output(cmd, shell=True)
     stdout = stdout.decode('utf-8')
     return (stdout)
+
+########
+# Supervisor
+########
+def supervisor_status():
+    """
+    """
+    cmd = '''sudo supervisorctl status'''
+    stdout = subprocess.check_output(cmd, shell=True)
+    stdout = stdout.decode('utf-8')
+    procs = stdout.splitlines() # each line is a process
+    result = {}
+    for proc in procs:
+        proc = re.sub('\s+', ' ', proc).strip() #replace multiple spaces by one space
+        splitted_proc = proc.split(' ')
+        name = splitted_proc.pop(0)
+        status = splitted_proc.pop(0)
+        uptime = ' '.join(splitted_proc)
+        result[name] = status + '  ' + uptime
+    return (result)
 
 ########
 # System

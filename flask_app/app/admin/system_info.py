@@ -101,7 +101,18 @@ def disk_space():
     stdout = subprocess.check_output(cmd, shell=True)
     stdout = stdout.decode('utf-8')
     stdout = stdout.split( )
-    ret = {"size" : stdout[1], "used": stdout[2], "used_percent": stdout[3]}
+    size         = stdout[1]                # string like '29G' 
+    used         = stdout[2]                # string like '3.1G'
+    used_percent = stdout[3]                # string like '25%'
+    meter_value = str(int(stdout[3][:-1]))  # string like '25'
+    # meter  = ' <meter value="'+ meter_value +'"></meter>'
+    meter  = '<div class="progress"> <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="'+meter_value+'" aria-valuemin="0" aria-valuemax="100">'+used_percent+'</div></div>'
+    
+    ret = {
+        "used_percent" : meter,
+        "size"         : size, 
+        "used"         : used, 
+    }
     return (ret)
     
 ########

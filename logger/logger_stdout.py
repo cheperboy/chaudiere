@@ -4,11 +4,8 @@ CONFIG_PY = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "save": {
-            "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
-        },
         "default": {
-            "format": "%(filename)s | %(levelname)s | %(funcName)s | %(message)s"
+            "format": "%(asctime)s | %(filename)s | %(levelname)s | %(funcName)s | %(message)s"
         },
     },
 

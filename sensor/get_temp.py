@@ -13,7 +13,7 @@ envname = os.path.basename(envpath)                      # Dev
 # import and get logger
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 # Sensor Config
@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 base_dir = '/sys/bus/w1/devices/'
 
 # SENSOR CONFIG
-SENSOR_TEMP_0 = '28-00000a69bebf'
-SENSOR_TEMP_1 = '28-80000028212d'
-SENSOR_TEMP_2 = '28-800000282141'
+SENSOR_TEMP_0 = '28-800000282141' # eau
+SENSOR_TEMP_1 = '28-80000028212d' # fumee
+SENSOR_TEMP_2 = '28-00000a69bebf' # boitier
 
 # Constant
 DEFAULT_SENSOR_VALUE = -1

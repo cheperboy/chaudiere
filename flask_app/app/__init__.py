@@ -40,6 +40,7 @@ from logging.handlers import RotatingFileHandler
 
 import config, sys
 
+
 def set_config(app):
     """
     loads config then override from secret file
@@ -180,5 +181,6 @@ def create_app():
         init_db_admin_config()
         
     toolbar = DebugToolbarExtension(app)
+
     return (app)
 

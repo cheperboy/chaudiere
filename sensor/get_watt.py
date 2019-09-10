@@ -22,7 +22,7 @@ import glob
 # Script Constants
 WATT_SENSOR_SIZE = 4
 DEFAULT_SENSOR_VALUE = None #if no sensor value is read then recorded value is DEFAULT_SENSOR_VALUE
-MIN_VALUE = 1640               #if sensor value < MIN_VALUE then recorded value is 0
+MIN_VALUE = 1654               #if sensor value < MIN_VALUE then recorded value is 0
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -32,7 +32,7 @@ envname = os.path.basename(envpath)                      # Dev
 # import and get logger
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 

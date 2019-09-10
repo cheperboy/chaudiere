@@ -16,7 +16,7 @@ flaskapp = os.path.abspath(os.path.dirname(__file__))   # /home/pi/Dev/chaudiere
 projectpath = os.path.dirname(flaskapp)                 # /home/pi/Dev/chaudiere
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 # Create app instance
@@ -41,6 +41,7 @@ def send_sms(sender, recipients, body):
     """ Start N Threads for the N recipients 
     Each Thread will call the function send_async_sms"""
     for recipient in recipients:
+        logger.debug('sending to '+str(recipient))
         thr = Thread(target=send_async_sms, args=[app, sender, recipient, body])
         thr.start()
 

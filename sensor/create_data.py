@@ -5,10 +5,8 @@ import serial
 from serial.serialutil import SerialException
 from random import randint
 
-currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/script
+currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/sensor
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
-envpath = os.path.dirname(projectpath)                   # /home/pi/Dev
-envname = os.path.basename(envpath)                      # Dev
 
 # import sensors API
 from get_temp import api_get_temp_values
@@ -22,7 +20,7 @@ from db_api import createSensorRecord
 # import and get logger
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 # Global variables
@@ -72,4 +70,5 @@ def get_sensors_fake():
             logger.error('IndexError ', exc_info=True)
 
 if __name__ == '__main__':
+    logger.info('starting processus')
     main()

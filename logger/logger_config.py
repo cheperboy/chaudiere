@@ -2,6 +2,16 @@ import os
 import logging.config
 import yaml
 
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+print("-------  LOGGER NOT USED --- THIS SHOULD NOT APPEAR IN LOG -------")
+
 #CONFIG_TYPE = "YAML"
 CONFIG_TYPE = "PY"
 
@@ -28,12 +38,12 @@ CONFIG_PY = {
 
 #handler level overrides the logger level
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "level": "DEBUG",
-            "formatter": "console_formatter",
-            "stream": "ext://sys.stdout"
-        },
+        # "console": {
+            # "class": "logging.StreamHandler",
+            # "level": "DEBUG",
+            # "formatter": "console_formatter",
+            # "stream": "ext://sys.stdout"
+        # },
 
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
@@ -60,8 +70,11 @@ CONFIG_PY = {
 
     "root": {
         "level": "DEBUG",
-        "handlers": ["console", 
-                     "error_file_handler", 
+        # "handlers": ["console", 
+                     # "error_file_handler", 
+                     # "info_file_handler",
+                    # ]
+        "handlers": ["error_file_handler", 
                      "info_file_handler",
                     ]
     },

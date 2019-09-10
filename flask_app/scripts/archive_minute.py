@@ -60,7 +60,7 @@ app = create_app().app_context().push()
 # import and get logger
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 def find_datetime_end(date):

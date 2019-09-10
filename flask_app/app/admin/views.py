@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+
 import pathlib
 from subprocess import check_output
 import time, datetime
@@ -19,7 +21,7 @@ from .system_info import *
 from .forms import AdminConfigForm
 from ..views.auth import auth
 from ..models import AdminConfig
-from ..constantes import *
+# from ..constantes import LOGGER_PATH
 from .. import db
 from .charts import *
 
@@ -55,7 +57,7 @@ def index():
     params["disk_space"] = disk_space()
     params["supervisor"] = supervisor_status()
     params["db_size"]    = db_size()
-
+    
     return render_template('admin/admin.html', params =  params)
     
 @admin_blueprint.route('/config', methods=['GET', 'POST'])
@@ -70,8 +72,8 @@ def config():
             # admin_config.temp_chaudiere_failure = form.temp_chaudiere_failure.data
             form.populate_obj(admin_config)
             db.session.commit()
-            print(form.errors)
             # flash(u'updated', 'success')
+            sys.stdout.write("Update admin config\n")
             return render_template('admin/admin_config.html', form=form, success=True)
         else:
             pass

@@ -41,7 +41,7 @@ app = create_app().app_context().push()
 ###############################################################################
 logger_directory = os.path.join(projectpath, 'logger')
 sys.path.append(logger_directory)
-import logger_config
+import logger_stdout
 logger = logging.getLogger(__name__)
 
 
@@ -63,9 +63,10 @@ def main_function(debug):
             logger.info('task done. sleeping {0}s.'.format(DEAMON_SLEEP))
             sleep(DEAMON_SLEEP)
     except KeyboardInterrupt as e:
-        logger.warning(f'KeyboardInterrupt, Stopping process')
+        logger.warning(f'Stopped by system, Stopping process')
     finally:
         logger.warning(f'Stop process')
         
 if __name__ == '__main__':
+    logger.info('starting processus')
     main_function()

@@ -21,5 +21,5 @@
 
 # Every time the system boot
 # Wait 30 second and launch local gui
-@reboot pi sleep 20 && /bin/bash /home/pi/Prod/chaudiere/local_gui.sh > /home/pi/Prod/log/cron.log 2>&1
+@reboot pi sleep 30 && /bin/bash /home/pi/Prod/chaudiere/local_gui.sh > /home/pi/Prod/log/cron.log 2>&1
 

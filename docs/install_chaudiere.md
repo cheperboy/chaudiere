@@ -29,6 +29,8 @@ source /home/pi/.local/bin/virtualenvwrapper.sh
 workon prod
 python3 ~/Prod/chaudiere/flask_app/manager.py users create
 ```
+13. `sudo chmod a+x /home/pi/Prod/chaudiere/local_gui.sh`
+
 
 ## Edit config variable
 

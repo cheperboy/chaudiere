@@ -213,6 +213,12 @@ run "sudo cp $DIR_PROD_CHAUDIERE/config/prod/chaudiere_cron_prod /etc/cron.d"
 # file in /etc/cron.d must be owned by root
 run "sudo chown root /etc/cron.d/chaudiere_cron_prod"
 
+########################
+# local_gui.sh runable #
+########################
+say "Make local_gui.sh executable"
+run "sudo chmod a+x /home/pi/Prod/chaudiere/local_gui.sh"
+
 ##############################
 # Start nginx and supervisor #
 ##############################

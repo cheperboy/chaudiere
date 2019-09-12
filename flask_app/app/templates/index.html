@@ -25,11 +25,16 @@ La variable local_display est utilisée pour
 	{% endblock %}
 </div>    
 <hr>
- 
 <script type="text/javascript">
 	// Those parameters are :
 	//	- set in flask view
 	//  - copied in a JS variable to be accessible to javascript
+	{% if chart_debug_conf_minute %}
+		var chart_debug_conf_minute = JSON.parse('{{ chart_debug_conf_minute | tojson | safe}}');
+	{% endif %}
+	{% if chart_debug_conf_second %}
+		var chart_debug_conf_second = JSON.parse('{{ chart_debug_conf_second | tojson | safe}}');
+	{% endif %}
 	{% if chart_params %}
 		var JS_base_URL = "{{ request.host_url }}";
 		var JS_chart_json_template = "{{ chart_params.json_template }}";

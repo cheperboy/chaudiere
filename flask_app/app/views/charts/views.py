@@ -99,6 +99,7 @@ def now(hours):
                             render_static_chart = True,
                             history_form_data =   json_date_picker())
 
+
 @charts_blueprint.route('/', defaults={'hours': 1}, methods=['GET'])
 @charts_blueprint.route('/<int:hours>', methods=['GET'])
 def local_display(hours):

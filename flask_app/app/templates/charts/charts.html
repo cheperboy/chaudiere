@@ -1,12 +1,6 @@
 {% extends "index.html" %}
 
 {% block content %}
-		<div class="container-fluid">
-		  <div class="row">
-			  <div class="container"  style="height: 400px" id="staticchart-container">
-			  </div>
-			</div>
-		</div>
    	
 	{% if render_static_chart %}
 		<div class="container-fluid">
@@ -25,6 +19,21 @@
 		<div class="container-fluid">
 		  <div class="row">
 			  <div class="container"  style="height: 800px" id="staticchartraw-container"></div>
+			</div>
+		</div>
+	{% endif %}
+	
+	{% if render_debugchart_minute %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container"  style="height: 400px" id="debugchart-minute-container"></div>
+			</div>
+		</div>
+	{% endif %}
+	{% if render_debugchart_second %}
+		<div class="container-fluid">
+		  <div class="row">
+			  <div class="container"  style="height: 400px" id="debugchart-second-container"></div>
 			</div>
 		</div>
 	{% endif %}

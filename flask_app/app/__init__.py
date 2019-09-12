@@ -32,6 +32,7 @@ from flask_login import LoginManager
 from app.admin import admin_blueprint
 from app.views.auth import auth
 from app.views.charts.views import charts_blueprint
+from app.views.debug import debug_blueprint
 from app.views.monitor import monitor_blueprint
 from app.views.webapi import webapi
 
@@ -144,6 +145,7 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(charts_blueprint)
+    app.register_blueprint(debug_blueprint)
     app.register_blueprint(webapi)
     app.register_blueprint(monitor_blueprint)
     

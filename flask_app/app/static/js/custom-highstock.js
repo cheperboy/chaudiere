@@ -33,9 +33,18 @@ $(document).ready(function() {
 	div_id = 'staticchart-container'
 	if(document.getElementById(div_id)){
 		// Note : parameters JS_begin_date and JS_hours_lenth is get from chart.py view and passed to javascript via index.html
-		if(JS_begin_date){
+		if (typeof JS_begin_date !== 'undefined') {
+		//if(JS_begin_date){
 			var conf = requestConfHistory(JS_begin_date, JS_hours_lenth, JS_chart_json_template)
 		}
 		static_chart = new Highcharts.stockChart(div_id, conf);
+	}
+	div_id = 'debugchart-minute-container'
+	if(document.getElementById(div_id)){
+		debug_chart_minute = new Highcharts.stockChart(div_id, chart_debug_conf_minute);
+	}
+	div_id = 'debugchart-second-container'
+	if(document.getElementById(div_id)){
+		debug_chart_second = new Highcharts.stockChart(div_id, chart_debug_conf_second);
 	}
 });

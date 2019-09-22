@@ -61,7 +61,7 @@ Physical inputs / database fields
 """
 TEMP_CHAUDIERE  = 0 
 TEMP_FUMEE      = 1
-TEMP_RETOUR     = 2
+TEMP_BOITIER    = 2
 TEMP_CONSIGNE   = 8
 VENT_SECONDAIRE = 3
 ALLUMAGE        = 4
@@ -72,7 +72,7 @@ PHASE           = 7
 InputDb = {
     TEMP_CHAUDIERE  : 'temp0',
     TEMP_FUMEE      : 'temp1',
-    TEMP_RETOUR     : 'temp2',
+    TEMP_BOITIER    : 'temp2',
     TEMP_CONSIGNE   : 'temp3',
     VENT_SECONDAIRE : 'watt0',
     ALLUMAGE        : 'watt1',
@@ -84,8 +84,8 @@ InputDb = {
 InputName = {
     TEMP_CHAUDIERE  : 'Temp chaudiere'  ,
     TEMP_FUMEE      : 'Temp fumee'      ,
-    TEMP_RETOUR     : 'Temp retour'     ,
-    TEMP_CONSIGNE   : 'Temp consigne',
+    TEMP_BOITIER    : 'Temp boitier'    ,
+    TEMP_CONSIGNE   : 'Temp consigne'   ,
     VENT_SECONDAIRE : 'Vent secondaire' ,
     ALLUMAGE        : 'Allumage'        ,
     VENT_PRIMAIRE   : 'Vent primaire'   ,

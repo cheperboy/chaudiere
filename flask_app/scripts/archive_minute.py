@@ -136,6 +136,7 @@ def record_minute(begin):
     end = begin + timedelta(minutes=1)
     temp0 = 0.0
     temp1 = 0.0
+    temp2 = 0.0
     watt1 = 0
     watt2 = 0
     watt3 = 0
@@ -147,17 +148,19 @@ def record_minute(begin):
         for log in logs:
             if (log.temp0 is not None): temp0 += float(log.temp0)
             if (log.temp1 is not None): temp1 += float(log.temp1)
+            if (log.temp2 is not None): temp2 += float(log.temp2)
             if (log.watt1 is not None): watt1 += int(log.watt1)
             if (log.watt2 is not None): watt2 += int(log.watt2)
             if (log.watt3 is not None): watt3 += int(log.watt3)
         # calcule des moyennes sur les series
         temp0 = temp0 / nb_logs
         temp1 = temp1 / nb_logs
+        temp2 = temp2 / nb_logs
         watt1 = watt1 / nb_logs
         watt2 = watt2 / nb_logs
         watt3 = watt3 / nb_logs
         # Save to db
-        ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, None, watt1, watt2, watt3, None, None, None)
+        ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, temp2, None, None, watt1, watt2, watt3, None, None, None)
     # else if no log to process, we still create an entry with None fields
     else:
         ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None, None)

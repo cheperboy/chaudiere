@@ -59,9 +59,9 @@ def create_chart_minute(dt_begin, dt_end):
     chart_minute.add_serie(InputName[PHASE]         , InputDb[PHASE]            , yAxis=2)
     
     chart_minute.subtitle_entries_date()
-    chart_minute.add_yAxis('température', opposite=False)
-    chart_minute.add_yAxis('current'    , opposite=True)
-    chart_minute.add_yAxis('phase'      , opposite=True)
+    chart_minute.add_yAxis('température', opposite=False, min=0, max=170)
+    chart_minute.add_yAxis('current'    , opposite=True , min=0, max=2000)
+    chart_minute.add_yAxis('phase'      , opposite=True , min=0, max=10)
     chart_minute.navigator_enable(True)
     chart_minute.scrollbar_enable(True)
     chart_minute.range_selector()
@@ -86,9 +86,9 @@ def create_chart_second(dt_begin, dt_end):
     chart_second.add_serie(InputName[PHASE]         , InputDb[PHASE]            , yAxis=2)
     
     chart_second.subtitle_entries_date()
-    chart_second.add_yAxis('température', opposite=False)
-    chart_second.add_yAxis('current'    , opposite=True)
-    chart_second.add_yAxis('phase'      , opposite=True)
+    chart_second.add_yAxis('température', opposite=False, min=0, max=170)
+    chart_second.add_yAxis('current'    , opposite=True , min=0, max=2000)
+    chart_second.add_yAxis('phase'      , opposite=True , min=0, max=10)
     chart_second.navigator_enable(True)
     chart_second.scrollbar_enable(True)
     chart_second.range_selector()
@@ -159,14 +159,14 @@ class Chart:
         
         self.json['series'].append(serie)
         
-    def add_yAxis(self, title_text, opposite=False):
+    def add_yAxis(self, title_text, opposite=False, min=0, max=0):
         """ 
         """
         yAxis = {
             'labels': {'align': 'right','x': -3},
             'title': {'text': title_text},
-            'softMin': 55,
-            'softMax': 70,
+            'softMin': min,
+            'softMax': max,
             'top': str((0))+'%',
             'height': '100%',
             'lineWidth': 1,
@@ -271,8 +271,7 @@ default_template = {
     'scrollbar': {'enabled': False},
     'title': {'text': ''},
     'xAxis': {'plotBands': None},
-    'yAxis': [
-    ],
+    'yAxis': [],
     'tooltip': {
         'shared': True,
         'split': False,

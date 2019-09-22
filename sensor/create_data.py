@@ -52,7 +52,7 @@ def get_sensors():
             temps = get_temp()
             logger.info('watts '+str(watts)+' temps '+ str(temps))
             dt = datetime.datetime.now()
-            createSensorRecord(dt, temps[0], temps[1], temps[2], watts[0], watts[1], watts[2], watts[3])
+            createSensorRecord(dt, temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
             time.sleep(SLEEP_DELAY)
         except IndexError:
             logger.error('IndexError ', exc_info=True)
@@ -62,7 +62,7 @@ def get_sensors_fake():
         try:
             random_int = randint(-10, 10)
             dt = datetime.datetime.now()
-            datas = [dt, 60+random_int, 70+random_int, None, 2000, 2000, 0, 0]
+            datas = [dt, 60+random_int, 70+random_int, None, None, 2000, 2000, 0, 0]
             logger.info('datas '+str(datas))
             createSensorRecord(*datas)
             time.sleep(SLEEP_DELAY)

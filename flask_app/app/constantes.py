@@ -3,8 +3,8 @@
 """
 Application Values
 """
-TEMP_CHAUDIERE_FAILURE_DEFAULT          = 62    # Min Water temp before alerting of potential chaudiere failure
-CHAUDIERE_DB_ROTATE_HOURS_DEFAULT       = 2     
+TEMP_CHAUDIERE_FAILURE_DEFAULT          = 56    # Min Water temp before alerting of potential chaudiere failure
+CHAUDIERE_DB_ROTATE_HOURS_DEFAULT       = 5     
 CHAUDIERE_MINUTE_DB_ROTATE_DAYS_DEFAULT = 35
 ALERTS_ENABLE_DEFAULT                   = False # Boolean to disable alerts (SMS/Mail) unless enable by user
 
@@ -62,6 +62,7 @@ Physical inputs / database fields
 TEMP_CHAUDIERE  = 0 
 TEMP_FUMEE      = 1
 TEMP_RETOUR     = 2
+TEMP_CONSIGNE   = 8
 VENT_SECONDAIRE = 3
 ALLUMAGE        = 4
 VENT_PRIMAIRE   = 5
@@ -72,6 +73,7 @@ InputDb = {
     TEMP_CHAUDIERE  : 'temp0',
     TEMP_FUMEE      : 'temp1',
     TEMP_RETOUR     : 'temp2',
+    TEMP_CONSIGNE   : 'temp3',
     VENT_SECONDAIRE : 'watt0',
     ALLUMAGE        : 'watt1',
     VENT_PRIMAIRE   : 'watt2',
@@ -83,6 +85,7 @@ InputName = {
     TEMP_CHAUDIERE  : 'Temp chaudiere'  ,
     TEMP_FUMEE      : 'Temp fumee'      ,
     TEMP_RETOUR     : 'Temp retour'     ,
+    TEMP_CONSIGNE   : 'Temp consigne',
     VENT_SECONDAIRE : 'Vent secondaire' ,
     ALLUMAGE        : 'Allumage'        ,
     VENT_PRIMAIRE   : 'Vent primaire'   ,

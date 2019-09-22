@@ -21,12 +21,12 @@ sys.path.append(logger_directory)
 import logger_stdout
 logger = logging.getLogger(__name__)
 
-def createSensorRecord(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3):
+def createSensorRecord(timestamp, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3):
     try:
-        entry = Chaudiere(timestamp, temp0, temp1, temp2, watt0, watt1, watt2, watt3, None, None, None)
+        entry = Chaudiere(timestamp, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3, None, None, None)
         db.session.add(entry)
         db.session.commit()
-    except Error as e:
+    except Exception as e:
         logger.error("generic Error" + str(e.message))
         return False
     else:

@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 # Script Constants
-DEAMON_SLEEP = 60 # do nothing during 2 minutes
+DEAMON_SLEEP = 60 # do nothing during 1 minutes
 
 @click.command()
 @click.option('-d', '--debug',          type=click.BOOL,        help='print debug info')

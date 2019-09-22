@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from random import random
 import pprint
 import copy
+import subprocess
 
 from flask import Blueprint, render_template, request, jsonify, make_response, redirect, url_for, flash
 from flask_login import login_required
@@ -59,7 +60,30 @@ def index():
     params["db_size"]    = db_size()
     
     return render_template('admin/admin.html', params =  params)
-    
+
+def restart_supervisor_minute_phase_deamon():
+    """ Need to restart daemon to take into account new admin value
+    ret est le retour attendu de la fonction. Si retour différent: log error
+    """
+    cmd_prod = """sudo supervisorctl restart prod:minute_phase"""
+    cmd_dev  = """sudo supervisorctl restart dev:minute_phase_dev"""
+    ret_prod = """prod:minute_phase: stopped
+    prod:minute_phase: started
+    """
+    ret_dev = """dev:minute_phase_dev: stopped
+    dev:minute_phase_dev: started
+    """
+    cmd = cmd_prod
+    ret = ret_prod
+    if app.config['ENVNAME'] == 'Dev':
+        cmd = cmd_dev
+        ret = ret_dev
+    stdout = subprocess.check_output(cmd, shell=True)
+    stdout = stdout.decode('utf-8')
+    sys.stdout.write('SUCCESS '+ cmd+'\n') and sys.stdout.flush()
+    if (ret==stdout):
+        sys.stderr.write('FAILED '+ cmd + '\n') and sys.stderr.flush()
+
 @admin_blueprint.route('/config', methods=['GET', 'POST'])
 @login_required
 def config():
@@ -73,7 +97,8 @@ def config():
             form.populate_obj(admin_config)
             db.session.commit()
             # flash(u'updated', 'success')
-            sys.stdout.write("Update admin config\n")
+            sys.stdout.write("Update admin config\n") and sys.stdout.flush()
+            restart_supervisor_minute_phase_deamon()
             return render_template('admin/admin_config.html', form=form, success=True)
         else:
             pass

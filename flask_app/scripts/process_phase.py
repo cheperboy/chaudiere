@@ -46,10 +46,7 @@ logger = logging.getLogger(__name__)
 # import TEMP_CHAUDIERE_FAILURE from AdminConfig database
 from app.models.admin_config import AdminConfig
 admin_config = AdminConfig.first(AdminConfig)
-if admin_config is not None:
-    TEMP_CHAUDIERE_FAILURE = admin_config.temp_chaudiere_failure
-    ALERTS_ENABLE = admin_config.alerts_enable
-else:
+if admin_config is None:
     logger.error("Could not fetch AdminConfig (temp_chaudiere_failure, alerts_enable)")
 
 def temperature_variation(entry, periode):
@@ -120,9 +117,14 @@ def process_phase(mode='normal', hours=None, date=None):
     """ 
     Détermine la date de début (begin) et de fin (end) des minutes à traiter en fonction du `mode`
     """
+    TEMP_CHAUDIERE_FAILURE = admin_config.temp_chaudiere_failure
+    logger.info("TEMP_CHAUDIERE_FAILURE " + str(TEMP_CHAUDIERE_FAILURE))
     rework_mode_disable_alert = False
     if mode is 'normal':
         begin = find_last_phase() # begin = last processed ChaudiereMinute entry.dt
+        if begin is None: 
+            # Si begin = None alors il n'y a aucun reord dans la table ChaudiereMinute. Aucun traitement ne peut être effectué
+            return
         end = ChaudiereMinute.last(ChaudiereMinute).dt # end = last existing ChaudiereMinute entry.dt
     elif mode is 'rework_from_now':
         rework_mode_disable_alert = True
@@ -166,13 +168,12 @@ def process_phase(mode='normal', hours=None, date=None):
         process_alerts(entry, rework_mode_disable_alert)
         begin = begin + timedelta(minutes=1)
         
-
-
 def update_phase(entry):
     """
     Met à jour le champ phase en fonction des valeur ventilateur, température, allumeur
     """
     # Si des informations capteurs sont disponibles
+    TEMP_CHAUDIERE_FAILURE = admin_config.temp_chaudiere_failure
     if entry.get(ALLUMAGE) is not None and\
         entry.get(VENT_PRIMAIRE) is not None and\
         entry.get(TEMP_CHAUDIERE) is not None:
@@ -180,17 +181,14 @@ def update_phase(entry):
             # détecter l'allumage (allumeur > 0)
             if (entry.get(ALLUMAGE) > 0):
                 entry.phase = PHASE_ALLUMAGE
-                db.session.commit()
 
             # Détecter la combustion (ventilateur > 0 et allumeur == 0)
             elif entry.get(VENT_PRIMAIRE) > 0:
                 entry.phase = PHASE_COMBUSTION
-                db.session.commit()
 
             # Détecter le maintien de feu (vent == 0 et allumeur == 0)
             elif entry.get(VENT_PRIMAIRE) == 0:
                 entry.phase = PHASE_MAINTIEN
-                db.session.commit()
 
             # Détecter l'arrêt (condition température basse : temp_chaudiere < TEMP_CHAUDIERE_FAILURE) 
             # malgré la condition température basse, 
@@ -202,36 +200,33 @@ def update_phase(entry):
                 # Si allumeur en marche => ALLUMAGE
                 if entry.get(ALLUMAGE) > 0:
                     entry.phase = PHASE_ALLUMAGE
-                    db.session.commit()
             
                 # Si ventilateur en marche et allumeur à été en marche [depuis moins de 20 minutes] => COMBUSTION
                 elif entry.get(VENT_PRIMAIRE) > 0:
                     condition_precs_was_allumage = '((prec is not None) and (prec.phase == '+str(PHASE_ALLUMAGE)+' ))'
                     if entry.at_least_one_prec_verify_condition(20, condition_precs_was_allumage):
                         entry.phase = PHASE_SURVEILLANCE
-                        db.session.commit()
                     
                     # Si ventilateur en marche et température augmente [10 min] => COMBUSTION
                     delta_temp = temperature_variation(entry, 10)
                     if delta_temp is not None and delta_temp > 0.2:
                         entry.phase = PHASE_SURVEILLANCE
-                        db.session.commit()
-
+                        
                     # Cas non nominal : si ventilateur en marche et température diminue pendant + de 30 minutes => BOURRAGE
                     delta_temp = temperature_variation(entry, 30)
                     if delta_temp is not None and delta_temp < 1.0:
                         entry.phase = PHASE_RISQUE_BOURAGE
-                        db.session.commit()
                         
                 # Dans tout les autres cas (par défaut) => ARRET
                 else:
                     entry.phase = PHASE_ARRET
-                    db.session.commit()
                     
     # cas par défaut, aucune information des capteurs disponible, phase est UNDEFINED
     else:
         entry.phase = PHASE_UNDEFINED
-        db.session.commit()
+    
+    # Record changes to database
+    db.session.commit()
 
 def update_change(entry):
     """
@@ -251,6 +246,7 @@ def process_alerts(entry, rework_mode_disable_alert):
     ALERT -> UNDEFINED -> ALERT (change == True)
     Si une alerte est envoyee, alors le champ entry.event vaut "Alert mail/sms"
     """
+    ALERTS_ENABLE = admin_config.alerts_enable
     condition_precs_was_not_alert = '((prec is not None) and (prec.phase != '+str(PHASE_ARRET)+' ))'
     if entry.change is True and\
       entry.phase == PHASE_ARRET and\

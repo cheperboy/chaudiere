@@ -18,6 +18,7 @@ class ChaudiereBase(db.Model):
     temp0   = db.Column(db.Float)
     temp1   = db.Column(db.Float)
     temp2   = db.Column(db.Float)
+    temp3   = db.Column(db.Float)
     watt0   = db.Column(db.Integer)
     watt1   = db.Column(db.Integer)
     watt2   = db.Column(db.Integer)
@@ -26,11 +27,12 @@ class ChaudiereBase(db.Model):
     change  = db.Column(db.Boolean)     # filled with constant in phase change
     event   = db.Column(db.String(100)) # filled with constant in case of ALERT
 
-    def __init__(self, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
+    def __init__(self, dt, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3, phase, change, event):
         self.dt     = dt
         self.temp0  = temp0
         self.temp1  = temp1
         self.temp2  = temp2
+        self.temp3  = temp3
         self.watt0  = watt0
         self.watt1  = watt1 
         self.watt2  = watt2
@@ -43,12 +45,12 @@ class ChaudiereBase(db.Model):
         return '<{0} {1} {2} {3} {4} {5} {6} {7}>'.format(type(self).__name__, self.id, self.dt, self.watt0, self.temp0, self.phase, self.change, self.event)
 
     @classmethod
-    def create(self, cls, dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event):
+    def create(self, cls, dt, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3, phase, change, event):
         """Wrapper method for creating new entries from external scripts 
         Args:
             Name of the class (Chaudiere or ChaudiereMinute)
         """
-        entry = cls(dt, temp0, temp1, temp2, watt0, watt1, watt2, watt3, phase, change, event)
+        entry = cls(dt, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3, phase, change, event)
         db.session.add(entry)
         db.session.commit()
     
@@ -65,6 +67,7 @@ class ChaudiereBase(db.Model):
             self.temp0, 
             self.temp1, 
             self.temp2, 
+            self.temp3, 
             self.watt0, 
             self.watt1, 
             self.watt2,

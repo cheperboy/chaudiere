@@ -101,7 +101,7 @@ def api_get_temp_values():
     """
     temp0 = get_temp_value(SENSOR_TEMP_0, BY_NAME)
     temp1 = get_temp_value(SENSOR_TEMP_1, BY_NAME)
-    temp2 = DEFAULT_SENSOR_VALUE
+    temp2 = get_temp_value(SENSOR_TEMP_2, BY_NAME)
     if not temp0:
         logger.critical("temp0 Fail, returning wrong value")
         temp0 = DEFAULT_SENSOR_VALUE

@@ -157,10 +157,10 @@ def record_minute(begin):
         watt2 = watt2 / nb_logs
         watt3 = watt3 / nb_logs
         # Save to db
-        ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, watt1, watt2, watt3, None, None, None)
+        ChaudiereMinute.create(ChaudiereMinute, begin, temp0, temp1, None, None, None, watt1, watt2, watt3, None, None, None)
     # else if no log to process, we still create an entry with None fields
     else:
-        ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None)
+        ChaudiereMinute.create(ChaudiereMinute, begin, None, None, None, None, None, None, None, None, None, None, None)
 
 if __name__ == '__main__':
     

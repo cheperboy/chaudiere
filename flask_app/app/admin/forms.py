@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 class AdminConfigForm(FlaskForm):
     temp_chaudiere_failure = IntegerField(
                                 'Temp Chaudiere Failure',
-                                [validators.NumberRange(min=55, max=75, message="min=55, max=75")])
+                                [validators.NumberRange(min=45, max=75, message="min=45, max=75")])
     
     chaudiere_db_rotate_hours= IntegerField(
                                 'Rotate Chaudiere db every (hours)',

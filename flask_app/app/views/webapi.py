@@ -43,7 +43,7 @@ def getchaudiere(hours, db_field):
 # get last record as json
 @webapi.route('/getchaudiere/last', methods=['GET'])
 #@cache.cached(timeout=10)
-def getchaudiere_last(hours, db_field):
+def getchaudiere_last():
     entry = Chaudiere.last()
     return jsonify(entry), 200
 

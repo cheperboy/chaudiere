@@ -14,7 +14,7 @@ local_ip="$(echo -e "${local_ip_raw}" | cut -d ' ' -f1)"
 # echo 'local_ip ' -$local_ip-
 
 #echo chromium-browser --kiosk --app=http://$local_ip:5007/charts/
-chromium-browser --kiosk --app=http://$local_ip:5007/charts/
+chromium-browser --kiosk --disable-restore-session-state --app=http://$local_ip:5007/charts/
 
 # to kill this process
 # killall -9 chromium-browse

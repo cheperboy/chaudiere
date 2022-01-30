@@ -44,7 +44,7 @@ def getchaudiere(hours, db_field):
 @webapi.route('/getchaudiere/last', methods=['GET'])
 #@cache.cached(timeout=10)
 def getchaudiere_last():
-    entry = Chaudiere.last(Chaudiere)
+    entry = Chaudiere.last(Chaudiere).tolist()
     return jsonify(entry), 200
 
 @webapi.route('/getminutehistory/<int:year>/<int:month>/<int:day>/<int:hour>/<int:hours>/<string:db_field>', methods=['GET'])

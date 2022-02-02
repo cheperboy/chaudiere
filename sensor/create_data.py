@@ -16,6 +16,7 @@ from get_watt import api_get_watt_values
 flask_app_directory = os.path.join(projectpath, 'flask_app')
 sys.path.append(flask_app_directory)
 from db_api import createSensorRecord
+from db_influx_api import add_measures_influx
 
 # import and get logger
 logger_directory = os.path.join(projectpath, 'logger')
@@ -53,6 +54,7 @@ def get_sensors():
             logger.info('watts '+str(watts)+' temps '+ str(temps))
             dt = datetime.datetime.now()
             createSensorRecord(dt, temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
+            add_measures_influx(temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
             time.sleep(SLEEP_DELAY)
         except IndexError:
             logger.error('IndexError ', exc_info=True)

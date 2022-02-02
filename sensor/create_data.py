@@ -27,6 +27,29 @@ logger = logging.getLogger(__name__)
 # Global variables
 SLEEP_DELAY = 5
 
+
+from influxdb import InfluxDBClient
+# connexion a la base de données InfluxDB
+influx_client = InfluxDBClient('localhost', 8086, username='influx', password='yVhlZYyZk3i/TXXmXMM')
+DB_NAME = "chaudiere"
+connected = False
+while not connected:
+    try:
+        logging.info("Database %s exists?" % DB_NAME)
+        if not {'name': DB_NAME} in influx_client.get_list_database():
+            logging.info("Database %s creation.." % DB_NAME)
+            influx_client.create_database(DB_NAME)
+            logging.info("Database %s created!" % DB_NAME)
+        influx_client.switch_database(DB_NAME)
+        logging.info("Connected to %s!" % DB_NAME)
+    except Exception as e:
+        logging.info('InfluxDB is not reachable. Waiting 5 seconds to retry.')
+        time.sleep(5)
+    else:
+        connected = True
+
+
+
 @click.group()
 def main():
     pass
@@ -54,7 +77,7 @@ def get_sensors():
             logger.info('watts '+str(watts)+' temps '+ str(temps))
             dt = datetime.datetime.now()
             createSensorRecord(dt, temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
-            add_measures_influx(temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
+            add_measures_influx(influx_client, temps[0], temps[1], temps[2], None, watts[0], watts[1], watts[2], watts[3])
             time.sleep(SLEEP_DELAY)
         except IndexError:
             logger.error('IndexError ', exc_info=True)

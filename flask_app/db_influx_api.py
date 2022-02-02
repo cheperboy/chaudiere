@@ -7,7 +7,6 @@ import logging
 import time
 from datetime import datetime
 import json
-from influxdb import InfluxDBClient
 
 currentpath = os.path.abspath(os.path.dirname(__file__)) # /home/pi/Dev/chaudiere/flask_app
 projectpath = os.path.dirname(currentpath)               # /home/pi/Dev/chaudiere
@@ -18,28 +17,8 @@ sys.path.append(logger_directory)
 import logger_stdout
 logger = logging.getLogger(__name__)
 
-# connexion a la base de données InfluxDB
-client = InfluxDBClient('localhost', 8086, username='influx', password='yVhlZYyZk3i/TXXmXMM')
-DB_NAME = "chaudiere"
-connected = False
-while not connected:
-    try:
-        logging.info("Database %s exists?" % DB_NAME)
-        if not {'name': DB_NAME} in client.get_list_database():
-            logging.info("Database %s creation.." % DB_NAME)
-            client.create_database(DB_NAME)
-            logging.info("Database %s created!" % DB_NAME)
-        client.switch_database(DB_NAME)
-        logging.info("Connected to %s!" % DB_NAME)
-    except Exception as e:
-        logging.info('InfluxDB is not reachable. Waiting 5 seconds to retry.')
-        time.sleep(5)
-    else:
-        connected = True
-
-
-def add_measures_influx(timestamp, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3):
-    logging.info("Adding measure to influx %s" % timestamp)
+def add_measures_influx(influx_client, temp0, temp1, temp2, temp3, watt0, watt1, watt2, watt3):
+    logging.info("Adding measure to influx")
     point = {
         "measurement": 'snapshot',
         "tags": {
@@ -60,4 +39,4 @@ def add_measures_influx(timestamp, temp0, temp1, temp2, temp3, watt0, watt1, wat
     }
     points = []
     points.append(point)
-    client.write_points(points)
+    influx_client.write_points(points)

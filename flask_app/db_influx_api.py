@@ -19,7 +19,7 @@ import logger_stdout
 logger = logging.getLogger(__name__)
 
 # connexion a la base de données InfluxDB
-client = InfluxDBClient('localhost', 8086, username='admin', password='password')
+client = InfluxDBClient('localhost', 8086, username='influx', password='yVhlZYyZk3i/TXXmXMM')
 DB_NAME = "chaudiere"
 connected = False
 while not connected:

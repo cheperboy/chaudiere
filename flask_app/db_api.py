@@ -27,7 +27,7 @@ def createSensorRecord(timestamp, temp0, temp1, temp2, temp3, watt0, watt1, watt
         db.session.add(entry)
         db.session.commit()
     except Exception as e:
-        logger.error("generic Error" + str(e.message))
+        logger.error("generic Error" + str(e))
         return False
     else:
         return True
